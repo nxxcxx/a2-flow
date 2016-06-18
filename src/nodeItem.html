@@ -1,0 +1,17 @@
+<!-- SVG snippet templates need an svg: prefix on their root element to disambiguate the SVG element from an HTML component. -->
+<svg:g svgMovable>
+	<rect [attr.width]="ui.node.width" [attr.height]="ui.node.height" stroke="black" fill="rgba(230,230,235,1.0)" />
+	<text #headerElem alignment-baseline="hanging"> {{ node.name }} </text>
+	<g #inputElem>
+		<g *ngFor="let input of node.input; let i = index">
+			<text [attr.x]="ui.input.label.x" [attr.y]="getLabelPosY( i )" alignment-baseline="hanging"> {{ input.name }} </text>
+			<rect [attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y" [attr.width]="ui.io.width" [attr.height]="ui.io.height" stroke="black" fill="rgba(0,0,0,0)" />
+		</g>
+	</g>
+	<g #outputElem>
+		<g *ngFor="let output of node.output; let i = index">
+			<text [attr.x]="ui.output.label.x" [attr.y]="getLabelPosY( i )" text-anchor="end" alignment-baseline="hanging"> {{ output.name }} </text>
+			<rect [attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y" [attr.width]="ui.io.width" [attr.height]="ui.io.height" stroke="black" fill="rgba(0,0,0,0)" />
+		</g>
+	</g>
+</g>
