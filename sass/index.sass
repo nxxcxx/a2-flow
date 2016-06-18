@@ -1,0 +1,36 @@
+$grey: #ddd
+
+html, body
+	font-family: monospace
+	margin: 0px
+	padding: 0px
+	height: 100%
+	font-size: 14px
+
+.view
+	height: 100%
+	float: left
+
+	&.left
+		background: $grey
+		width: 30%
+		overflow-y: scroll
+
+	&.right
+		width: 70%
+
+=no-select
+	-webkit-touch-callout: none
+	-webkit-user-select: none
+	-khtml-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	user-select: none
+
+#nodeGraph
+	height: 100%
+	width: 100%
+	display: block
+	cursor: default
+	font-size: 14px
+	+no-select
