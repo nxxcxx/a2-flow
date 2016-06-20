@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input } from 'angular2/core'
+import { Component, ElementRef, Input } from 'angular2/core'
 import { NodeManager } from './nodeManager.service'
 
 @Component( {

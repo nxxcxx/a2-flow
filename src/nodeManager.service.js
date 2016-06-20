@@ -1,5 +1,5 @@
 import { Injectable } from 'angular2/core'
-import * as nodeFactory from './nodeFactory'
+import nodeFactory from './nodeFactory'
 import toposort from 'toposort'
 
 @Injectable()
@@ -8,32 +8,41 @@ export class NodeManager {
 	constructor() {
 		this.nodes = []
 		this.connections = []
-		this.createTestNode()
-
 		this.connectingIO = { src: null, dst: null }
+		this.selectedNode = null
+
+		// test
+		this.createTestNode()
 	}
 
-	addNode() {
-		this.nodes.push( Math.random() )
-	}
+	getNodes() { return this.nodes }
 
-	removeNode() {
-		this.nodes.pop()
-	}
+	getConnections() { return this.connections }
 
-	getNodes() {
-		return this.nodes
-	}
+	getSelectedNode() { return this.selectedNode }
 
-	getConnections() {
-		return this.connections
+	setSelectedNode( node ) {
+		this.selectedNode = node
+		// bring node to end of array so it render last in view
+		let swapIndex = -1
+		for ( let i = 0; i < this.nodes.length; i++ ) {
+			if ( this.nodes[ i ] === node ) {
+				swapIndex = i
+				break
+			}
+		}
+		// swapItem
+		let lastIndex = this.nodes.length - 1
+		let temp = this.nodes[ swapIndex ]
+		this.nodes[ swapIndex ] = this.nodes[ lastIndex ]
+		this.nodes[ lastIndex ] = temp
 	}
 
 	isConnectionExists( output, input ) {
 		let res = false
-		this.connections.forEach( io => {
+		for ( let io of this.connections ) {
 			if ( io[ 0 ] === output && io[ 1 ] === input ) return res = true
-		} )
+		}
 		return res
 	}
 
@@ -62,7 +71,7 @@ export class NodeManager {
 
 	connectIO( output, input ) {
 		if ( this.isValidConnection( output, input ) ) {
-		// many -> one, if the same input already exists, remove & disconnect it
+		// many -> one connection, if the same input already exists, remove & disconnect it
 			if ( !input.free ) {
 				input.disconnect()
 				this.disconnectInput( input )
@@ -78,15 +87,15 @@ export class NodeManager {
 			this.disconnectInput( io )
 		} else {
 			// need to make a new copy because cannot call disconnectInput inside a loop
-			io.input.slice( 0 ).forEach( inp => {
+			for ( let inp of Array.from( io.input ) ) {
 				inp.disconnect()
 				this.disconnectInput( inp )
-			} )
+			}
 		}
 	}
 
 	disconnectInput( input ) {
-		this.connections = this.connections.filter( io => { return io[ 1 ] !== input } )
+		this.connections = this.connections.filter( io => io[ 1 ] !== input )
 	}
 
 	startConnectingIO( io )  {
@@ -96,8 +105,8 @@ export class NodeManager {
 	endConnectingIO( io ) {
 		let cIO = this.connectingIO
 		cIO.dst = io
-		if ( cIO.src instanceof nodeFactory.Output ) { this.connectIO( cIO.src, cIO.dst ) }
-		else { this.connectIO( cIO.dst, cIO.src ) }
+		if ( cIO.src instanceof nodeFactory.Output ) this.connectIO( cIO.src, cIO.dst )
+		else this.connectIO( cIO.dst, cIO.src )
 		cIO.src = cIO.dst = null
 	}
 
@@ -105,7 +114,7 @@ export class NodeManager {
 		let test = this.connections.slice( 0 )
 		test.push( [ output, input ] )
 		try { this.computeToposort( test ) }
-		catch ( e ) { return true }
+		catch( e ) { return true }
 		return false
 	}
 

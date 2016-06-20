@@ -1,10 +1,12 @@
 <!-- SVG snippet templates need an svg: prefix on their root element to disambiguate the SVG element from an HTML component. -->
 <!-- nodeItem -->
-<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )">
+<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )" (click)="select()"
+	stroke-width="0.5"
+>
 
 	<!-- Backdrop -->
 	<rect [attr.width]="ui.node.width" [attr.height]="ui.node.height"
-		stroke="black" fill="rgba(220,220,220,1.0)"
+		stroke="black" fill="rgba(230,230,230,1.0)"
 	/>
 
 	<!-- Header Label -->

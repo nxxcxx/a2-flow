@@ -89,4 +89,4 @@ function create( name ) {
 	return new Node( name )
 }
 
-export { create, Node, Input, Output }
+export default { create, Node, Input, Output }

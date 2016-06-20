@@ -73,4 +73,8 @@ export class NodeItem {
 		} )
 	}
 
+	select() {
+		this.nodeManager.setSelectedNode( this.node )
+	}
+
 }

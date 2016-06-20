@@ -17,8 +17,8 @@ import { NodeConnection } from './nodeConnection.component'
 		<svg id="nodeGraph">
 			<rect svgMovable svgZoomable [isRootCtrl]="true" targetId="svgMoveCtrlRoot" fill="rgba(0,0,0,0)" width="100%" height="100%" />
 			<g id="svgMoveCtrlRoot">
-				<g nodeItem *ngFor="let currentNode of nodeManager.getNodes()" [node]="currentNode" />
 				<g nodeConnection *ngFor="let conn of nodeManager.getConnections()" [connection]="conn" />
+				<g nodeItem *ngFor="let currentNode of nodeManager.getNodes()" [node]="currentNode" />
 			</g>
 		</svg>
 	</div>
