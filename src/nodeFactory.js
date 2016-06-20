@@ -4,8 +4,9 @@ class Connection {
 	constructor( name, parent ) {
 		this.uuid = uuid()
 		this.name = name
-		this.getParent = () => { return parent }
+		this.parent = parent
 		this.free = true
+		this.ui = { absolutePosition: { x: 0, y:0 } }
 	}
 }
 
@@ -13,6 +14,7 @@ class Input extends Connection {
 	constructor( name, parent ) {
 		super( name, parent )
 		this.output = null
+		this.type = 1
 	}
 	connect( output ) {
 		if ( output instanceof Output ) {
@@ -39,6 +41,7 @@ class Output extends Connection {
 		super( name, parent )
 		this.data = null
 		this.input = []
+		this.type = 0
 	}
 }
 
@@ -49,13 +52,13 @@ class Executable {
 	}
 	compile() {
 		try { this._task = new Function( 'input', this._fnstr ) }
-		catch ( e ) { console.error( e ) }
+		catch ( e ) { throw e }
 	}
 	execute() {
 		var inpObj = {}
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
 		try { var res = this._task.call( null, inpObj ) }
-		catch ( e ) { console.error( e ) }
+		catch ( e ) { throw e }
 		this.output.forEach( io => { io.data = res[ io.name ] } )
 	}
 }
@@ -68,6 +71,7 @@ class Node extends Executable {
 		this.input = []
 		this.output = []
 		this.order = -1
+		this.ui = { absolutePosition: { x: 0, y: 0 } }
 	}
 	addInput() {
 		for ( let i = 0; i < arguments.length; i++ ) {
@@ -81,6 +85,8 @@ class Node extends Executable {
 	}
 }
 
-export function create( name ) {
+function create( name ) {
 	return new Node( name )
 }
+
+export { create, Node, Input, Output }

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input } from 'angular2/core'
+import { Directive, ElementRef, HostListener, Input, Output, EventEmitter } from 'angular2/core'
 import { SvgUIService } from './svgUI.service'
 
 @Directive( {
@@ -10,7 +10,7 @@ export class SvgMovableDirective {
 
 	@Input() targetId
 	@Input() isRootCtrl // isRootCtrl indicate elem root transformation ( scalingFactor must equal to 1 )
-
+	@Output() positionUpdated = new EventEmitter()
 
 	constructor( elRef: ElementRef, svgUI: SvgUIService ) {
 		this.el = elRef.nativeElement
@@ -56,6 +56,7 @@ export class SvgMovableDirective {
 				, newY = this.mat[ 5 ] + dy
 				, mat = this.mat
 				this.el.setAttribute( 'transform', `matrix(${mat[0]},${mat[1]},${mat[2]},${mat[3]},${newX},${newY})` )
+				this.positionUpdated.emit( { x: newX, y: newY } )
 			}
 		}
 
@@ -72,13 +73,12 @@ export class SvgMovableDirective {
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
-
-		if ( this.disabled ) return
+		// disable if elem has attr svg-disable-move
+		if ( this.disabled || $event.target.hasAttribute( 'svg-disable-move' ) ) return
 		this.mousehold = true
 		this.prevPos.x = $event.pageX
 		this.prevPos.y = $event.pageY
 		this.mat = this.el.getAttribute( 'transform' ).match( this.numPattern ).map( v => parseFloat( v ) )
-
 	}
 
 }

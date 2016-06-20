@@ -1,11 +1,12 @@
 import { Component, Input, ViewChild, ElementRef } from 'angular2/core'
 import { SvgMovableDirective } from './svgMovable.directive'
 import { NodeManager } from './nodeManager.service'
+import { NodeIO } from './nodeIO.directive'
 
 @Component( {
 
 	selector: '[nodeItem]',
-	directives: [ SvgMovableDirective ],
+	directives: [ SvgMovableDirective, NodeIO ],
 	template: require( './nodeItem.html' ) // using require instad of templateUrl so webpack can watch the file
 
 } )
@@ -55,6 +56,21 @@ export class NodeItem {
 
 	getLabelPosY( index ) {
 		return index * this.ui.lineHeight + this.ui.headerHeight
+	}
+
+	updateNodePosition( position ) {
+		this.node.ui.absolutePosition.x = position.x
+		this.node.ui.absolutePosition.y = position.y
+
+		this.node.output.forEach( ( io, idx ) => {
+			io.ui.absolutePosition.x = position.x + this.ui.output.io.x + this.ui.io.width
+			io.ui.absolutePosition.y = position.y + this.getLabelPosY( idx ) + this.ui.io.offset.y + this.ui.io.height * 0.5
+		} )
+
+		this.node.input.forEach( ( io, idx ) => {
+			io.ui.absolutePosition.x = position.x + this.ui.input.io.x
+			io.ui.absolutePosition.y = position.y + this.getLabelPosY( idx ) + this.ui.io.offset.y + this.ui.io.height * 0.5
+		} )
 	}
 
 }

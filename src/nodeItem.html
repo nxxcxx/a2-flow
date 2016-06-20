@@ -1,17 +1,45 @@
 <!-- SVG snippet templates need an svg: prefix on their root element to disambiguate the SVG element from an HTML component. -->
-<svg:g svgMovable>
-	<rect [attr.width]="ui.node.width" [attr.height]="ui.node.height" stroke="black" fill="rgba(230,230,235,1.0)" />
+<!-- nodeItem -->
+<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )">
+
+	<!-- Backdrop -->
+	<rect [attr.width]="ui.node.width" [attr.height]="ui.node.height"
+		stroke="black" fill="rgba(220,220,220,1.0)"
+	/>
+
+	<!-- Header Label -->
 	<text #headerElem alignment-baseline="hanging"> {{ node.name }} </text>
+
+	<!-- Input Label-->
 	<g #inputElem>
 		<g *ngFor="let input of node.input; let i = index">
-			<text [attr.x]="ui.input.label.x" [attr.y]="getLabelPosY( i )" alignment-baseline="hanging"> {{ input.name }} </text>
-			<rect [attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y" [attr.width]="ui.io.width" [attr.height]="ui.io.height" stroke="black" fill="rgba(0,0,0,0)" />
+			<!-- Text -->
+			<text [attr.x]="ui.input.label.x" [attr.y]="getLabelPosY( i )" alignment-baseline="hanging">
+				{{ input.name }}
+			</text>
+			<!-- IO -->
+			<rect nodeIO svg-disable-move [io]="input" [ioFree]="input.free"
+				[attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
+				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
+				stroke="black" fill="rgba(0,0,0,0)"
+			/>
 		</g>
 	</g>
+
+	<!-- Output Label -->
 	<g #outputElem>
 		<g *ngFor="let output of node.output; let i = index">
-			<text [attr.x]="ui.output.label.x" [attr.y]="getLabelPosY( i )" text-anchor="end" alignment-baseline="hanging"> {{ output.name }} </text>
-			<rect [attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y" [attr.width]="ui.io.width" [attr.height]="ui.io.height" stroke="black" fill="rgba(0,0,0,0)" />
+			<!-- Text -->
+			<text [attr.x]="ui.output.label.x" [attr.y]="getLabelPosY( i )" text-anchor="end" alignment-baseline="hanging">
+				{{ output.name }}
+			</text>
+			<!-- IO -->
+			<rect nodeIO svg-disable-move [io]="output" [ioFree]="output.free"
+				[attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
+				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
+				stroke="black" fill="rgba(0,0,0,0)"
+			/>
 		</g>
 	</g>
+
 </g>
