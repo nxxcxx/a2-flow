@@ -62,7 +62,7 @@ export class SvgMovableDirective {
 
 		document.addEventListener( 'mouseup', this.mouseupEvent )
 		document.addEventListener( 'mousemove', this.mousemoveEvent)
-
+		
 	}
 
 	ngOnDestroy() {

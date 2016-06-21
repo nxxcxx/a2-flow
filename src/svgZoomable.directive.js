@@ -11,9 +11,11 @@ export class SvgZoomableDirective {
 	@Input() targetId
 
 	constructor( elRef: ElementRef, svgUI: SvgUIService ) {
+
 		this.el = elRef.nativeElement
 		this.handler = elRef.nativeElement
 		this.svgUI = svgUI
+
 	}
 
 	ngOnInit() {

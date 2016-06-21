@@ -16,9 +16,6 @@ export class NodeIO {
 		this.nodeMan = nodeMan
 	}
 
-	ngOnInit() {
-	}
-
 	ngOnChanges() {
 		this.setFillColor( !this.ioFree )
 	}

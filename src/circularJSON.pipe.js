@@ -5,7 +5,7 @@ import CJSON from 'circular-json'
 	name: 'cjson'
 } )
 export class CircularJSON {
-	transform( value ) {
-		return CJSON.stringify( value, undefined, 2 )
+	transform( value, space ) {
+		return CJSON.stringify( value, undefined, parseInt( space ) )
 	}
 }

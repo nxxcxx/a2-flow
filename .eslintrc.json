@@ -1,46 +1,46 @@
 {
-    "env": {
-        "browser": true,
-        "node": true,
-        "commonjs": true,
-        "es6": true
-    },
-    "extends": "eslint:recommended",
-    "parser": "babel-eslint",
-    "parserOptions": {
-        "sourceType": "module"
-    },
-    "rules": {
-        "eqeqeq": [
-            "error",
-            "always"
-        ],
-        "indent": [
-            "warn",
-            "tab", {
-                "SwitchCase": 1
-            }
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "warn",
-            "never"
-        ],
-        "no-console": [
-            "warn"
-        ],
-        "no-unused-vars": [
-            "warn"
-        ],
+		"env": {
+				"browser": true,
+				"node": true,
+				"commonjs": true,
+				"es6": true
+		},
+		"extends": "eslint:recommended",
+		"parser": "babel-eslint",
+		"parserOptions": {
+				"sourceType": "module"
+		},
+		"rules": {
+				"eqeqeq": [
+						"error",
+						"always"
+				],
+				"indent": [
+						"warn",
+						"tab", {
+								"SwitchCase": 1
+						}
+				],
+				"linebreak-style": [
+						"error",
+						"unix"
+				],
+				"quotes": [
+						"error",
+						"single"
+				],
+				"semi": [
+						"warn",
+						"never"
+				],
+				"no-console": [
+						"warn"
+				],
+				"no-unused-vars": [
+						"warn"
+				],
 				"no-empty": [
 					"warn"
 				]
-    }
+		}
 }

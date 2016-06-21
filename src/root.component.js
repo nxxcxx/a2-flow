@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core'
+import { Component, NgZone } from 'angular2/core'
 import { NodeDetails } from './nodeDetails.component'
 import { NodeGraph } from './nodeGraph.component'
 import { NodeManager } from './nodeManager.service'
@@ -13,5 +13,9 @@ import { NodeManager } from './nodeManager.service'
 
 } )
 export class RootComponent {
-	
+
+	constructor( zone: NgZone ) {
+		this.zone = zone
+	}
+
 }

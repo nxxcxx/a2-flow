@@ -13,6 +13,12 @@ export class NodeManager {
 
 		// test
 		this.createTestNode()
+		this.createTestNode()
+		this.createTestNode()
+		this.createTestNode()
+		this.createTestNode()
+		this.createTestNode()
+		this.createTestNode()
 	}
 
 	getNodes() { return this.nodes }
@@ -23,38 +29,22 @@ export class NodeManager {
 
 	setSelectedNode( node ) {
 		this.selectedNode = node
-		// bring node to end of array so it render last in view
-		let swapIndex = -1
-		for ( let i = 0; i < this.nodes.length; i++ ) {
-			if ( this.nodes[ i ] === node ) {
-				swapIndex = i
-				break
-			}
-		}
-		// swapItem
-		let lastIndex = this.nodes.length - 1
-		let temp = this.nodes[ swapIndex ]
-		this.nodes[ swapIndex ] = this.nodes[ lastIndex ]
-		this.nodes[ lastIndex ] = temp
+		// bring selected node to end of array so it render last in view
+		let swapIndex = this.nodes.findIndex( currentNode => currentNode === node )
+		this.nodes.push( this.nodes.splice( swapIndex, 1 )[ 0 ] )
 	}
 
 	isConnectionExists( output, input ) {
-		let res = false
-		for ( let io of this.connections ) {
-			if ( io[ 0 ] === output && io[ 1 ] === input ) return res = true
-		}
-		return res
+		return this.connections.find( io => io[ 0 ] === output && io[ 1 ] === input ) !== undefined
 	}
 
 	isValidConnection( output, input ) {
-
 		// for debugging
 		// if ( !( output instanceof nodeFactory.Output ) ) console.warn( 'invalid output')
 		// if ( !( input instanceof nodeFactory.Input ) ) console.warn( 'invalid input')
 		// if ( this.isConnectionExists( output, input ) ) console.warn( 'connection already exists' )
 		// if ( output.parent.uuid === input.parent.uuid ) console.warn( 'same node io' )
 		// console.warn( 'cylic:', this.testCyclicConnection( output, input ) )
-
 		if (
 			( output !== input ) &&
 			( output instanceof nodeFactory.Output ) &&
@@ -66,7 +56,6 @@ export class NodeManager {
 			return true
 		}
 		return false
-
 	}
 
 	connectIO( output, input ) {
@@ -103,15 +92,15 @@ export class NodeManager {
 	}
 
 	endConnectingIO( io ) {
-		let cIO = this.connectingIO
-		cIO.dst = io
-		if ( cIO.src instanceof nodeFactory.Output ) this.connectIO( cIO.src, cIO.dst )
-		else this.connectIO( cIO.dst, cIO.src )
-		cIO.src = cIO.dst = null
+		let cio = this.connectingIO
+		cio.dst = io
+		if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
+		else this.connectIO( cio.dst, cio.src )
+		cio.src = cio.dst = null
 	}
 
 	testCyclicConnection( output, input ) {
-		let test = this.connections.slice( 0 )
+		let test = Array.from( this.connections )
 		test.push( [ output, input ] )
 		try { this.computeToposort( test ) }
 		catch( e ) { return true }

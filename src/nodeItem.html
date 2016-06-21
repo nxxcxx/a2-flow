@@ -1,6 +1,6 @@
 <!-- SVG snippet templates need an svg: prefix on their root element to disambiguate the SVG element from an HTML component. -->
 <!-- nodeItem -->
-<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )" (click)="select()"
+<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )" (mousedown)="select()"
 	stroke-width="0.5"
 >
 
@@ -10,7 +10,7 @@
 	/>
 
 	<!-- Header Label -->
-	<text #headerElem alignment-baseline="hanging"> {{ node.name }} </text>
+	<text #headerElem alignment-baseline="hanging" [attr.y]="ui.header.offset.y"> {{ node.name }} </text>
 
 	<!-- Input Label-->
 	<g #inputElem>

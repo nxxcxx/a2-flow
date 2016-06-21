@@ -1,5 +1,4 @@
 import { Component, ElementRef, Input } from 'angular2/core'
-import { NodeManager } from './nodeManager.service'
 
 @Component( {
 
@@ -11,12 +10,8 @@ export class NodeConnection {
 
 	@Input() connection
 
-	constructor( elRef: ElementRef, nodeMan: NodeManager ) {
+	constructor( elRef: ElementRef ) {
 		this.el = elRef.nativeElement
-		this.nodeMan = nodeMan
-	}
-
-	ngOnInit() {
 	}
 
 	getBezierCurveString() {
