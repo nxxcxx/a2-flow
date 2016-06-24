@@ -13,15 +13,16 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
+			root: path.resolve( __dirname ),
 			src: path.resolve( __dirname, 'src' ),
 			sass: path.resolve( __dirname, 'sass' )
 		},
-		extensions: [ '', '.js', '.sass' ]
+		extensions: [ '', '.js', '.sass', '.css' ]
 	},
 	module: {
 		loaders: [
 			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
-			{ test: /\.sass$/, loaders: [ 'style', 'css', 'sass' ] },
+			{ test: /\.sass$|\.css$/, loaders: [ 'style', 'css', 'sass' ] },
 			{ test: /\.html$/, loader: 'raw' }
 		]
 	},

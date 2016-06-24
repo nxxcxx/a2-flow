@@ -2,6 +2,12 @@ import { Injectable } from 'angular2/core'
 import nodeFactory from './nodeFactory'
 import toposort from 'toposort'
 
+// CodeMirror ( import order is important )
+import CodeMirror from 'codemirror'
+import 'root/node_modules/codemirror/mode/javascript/javascript.js'
+import 'root/node_modules/codemirror/lib/codemirror.css'
+import 'root/node_modules/codemirror/theme/neo.css'
+
 @Injectable()
 export class NodeManager {
 
@@ -10,15 +16,24 @@ export class NodeManager {
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
 		this.selectedNode = null
+		this.codeMirror = null
 
 		// test
 		this.createTestNode()
-		this.createTestNode()
-		this.createTestNode()
-		this.createTestNode()
-		this.createTestNode()
-		this.createTestNode()
-		this.createTestNode()
+	}
+
+	initEditor( textareaElem ) {
+		this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
+			lineNumbers: true,
+			mode: 'javascript',
+			theme: 'neo',
+			tabSize: 2
+		} )
+		this.codeMirror.on( 'change', cm => {
+			// set selected node content
+			if ( !this.selectedNode ) return
+			this.selectedNode._fnstr = cm.doc.getValue()
+		} )
 	}
 
 	getNodes() { return this.nodes }
@@ -32,6 +47,8 @@ export class NodeManager {
 		// bring selected node to end of array so it render last in view
 		let swapIndex = this.nodes.findIndex( currentNode => currentNode === node )
 		this.nodes.push( this.nodes.splice( swapIndex, 1 )[ 0 ] )
+		// set editor content
+		this.codeMirror.doc.setValue( node._fnstr )
 	}
 
 	isConnectionExists( output, input ) {
@@ -39,14 +56,7 @@ export class NodeManager {
 	}
 
 	isValidConnection( output, input ) {
-		// for debugging
-		// if ( !( output instanceof nodeFactory.Output ) ) console.warn( 'invalid output')
-		// if ( !( input instanceof nodeFactory.Input ) ) console.warn( 'invalid input')
-		// if ( this.isConnectionExists( output, input ) ) console.warn( 'connection already exists' )
-		// if ( output.parent.uuid === input.parent.uuid ) console.warn( 'same node io' )
-		// console.warn( 'cylic:', this.testCyclicConnection( output, input ) )
 		if (
-			( output !== input ) &&
 			( output instanceof nodeFactory.Output ) &&
 			( input instanceof nodeFactory.Input ) &&
 			( output.parent.uuid !== input.parent.uuid ) &&
@@ -114,19 +124,52 @@ export class NodeManager {
 	}
 
 	createTestNode() {
-		var n = nodeFactory.create( 'Vector3' )
-		n.addInput( 'bufferGeometry', 'shader', 'modifier' )
-		n.addOutput( 'vec3', 'buffer' )
-		n._fnstr = ''
+		let n = nodeFactory.create( 'Constants' )
+		n.addOutput( 'x', 'y', 'z' )
+		n._fnstr = 'return { x: 42, y: 33, z: 76 }'
 		n.compile()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'BufferGeometry' )
-		n.addInput( 'geometry', 'shader', 'buffer' )
-		n.addOutput( 'Mesh', 'shader' )
-		n._fnstr = ''
+		n = nodeFactory.create( 'Vector3' )
+		n.addInput( 'u', 'v', 'w' )
+		n.addOutput( 'vec3' )
+		n._fnstr = 'return { vec3: [ input.u, input.v, input.w ] }'
 		n.compile()
 		this.nodes.push( n )
+
+		n = nodeFactory.create( 'Vector3' )
+		n.addInput( 's', 't', 'p' )
+		n.addOutput( 'vec3' )
+		n._fnstr = 'return { vec3: [ input.s, input.t, input.p ] }'
+		n.compile()
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'Dot' )
+		n.addInput( 'v1', 'v2' )
+		n.addOutput( 'f' )
+		n._fnstr = 'return { f: input.v1[0]*input.v2[0]+input.v1[1]*input.v2[1]+input.v1[2]*input.v2[2] }'
+		n.compile()
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'Console' )
+		n.addInput( 'log' )
+		n._fnstr = 'console.log( input.log )'
+		n.compile()
+		this.nodes.push( n )
+	}
+
+	computeTopologicalOrder() {
+		let sorted = this.computeToposort( this.connections )
+		this.nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
+	}
+
+	run() {
+		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
+		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			var err = n.compile()
+			if ( err ) console.error( `Node order No.${n.order}`, err )
+			n.execute()
+		} )
 	}
 
 }
