@@ -1,4 +1,6 @@
 $grey: #ddd
+$w1: #fff
+$b1: #000
 
 html, body
 	font-family: monospace
@@ -6,13 +8,57 @@ html, body
 	padding: 0px
 	height: 100%
 	font-size: 14px
+	background: $b1
+	color: $w1
+
+button
+	border: none
+	border-right: 1px solid $w1
+	background: $b1
+	color: $w1
+	display: block
+	float: left
+
+pre
+	margin: 0px
+	overflow-x: scroll
+
+::-webkit-scrollbar
+	background: $b1
+	border-right: 1px solid $w1
+	width: 3px
+	height: 3px
+::-webkit-scrollbar-thumb
+	background: $w1
+
+.cm-s-black
+	&.CodeMirror
+		background-color: $b1
+		color: $w1
+		line-height: 1.4375
+		border-top: 1px solid $w1
+		border-bottom: 1px solid $w1
+	&.CodeMirror-focused div.CodeMirror-selected
+		background: rgba(255, 255, 255, 0.33)
+	.CodeMirror-gutters
+		border:none
+		border-right: 1px solid $w1
+		background-color: transparent
+	.CodeMirror-cursor
+		width: auto
+		border: 0
+		background: $w1
+		z-index: 1
+	.CodeMirror-linenumber
+		padding: 0
+		color: $w1
+
 
 .view
 	height: 100%
 	float: left
 
 	&.left
-		background: $grey
 		width: 30%
 		overflow-y: scroll
 

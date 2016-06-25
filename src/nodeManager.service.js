@@ -6,27 +6,33 @@ import toposort from 'toposort'
 import CodeMirror from 'codemirror'
 import 'root/node_modules/codemirror/mode/javascript/javascript.js'
 import 'root/node_modules/codemirror/lib/codemirror.css'
-import 'root/node_modules/codemirror/theme/neo.css'
+// import 'root/node_modules/codemirror/theme/neo.css'
 
 @Injectable()
 export class NodeManager {
 
 	constructor() {
+		window.NM = this
 		this.nodes = []
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
 		this.selectedNode = null
 		this.codeMirror = null
-
 		// test
 		this.createTestNode()
+
+		this.linking = false
+		document.addEventListener( 'mouseup', () => {
+			this.linking = false
+			console.log( this.linking )
+		} )
 	}
 
 	initEditor( textareaElem ) {
 		this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
 			lineNumbers: true,
-			mode: 'javascript',
-			theme: 'neo',
+			// mode: 'javascript',
+			theme: 'black',
 			tabSize: 2
 		} )
 		this.codeMirror.on( 'change', cm => {
@@ -99,14 +105,21 @@ export class NodeManager {
 
 	startConnectingIO( io )  {
 		this.connectingIO.src = io
+		// TODO: activate temp connection
+		this.linking = true
 	}
 
 	endConnectingIO( io ) {
 		let cio = this.connectingIO
 		cio.dst = io
-		if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
-		else this.connectIO( cio.dst, cio.src )
+		if ( cio.src ) {
+			if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
+			else this.connectIO( cio.dst, cio.src )
+		}
 		cio.src = cio.dst = null
+		// TODO: deactivate temp connection
+		this.linking = false
+		console.log( 'todo' )
 	}
 
 	testCyclicConnection( output, input ) {

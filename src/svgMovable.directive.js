@@ -32,7 +32,7 @@ export class SvgMovableDirective {
 		this.currPos = { x: null, y: null }
 
 		this.numPattern = /[\d|\.|\+|-]+/g
-		this.mat = this.el.getAttribute( 'transform' ).match( this.numPattern ).map( v => parseFloat( v ) )
+		this.mat = this.mat = this.parseMatrix()
 
 		this.position = { x: 0, y: 0 }
 		this.position.x = this.mat[ 4 ]
@@ -62,7 +62,7 @@ export class SvgMovableDirective {
 
 		document.addEventListener( 'mouseup', this.mouseupEvent )
 		document.addEventListener( 'mousemove', this.mousemoveEvent)
-		
+
 	}
 
 	ngOnDestroy() {
@@ -78,7 +78,11 @@ export class SvgMovableDirective {
 		this.mousehold = true
 		this.prevPos.x = $event.pageX
 		this.prevPos.y = $event.pageY
-		this.mat = this.el.getAttribute( 'transform' ).match( this.numPattern ).map( v => parseFloat( v ) )
+		this.mat = this.parseMatrix()
+	}
+
+	parseMatrix() {
+		return this.el.getAttribute( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 	}
 
 }

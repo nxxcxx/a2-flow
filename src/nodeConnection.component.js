@@ -3,7 +3,7 @@ import { Component, ElementRef, Input } from 'angular2/core'
 @Component( {
 
 	selector: '[nodeConnection]',
-	template: '<svg:path stroke="black" fill="transparent" [attr.d]="getBezierCurveString()" />'
+	template: '<svg:path stroke="#fff" fill="rgba(0,0,0,0)" [attr.d]="getBezierCurveString()" />'
 
 } )
 export class NodeConnection {

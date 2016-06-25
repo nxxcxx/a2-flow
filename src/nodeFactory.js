@@ -25,9 +25,11 @@ class Input extends Connection {
 		}
 	}
 	disconnect() {
-		let i = this.output.input.indexOf( this )
-		if ( i > -1 ) this.output.input.splice( i, 1 )
-		if ( this.output.input.length === 0 ) this.output.free = true
+		if ( this.output ) {
+			let i = this.output.input.indexOf( this )
+			if ( i > -1 ) this.output.input.splice( i, 1 )
+			if ( this.output.input.length === 0 ) this.output.free = true
+		}
 		this.output = null
 		this.free = true
 	}

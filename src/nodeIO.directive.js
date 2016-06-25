@@ -22,7 +22,7 @@ export class NodeIO {
 
 	setFillColor( bool ) {
 		// TODO use css class
-		if ( bool ) this.el.setAttribute( 'fill', 'rgba(0,0,0,1)' )
+		if ( bool ) this.el.setAttribute( 'fill', '#fff' )
 		else this.el.setAttribute( 'fill', 'rgba(0,0,0,0)' )
 	}
 

@@ -1,14 +1,18 @@
 <!-- SVG snippet templates need an svg: prefix on their root element to disambiguate the SVG element from an HTML component. -->
 <!-- nodeItem -->
-<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )" (mousedown)="select()">
+<svg:g svgMovable (positionUpdated)="updateNodePosition( $event )" (mousedown)="select()" style="fill: #fff">
 
 	<!-- Backdrop -->
 	<rect [attr.width]="ui.node.width" [attr.height]="ui.node.height"
-		stroke="black" fill="rgba(230,230,230,1.0)"
+		stroke="#fff" fill="#000"
 	/>
 
 	<!-- Header Label -->
-	<text #headerElem alignment-baseline="hanging" [attr.y]="ui.header.offset.y"> {{ node.name }} {{ node.order }}</text>
+	<text #headerElem alignment-baseline="hanging"
+		[attr.x]="ui.header.offset.x" [attr.y]="ui.header.offset.y"
+	>
+		{{ node.name }} {{ node.order }}
+	</text>
 
 	<!-- Input Label-->
 	<g #inputElem>
@@ -21,7 +25,7 @@
 			<rect nodeIO svg-disable-move [io]="input" [ioFree]="input.free"
 				[attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
 				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
-				stroke="black" fill="rgba(0,0,0,0)"
+				stroke="#fff" fill="rgba(0,0,0,0)"
 			/>
 		</g>
 	</g>
@@ -37,7 +41,7 @@
 			<rect nodeIO svg-disable-move [io]="output" [ioFree]="output.free"
 				[attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
 				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
-				stroke="black" fill="rgba(0,0,0,0)"
+				stroke="#fff" fill="rgba(0,0,0,0)"
 			/>
 		</g>
 	</g>

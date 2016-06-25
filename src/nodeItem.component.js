@@ -24,11 +24,11 @@ export class NodeItem {
 			node: { width: 0, height: 0 },
 			centerSpacing: 10,
 			lineHeight: 12,
-			header: { height: 16, offset: { x: 0, y: 0 } },
+			header: { height: 16, offset: { x: 5, y: 0 } },
 			io: { width: 8, height: 8, spacing: { x: 4, y: 0 }, offset: { x: 0, y: 2 } },
 			input: { label: { x: 0, y: 0 }, io: { x: 0, y: 0 } },
 			output: { label: { x: 0, y: 0 }, io: { x: 0, y: 0 } },
-			padding: { top: 0, bottom: 0 }
+			padding: { top: 5, bottom: 5 }
 		}
 	}
 

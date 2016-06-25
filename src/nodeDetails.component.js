@@ -11,20 +11,24 @@ import { NodeEditor } from './nodeEditor.component'
 	template:
 	`
 	<div class="view left">
-		<button (click)="run()">RUN</button>
+		<div>
+			<button (click)="createTestNodes()">TEST</button>
+			<button (click)="run()">RUN</button>
+		</div>
+		<div style="clear: left"></div>
 		<node-editor></node-editor>
-		<input [(ngModel)]="enabled" type="checkbox"> Debug
-		<pre *ngIf="enabled" style="background: #f6f6f6; margin: 0px; overflow-x: scroll">{{ getNodeInfo() }}</pre>
+		<input [(ngModel)]="debugEnabled" type="checkbox"> Debug
+		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
 	</div>
 	`
-	// {{ nodeMan.getSelectedNode() | cjson: 2 }} why this does not update when object's property changed?
+
 } )
 export class NodeDetails {
 
 	constructor( nodeManager: NodeManager ) {
 		this.nodeMan = nodeManager
 		this.cjson = new CircularJSON()
-		this.enabled = true
+		this.debugEnabled = false
 	}
 
 	getNodeInfo() {
@@ -34,6 +38,10 @@ export class NodeDetails {
 	run() {
 		this.nodeMan.computeTopologicalOrder()
 		this.nodeMan.run()
+	}
+
+	createTestNodes() {
+		this.nodeMan.createTestNode()
 	}
 
 }
