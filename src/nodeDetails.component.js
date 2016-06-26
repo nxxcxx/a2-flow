@@ -5,7 +5,7 @@ import { NodeEditor } from './nodeEditor.component'
 
 @Component( {
 
-	selector: 'node-details',
+	selector: 'nodeDetails',
 	directives: [ NodeEditor ],
 	pipes: [ CircularJSON ],
 	template:

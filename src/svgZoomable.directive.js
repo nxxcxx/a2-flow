@@ -1,5 +1,4 @@
 import { Directive, ElementRef, HostListener, Input } from 'angular2/core'
-import { SvgUIService } from './svgUI.service'
 
 @Directive( {
 
@@ -10,11 +9,10 @@ export class SvgZoomableDirective {
 
 	@Input() targetId
 
-	constructor( elRef: ElementRef, svgUI: SvgUIService ) {
+	constructor( elRef: ElementRef ) {
 
 		this.el = elRef.nativeElement
 		this.handler = elRef.nativeElement
-		this.svgUI = svgUI
 
 	}
 
@@ -31,8 +29,7 @@ export class SvgZoomableDirective {
 	@HostListener( 'mousewheel', [ '$event' ] ) onMouseWheel( $event ) {
 
 		$event.preventDefault()
-		let numPattern = /[\d|\.|\+|-]+/g
-		, mat = this.el.getAttribute( 'transform' ).match( numPattern ).map( v => parseFloat( v ) )
+		let mat = this.el.getAttribute( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 		, gain = 2.0
 		, minz = 0.25
 		, maxz = 10.0
@@ -51,7 +48,6 @@ export class SvgZoomableDirective {
 		if ( ss < minz || ss > maxz ) return
 
 		this.el.setAttribute( 'transform', `matrix(${ss},${mat[1]},${mat[2]},${ss},${xx},${yy})` )
-		this.svgUI.setScalingFactor( ss )
 
 	}
 

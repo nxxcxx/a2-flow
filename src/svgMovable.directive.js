@@ -9,7 +9,6 @@ import { SvgUIService } from './svgUI.service'
 export class SvgMovableDirective {
 
 	@Input() targetId
-	@Input() isRootCtrl // isRootCtrl indicate elem root transformation ( scalingFactor must equal to 1 )
 	@Output() positionUpdated = new EventEmitter()
 
 	constructor( elRef: ElementRef, svgUI: SvgUIService ) {
@@ -18,71 +17,66 @@ export class SvgMovableDirective {
 	}
 
 	ngOnInit() {
-
 		if ( this.targetId ) this.el = document.getElementById( this.targetId )
-
 		if ( !this.el.hasAttribute( 'transform' ) ) {
 			this.el.setAttribute( 'transform', 'matrix(1,0,0,1,0,0)' )
 		}
-
 		this.disabled = false
 		this.dragging = false
 		this.mousehold = false
 		this.prevPos = { x: null, y: null }
 		this.currPos = { x: null, y: null }
-
-		this.numPattern = /[\d|\.|\+|-]+/g
-		this.mat = this.mat = this.parseMatrix()
-
-		this.position = { x: 0, y: 0 }
-		this.position.x = this.mat[ 4 ]
-		this.position.y = this.mat[ 5 ]
-
 		this.mouseupEvent = () => {
 			if ( this.disabled ) return
 			this.mousehold = false
+			this.dragging = false
 		}
-
 		this.mousemoveEvent = $event => {
 			if ( this.disabled ) return
 			if ( this.mousehold ) {
 				this.dragging = true
-				this.currPos.x = $event.pageX
-				this.currPos.y = $event.pageY
-				let sf = this.isRootCtrl ? 1.0 : this.svgUI.getScalingFactor()
-				, dx = ( this.currPos.x - this.prevPos.x ) / sf
-				, dy = ( this.currPos.y - this.prevPos.y ) / sf
-				, newX = this.mat[ 4 ] + dx
-				, newY = this.mat[ 5 ] + dy
-				, mat = this.mat
-				this.el.setAttribute( 'transform', `matrix(${mat[0]},${mat[1]},${mat[2]},${mat[3]},${newX},${newY})` )
-				this.positionUpdated.emit( { x: newX, y: newY } )
+				let currMouse = this.getMousePositionSVG( $event )
+				, pm = this.prevMat
+				, [ dx, dy ] = [ currMouse.x - this.prevMouse.x, currMouse.y - this.prevMouse.y ]
+				, [ nx, ny ] = [ pm[ 4 ] + dx, pm[ 5 ] + dy ]
+				this.el.setAttribute( 'transform', `matrix(${pm[0]},${pm[1]},${pm[2]},${pm[3]},${nx},${ny})` )
+				this.positionUpdated.emit( { x: nx, y: ny } )
 			}
 		}
+	}
 
-		document.addEventListener( 'mouseup', this.mouseupEvent )
-		document.addEventListener( 'mousemove', this.mousemoveEvent)
-
+	ngAfterViewInit() {
+		setTimeout( () => {
+			this.svgUI.addEventListener( 'mouseup', this.mouseupEvent )
+			this.svgUI.addEventListener( 'mousemove', this.mousemoveEvent)
+		}, 0 )
 	}
 
 	ngOnDestroy() {
-		// TODO: attach event to svgCanvas insted of document
 		// detatch event listener that is not bound using @HostListener to prevent memory leak
-		document.removeEventListener( 'mouseup', this.mouseupEvent )
-		document.removeEventListener( 'mousemove', this.mousemoveEvent )
+		this.svgUI.removeEventListener( 'mouseup', this.mouseupEvent )
+		this.svgUI.removeEventListener( 'mousemove', this.mousemoveEvent )
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
 		// disable if elem has attr svg-disable-move
 		if ( this.disabled || $event.target.hasAttribute( 'svg-disable-move' ) ) return
 		this.mousehold = true
-		this.prevPos.x = $event.pageX
-		this.prevPos.y = $event.pageY
-		this.mat = this.parseMatrix()
+		this.prevMat = this.parseMatrix()
+		this.prevMouse = this.getMousePositionSVG( $event )
 	}
 
 	parseMatrix() {
 		return this.el.getAttribute( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+	}
+
+	getMousePositionSVG( $event ) {
+		// return relative mouse position in SVG element
+		// if the elem to move is the viewport, dont apply any transformation
+		if ( this.el === this.svgUI.getViewport() ) {
+			return { x: $event.clientX, y: $event.clientY }
+		}
+		return this.svgUI.getMousePositionSVG( $event )
 	}
 
 }

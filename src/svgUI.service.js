@@ -4,30 +4,45 @@ import { Injectable } from 'angular2/core'
 export class SvgUIService {
 
 	constructor() {
-		this.scalingFactor = 1.0
-		// this.handler
-		// this.handler.addEventListener( 'mousemove', $event => {
-			// this.mouseX = $event.pageX
-			// this.mouseY = $event.pageY
-			// var handlerOffsetLeft = this.handler.getBoundingClientRect().left + document.body.scrollLeft - document.body.clientLeft
-			// , handlerOffsetTop = this.handler.getBoundingClientRect().top + document.body.scrollTop - document.body.clientTop
-			// , cx = this.mouseX - handlerOffsetLeft
-			// , cy = this.mouseY - handlerOffsetTop
-			// , pos = panCtrl.getPosition(); // pos is relative pan position of target
-			// , ox = pos.x;
-			// , oy = pos.y;
-			// this.relativeMouseX = ( cx - ox ) / this.scalingFactor
-			// this.relativeMouseY = ( cy - oy ) / this.scalingFactor
-			//
-		// } )
+		window.SVGUI = this
+		this.svgCanvas = null
+		this.viewportCtrl = null
+		this.viewport = null
 	}
 
-	setScalingFactor( v ) {
-		this.scalingFactor = v
+	initSvgCanvas( svgCanvasElem, viewportCtrlElem, viewportElem ) {
+		this.svgCanvas = svgCanvasElem
+		this.viewportCtrl = viewportCtrlElem
+		this.viewport = viewportElem
 	}
 
-	getScalingFactor() {
-		return this.scalingFactor
+	getViewport() {
+		return this.viewport
+	}
+
+	getInverseViewportMatrix() {
+		return this.viewport.getScreenCTM().inverse()
+	}
+
+	createSVGPoint( x, y ) {
+		let point = this.svgCanvas.createSVGPoint()
+		point.x = x
+		point.y = y
+		return point
+	}
+
+	getMousePositionSVG( $event ) {
+		// return relative mouse position in SVG element
+		let pos = this.createSVGPoint( $event.clientX, $event.clientY )
+		return pos.matrixTransform( this.getInverseViewportMatrix() )
+	}
+
+	addEventListener( eventName, fn ) {
+		this.svgCanvas.addEventListener( eventName, fn )
+	}
+
+	removeEventListener( eventName, fn ) {
+		this.svgCanvas.removeEventListener( eventName, fn )
 	}
 
 }

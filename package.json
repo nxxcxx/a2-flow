@@ -28,6 +28,7 @@
     "es6-shim": "^0.35.1",
     "reflect-metadata": "^0.1.2",
     "rxjs": "^5.0.0-beta.6",
+    "svg-pan-zoom": "^3.2.9",
     "toposort": "^1.0.0",
     "uuid": "^2.0.2",
     "zone.js": "^0.6.12"

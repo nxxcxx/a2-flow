@@ -18,20 +18,15 @@ export class NodeManager {
 		this.connectingIO = { src: null, dst: null }
 		this.selectedNode = null
 		this.codeMirror = null
+		this.linking = false
 		// test
 		this.createTestNode()
-
-		this.linking = false
-		document.addEventListener( 'mouseup', () => {
-			this.linking = false
-			console.log( this.linking )
-		} )
 	}
 
 	initEditor( textareaElem ) {
 		this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
 			lineNumbers: true,
-			// mode: 'javascript',
+			mode: 'javascript',
 			theme: 'black',
 			tabSize: 2
 		} )
@@ -117,9 +112,7 @@ export class NodeManager {
 			else this.connectIO( cio.dst, cio.src )
 		}
 		cio.src = cio.dst = null
-		// TODO: deactivate temp connection
 		this.linking = false
-		console.log( 'todo' )
 	}
 
 	testCyclicConnection( output, input ) {

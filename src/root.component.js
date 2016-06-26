@@ -7,7 +7,7 @@ import { NodeManager } from './nodeManager.service'
 @Component( {
 
 	selector: 'root-component',
-	template: '<node-details></node-details><node-graph></node-graph>',
+	template: '<nodeDetails></nodeDetails><nodeGraph></nodeGraph>',
 	directives: [ NodeDetails, NodeGraph ],
 	providers: [ NodeManager ]
 
