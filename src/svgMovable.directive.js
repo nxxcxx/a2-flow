@@ -32,24 +32,20 @@ export class SvgMovableDirective {
 			this.dragging = false
 		}
 		this.mousemoveEvent = $event => {
-			if ( this.disabled ) return
-			if ( this.mousehold ) {
-				this.dragging = true
-				let currMouse = this.getMousePositionSVG( $event )
-				, pm = this.prevMat
-				, [ dx, dy ] = [ currMouse.x - this.prevMouse.x, currMouse.y - this.prevMouse.y ]
-				, [ nx, ny ] = [ pm[ 4 ] + dx, pm[ 5 ] + dy ]
-				this.el.setAttribute( 'transform', `matrix(${pm[0]},${pm[1]},${pm[2]},${pm[3]},${nx},${ny})` )
-				this.positionUpdated.emit( { x: nx, y: ny } )
-			}
+			if ( !this.mousehold || this.disabled ) return
+			this.dragging = true
+			let currMouse = this.getMousePositionSVG( $event )
+			, pm = this.prevMat
+			, [ dx, dy ] = [ currMouse.x - this.prevMouse.x, currMouse.y - this.prevMouse.y ]
+			, [ nx, ny ] = [ pm[ 4 ] + dx, pm[ 5 ] + dy ]
+			this.el.setAttribute( 'transform', `matrix(${pm[0]},${pm[1]},${pm[2]},${pm[3]},${nx},${ny})` )
+			this.positionUpdated.emit( { x: nx, y: ny } )
 		}
 	}
 
 	ngAfterViewInit() {
-		setTimeout( () => {
-			this.svgUI.addEventListener( 'mouseup', this.mouseupEvent )
-			this.svgUI.addEventListener( 'mousemove', this.mousemoveEvent)
-		}, 0 )
+		this.svgUI.addEventListener( 'mouseup', this.mouseupEvent )
+		this.svgUI.addEventListener( 'mousemove', this.mousemoveEvent)
 	}
 
 	ngOnDestroy() {

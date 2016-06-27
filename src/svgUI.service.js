@@ -8,12 +8,17 @@ export class SvgUIService {
 		this.svgCanvas = null
 		this.viewportCtrl = null
 		this.viewport = null
+		this.pendingEventListeners = []
 	}
 
 	initSvgCanvas( svgCanvasElem, viewportCtrlElem, viewportElem ) {
 		this.svgCanvas = svgCanvasElem
 		this.viewportCtrl = viewportCtrlElem
 		this.viewport = viewportElem
+		for ( let evt of this.pendingEventListeners ) {
+			this.addEventListener( evt[ 0 ], evt[ 1 ] )
+		}
+		this.pendingEventListeners = []
 	}
 
 	getViewport() {
@@ -24,21 +29,20 @@ export class SvgUIService {
 		return this.viewport.getScreenCTM().inverse()
 	}
 
-	createSVGPoint( x, y ) {
-		let point = this.svgCanvas.createSVGPoint()
-		point.x = x
-		point.y = y
-		return point
-	}
-
 	getMousePositionSVG( $event ) {
-		// return relative mouse position in SVG element
-		let pos = this.createSVGPoint( $event.clientX, $event.clientY )
+		// return mouse position relative to svgCanvas
+		let pos = this.svgCanvas.createSVGPoint()
+		pos.x = $event.clientX
+		pos.y = $event.clientY
 		return pos.matrixTransform( this.getInverseViewportMatrix() )
 	}
 
 	addEventListener( eventName, fn ) {
-		this.svgCanvas.addEventListener( eventName, fn )
+		if ( this.svgCanvas === null ) {
+			this.pendingEventListeners.push( [ eventName, fn ] )
+		} else {
+			this.svgCanvas.addEventListener( eventName, fn )
+		}
 	}
 
 	removeEventListener( eventName, fn ) {

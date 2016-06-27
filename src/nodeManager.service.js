@@ -6,7 +6,6 @@ import toposort from 'toposort'
 import CodeMirror from 'codemirror'
 import 'root/node_modules/codemirror/mode/javascript/javascript.js'
 import 'root/node_modules/codemirror/lib/codemirror.css'
-// import 'root/node_modules/codemirror/theme/neo.css'
 
 @Injectable()
 export class NodeManager {

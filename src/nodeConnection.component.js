@@ -1,17 +1,26 @@
 import { Component, ElementRef, Input } from 'angular2/core'
+import { NodeManager } from './nodeManager.service'
 
 @Component( {
 
 	selector: '[nodeConnection]',
-	template: '<svg:path stroke="#fff" fill="rgba(0,0,0,0)" [attr.d]="getBezierCurveString()" />'
+	template:
+	`
+		<svg:path
+			[attr.d]="getBezierCurveString()"
+			(dblclick)="disconnect()"
+			stroke="#fff" fill="rgba(0,0,0,0)"
+		/>
+	`
 
 } )
 export class NodeConnection {
 
 	@Input() connection
 
-	constructor( elRef: ElementRef ) {
+	constructor( elRef: ElementRef, nodeManager: NodeManager ) {
 		this.el = elRef.nativeElement
+		this.nodeMan = nodeManager
 	}
 
 	getBezierCurveString() {
@@ -23,6 +32,10 @@ export class NodeConnection {
 		, cx1 = x1 + hf , cy1 = y1
 		, cx2 = x2 - hf , cy2 = y2
 		return `M${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`
+	}
+
+	disconnect() {
+		this.nodeMan.disconnectIO( this.connection[ 1 ] )
 	}
 
 }
