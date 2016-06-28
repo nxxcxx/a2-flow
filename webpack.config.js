@@ -23,7 +23,8 @@ module.exports = {
 		loaders: [
 			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
 			{ test: /\.sass$|\.css$/, loaders: [ 'style', 'css', 'sass' ] },
-			{ test: /\.html$/, loader: 'raw' }
+			{ test: /\.html$/, loader: 'raw' },
+			{ test: /\.(png|jpg|woff|woff2|eot|ttf|svg)(\?.*$|$)/, exclude: /node_modules/, loader: 'url-loader?importLoaders=1&limit=100000' }
 		]
 	},
 	plugins: [

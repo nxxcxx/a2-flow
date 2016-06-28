@@ -52,7 +52,7 @@ class Executable {
 		this._fnstr = ''
 		this._task = null
 	}
-	compile() {
+	parse() {
 		try { this._task = new Function( 'input', this._fnstr ) }
 		catch ( e ) { throw e }
 	}

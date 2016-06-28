@@ -9,7 +9,7 @@
 
 	<!-- Header Label -->
 	<text #headerElem alignment-baseline="hanging"
-		[attr.x]="ui.header.offset.x" [attr.y]="ui.header.offset.y"
+		[attr.x]="ui.header.x" [attr.y]="ui.header.y"
 	>
 		{{ node.name }} {{ node.order }}
 	</text>
@@ -23,9 +23,10 @@
 			</text>
 			<!-- IO -->
 			<rect nodeIO svg-disable-move [io]="input" [ioFree]="input.free"
-				[attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
+				[attr.x]="ui.input.io.x" [attr.y]="getLabelPosY( i )"
 				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
 				stroke="#fff" fill="rgba(0,0,0,0)"
+				[attr.stroke-dasharray]="( ui.io.width * 2 + ui.io.height ) + ',' + ui.io.height"
 			/>
 		</g>
 	</g>
@@ -39,9 +40,10 @@
 			</text>
 			<!-- IO -->
 			<rect nodeIO svg-disable-move [io]="output" [ioFree]="output.free"
-				[attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i ) + ui.io.offset.y"
+				[attr.x]="ui.output.io.x" [attr.y]="getLabelPosY( i )"
 				[attr.width]="ui.io.width" [attr.height]="ui.io.height"
 				stroke="#fff" fill="rgba(0,0,0,0)"
+				[attr.stroke-dasharray]="ui.io.width + ',' + ui.io.height + ',' + ( ui.io.width + ui.io.height )"
 			/>
 		</g>
 	</g>

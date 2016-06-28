@@ -17,7 +17,8 @@ import { NodeEditor } from './nodeEditor.component'
 		</div>
 		<div style="clear: left"></div>
 		<node-editor></node-editor>
-		<input [(ngModel)]="debugEnabled" type="checkbox"> Debug
+		<br>
+		<input [(ngModel)]="debugEnabled" type="checkbox"> DEBUG
 		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
 	</div>
 	`
@@ -41,7 +42,7 @@ export class NodeDetails {
 	}
 
 	createTestNodes() {
-		this.nodeMan.createTestNode()
+		this.nodeMan.createTestNode2()
 	}
 
 }

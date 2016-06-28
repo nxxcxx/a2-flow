@@ -15,6 +15,9 @@ import { NodeTempConnection } from './nodeTempConnection.component'
 	template:
 	`
 	<div class="view right">
+
+		<div class="view right backdrop"></div>
+
 		<svg #svgCanvas id="nodeGraph">
 			<rect #viewportCtrl svgMovable svgZoomable targetId="svgViewport" fill="rgba(0,0,0,0)" width="100%" height="100%" />
 			<g #viewport id="svgViewport">
@@ -23,6 +26,7 @@ import { NodeTempConnection } from './nodeTempConnection.component'
 				<g nodeTempConnection [active]="nodeMan.linking" />
 			</g>
 		</svg>
+
 	</div>
 	`
 

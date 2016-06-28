@@ -62,7 +62,7 @@ export class NodeManager {
 			( output.parent.uuid !== input.parent.uuid ) &&
 			!this.isConnectionExists( output, input )
 		) {
-			if ( this.testCyclicConnection( output, input ) ) return false
+			if ( this.validateCyclicConnection( output, input ) ) return false
 			return true
 		}
 		return false
@@ -84,13 +84,13 @@ export class NodeManager {
 		if ( io instanceof nodeFactory.Input ) {
 			io.disconnect()
 			this.disconnectInput( io )
-		} else {
+		} else if ( io instanceof nodeFactory.Output ) {
 			// need to make a new copy because cannot call disconnectInput inside a loop
 			for ( let inp of Array.from( io.input ) ) {
 				inp.disconnect()
 				this.disconnectInput( inp )
 			}
-		}
+		} else { throw 'wtf' }
 	}
 
 	disconnectInput( input ) {
@@ -99,24 +99,20 @@ export class NodeManager {
 
 	startConnectingIO( io )  {
 		this.connectingIO.src = io
-		// TODO: activate temp connection
 		this.linking = true
 	}
 
 	endConnectingIO( io ) {
 		let cio = this.connectingIO
 		cio.dst = io
-		if ( cio.src ) {
-			if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
-			else this.connectIO( cio.dst, cio.src )
-		}
+		if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
+		else if ( cio.src instanceof nodeFactory.Input ) this.connectIO( cio.dst, cio.src )
 		cio.src = cio.dst = null
 		this.linking = false
 	}
 
-	testCyclicConnection( output, input ) {
-		let test = Array.from( this.connections )
-		test.push( [ output, input ] )
+	validateCyclicConnection( output, input ) {
+		let test = Array.from( this.connections ).concat( [ [ output, input] ] )
 		try { this.computeToposort( test ) }
 		catch( e ) { return true }
 		return false
@@ -129,37 +125,57 @@ export class NodeManager {
 	}
 
 	createTestNode() {
-		let n = nodeFactory.create( 'Constants' )
-		n.addOutput( 'x', 'y', 'z' )
-		n._fnstr = 'return { x: 42, y: 33, z: 76 }'
-		n.compile()
+		let n = nodeFactory.create( 'CONST' )
+		n.addOutput( 'X', 'Y', 'Z' )
+		n._fnstr = 'return { X: 42, Y: 33, Z: 76 }'
+		n.parse()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'Vector3' )
-		n.addInput( 'u', 'v', 'w' )
-		n.addOutput( 'vec3' )
-		n._fnstr = 'return { vec3: [ input.u, input.v, input.w ] }'
-		n.compile()
+		n = nodeFactory.create( 'VEC3' )
+		n.addInput( 'U', 'V', 'W' )
+		n.addOutput( 'VEC3' )
+		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
+		n.parse()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'Vector3' )
-		n.addInput( 's', 't', 'p' )
-		n.addOutput( 'vec3' )
-		n._fnstr = 'return { vec3: [ input.s, input.t, input.p ] }'
-		n.compile()
+		n = nodeFactory.create( 'VEC3' )
+		n.addInput( 'S', 'T', 'P' )
+		n.addOutput( 'VEC3' )
+		n._fnstr = 'return { VEC3: [ input.S, input.T, input.P ] }'
+		n.parse()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'Dot' )
-		n.addInput( 'v1', 'v2' )
-		n.addOutput( 'f' )
-		n._fnstr = 'return { f: input.v1[0]*input.v2[0]+input.v1[1]*input.v2[1]+input.v1[2]*input.v2[2] }'
-		n.compile()
+		n = nodeFactory.create( 'DOT' )
+		n.addInput( 'V1', 'V2' )
+		n.addOutput( 'F' )
+		n._fnstr = 'return { F: input.V1[0]*input.V2[0]+input.V1[1]*input.V2[1]+input.V1[2]*input.V2[2] }'
+		n.parse()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'Console' )
-		n.addInput( 'log' )
-		n._fnstr = 'console.log( input.log )'
-		n.compile()
+		n = nodeFactory.create( 'CONSOLE' )
+		n.addInput( 'LOG' )
+		n._fnstr = 'console.log( input.LOG )'
+		n.parse()
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'BUFFER GEOMETRY' )
+		n.addInput( 'U', 'V', 'W' )
+		n.addOutput( 'VEC3' )
+		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
+		n.parse()
+		this.nodes.push( n )
+
+	}
+
+	createTestNode2() {
+		function genID() {
+			let id = String.fromCharCode( Math.floor( Math.random() * 23 ) + 65 ) + ~~( Math.random() * 9 )
+			return id
+		}
+		let n = nodeFactory.create( genID() )
+		let [ ilen, olen ] = [ ~~( Math.random() * 6 ), ~~( Math.random() * 6 ) ]
+		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
+		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
 		this.nodes.push( n )
 	}
 
@@ -171,8 +187,7 @@ export class NodeManager {
 	run() {
 		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
 		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-			var err = n.compile()
-			if ( err ) console.error( `Node order No.${n.order}`, err )
+			n.parse()
 			n.execute()
 		} )
 	}
