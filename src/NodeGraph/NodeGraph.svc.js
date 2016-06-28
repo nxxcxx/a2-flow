@@ -1,5 +1,5 @@
 import { Injectable } from 'angular2/core'
-import nodeFactory from './NodeFactory.svc'
+import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
 
 // CodeMirror ( import order is important )
@@ -124,6 +124,20 @@ export class NodeGraphService {
 		return toposort( edges )
 	}
 
+	sortNodes() {
+		let sorted = this.computeToposort( this.connections )
+		this.nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
+		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
+	}
+
+	run() {
+		this.sortNodes()
+		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			n.parse()
+			n.execute()
+		} )
+	}
+
 	createTestNode() {
 		let n = nodeFactory.create( 'CONST' )
 		n.addOutput( 'X', 'Y', 'Z' )
@@ -177,19 +191,6 @@ export class NodeGraphService {
 		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
 		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
 		this.nodes.push( n )
-	}
-
-	computeTopologicalOrder() {
-		let sorted = this.computeToposort( this.connections )
-		this.nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
-	}
-
-	run() {
-		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
-		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-			n.parse()
-			n.execute()
-		} )
 	}
 
 }

@@ -9,7 +9,7 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 		<svg:path
 			[attr.d]="getBezierCurveString()"
 			(dblclick)="disconnect()"
-			stroke="#fff" fill="rgba(0,0,0,0)"
+			stroke-width="1.5" stroke="#fff" fill="rgba(0,0,0,0)"
 		/>
 	`
 

@@ -1,6 +1,6 @@
 import { Component } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
-import { CircularJSON } from 'src/circularJSON.pipe'
+import { CircularJSON } from 'src/pipes/circularJSON.pipe'
 import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 
 @Component( {
@@ -37,7 +37,6 @@ export class NodeDetails {
 	}
 
 	run() {
-		this.ngs.computeTopologicalOrder()
 		this.ngs.run()
 	}
 
