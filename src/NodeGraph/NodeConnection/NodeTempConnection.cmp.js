@@ -1,14 +1,13 @@
-import { Component, Input } from 'angular2/core'
+import { Component } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
-import { NodeSvgService } from 'src/NodeGraph/NodeSvg/NodeSvg.svc'
 
 @Component( {
 
 	selector: '[nodeTempConnection]',
 	template:
 	`
-		<svg:line style="pointer-events: none" stroke="#fff"
-			[attr.visibility]="active ? 'visible' : 'hidden'"
+		<svg:line style="pointer-events: none" stroke="#00bbff"
+			[attr.visibility]="ngs.linking ? 'visible' : 'hidden'"
 			[attr.x1]="getStartCoord().x"
 			[attr.y1]="getStartCoord().y"
 			[attr.x2]="mousePos.x"
@@ -19,38 +18,39 @@ import { NodeSvgService } from 'src/NodeGraph/NodeSvg/NodeSvg.svc'
 } )
 export class NodeTempConnection {
 
-	@Input() active
-
-	constructor( ngs: NodeGraphService, nss: NodeSvgService ) {
+	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
-		this.nss = nss
 		this.mousePos = { x: 0, y: 0 }
 	}
 
 	ngOnInit() {
-		this.mousedownEvent = () => {
-			this.mousePos = this.getStartCoord()
+		this.mousedownEvent = $event => {
+			let containerOffset = this.ngs.getContainerElem().offset()
+			this.mousePos = { x: $event.clientX - containerOffset.left, y: $event.clientY - containerOffset.top }
 		}
 		this.mouseupEvent = () => {
 			this.ngs.linking = false
 		}
 		this.mousemoveEvent = $event => {
 			if ( this.ngs.linking ) {
-				this.mousePos = this.nss.getMousePositionSVG( $event )
+				let containerOffset = this.ngs.getContainerElem().offset()
+				this.mousePos = { x: $event.clientX - containerOffset.left, y: $event.clientY - containerOffset.top }
 			}
 		}
 	}
 
 	ngAfterViewInit() {
-		this.nss.addEventListener( 'mousedown', this.mousedownEvent )
-		this.nss.addEventListener( 'mouseup', this.mouseupEvent )
-		this.nss.addEventListener( 'mousemove', this.mousemoveEvent )
+		this.ngs.getContainerElem()
+		.on( 'mousedown', this.mousedownEvent )
+		.on( 'mouseup', this.mouseupEvent )
+		.on( 'mousemove', this.mousemoveEvent )
 	}
 
 	ngOnDestroy() {
-		this.nss.removeEventListener( 'mousedown', this.mousedownEvent )
-		this.nss.removeEventListener( 'mouseup', this.mouseupEvent )
-		this.nss.removeEventListener( 'mousemove', this.mousemoveEvent )
+		this.ngs.getContainerElem()
+		.off( 'mousedown', this.mousedownEvent )
+		.off( 'mouseup', this.mouseupEvent )
+		.off( 'mousemove', this.mousemoveEvent )
 	}
 
 	getStartCoord() {

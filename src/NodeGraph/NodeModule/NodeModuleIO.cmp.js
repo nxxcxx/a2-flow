@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from 'angular2/core'
+import { Component, Input, Output, EventEmitter, ViewChild } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import NodeFactory from 'src/NodeGraph/NodeFactory'
 
@@ -21,10 +21,12 @@ import $ from 'jquery'
 } )
 export class NodeModuleIO {
 
+	@Output() onLink = new EventEmitter()
 	@Input() io
 	@ViewChild( 'ioRow' ) ioRow
 	@ViewChild( 'ioPort' ) ioPort
 	@ViewChild( 'ioLabel' ) ioLabel
+
 
 	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
@@ -53,21 +55,21 @@ export class NodeModuleIO {
 		}
 
 		this.mouseenterEvent = () => {
+
 			if ( this.io.free ) ioPort.css( 'background', '#e6e6e6' )
 		}
 		this.mouseleaveEvent = () => {
+
 			if ( this.io.free ) ioPort.css( 'background', 'rgba(0,0,0,0)' )
 		}
-		this.mousedownEvent = $event => {
-			$event.stopPropagation()
+		this.mousedownEvent = () => {
+			this.onLink.emit( true )
 			this.ngs.startConnectingIO( this.io )
 		}
-		this.mouseupEvent = $event => {
-			$event.stopPropagation()
+		this.mouseupEvent = () => {
 			this.ngs.endConnectingIO( this.io )
 		}
-		this.dblclickEvent = $event => {
-			$event.stopPropagation()
+		this.dblclickEvent = () => {
 			this.ngs.disconnectIO( this.io )
 		}
 
