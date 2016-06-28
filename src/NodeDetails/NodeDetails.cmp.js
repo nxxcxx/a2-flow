@@ -5,12 +5,11 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 
 @Component( {
 
-	selector: 'nodeDetails',
+	selector: '[nodeDetails]',
 	directives: [ NodeEditor ],
 	pipes: [ CircularJSON ],
 	template:
 	`
-	<div class="view left">
 		<div>
 			<button (click)="createTestNodes()">TEST</button>
 			<button (click)="run()">RUN</button>
@@ -20,7 +19,6 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 		<br>
 		<input [(ngModel)]="debugEnabled" type="checkbox"> DEBUG
 		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
-	</div>
 	`
 
 } )

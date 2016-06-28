@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input } from 'angular2/core'
+import { Component, Input } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 
 @Component( {
@@ -9,7 +9,7 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 		<svg:path
 			[attr.d]="getBezierCurveString()"
 			(dblclick)="disconnect()"
-			stroke-width="1.5" stroke="#fff" fill="rgba(0,0,0,0)"
+			stroke-width="1.5" stroke="#e6e6e6" fill="rgba(0,0,0,0)"
 		/>
 	`
 
@@ -18,12 +18,12 @@ export class NodeConnection {
 
 	@Input() connection
 
-	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
-		this.el = elRef.nativeElement
+	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
 	}
 
 	getBezierCurveString() {
+		// TODO: optimize this fn
 		let x1 = this.connection[ 0 ].ui.absolutePosition.x
 		, y1 = this.connection[ 0 ].ui.absolutePosition.y
 		, x2 = this.connection[ 1 ].ui.absolutePosition.x

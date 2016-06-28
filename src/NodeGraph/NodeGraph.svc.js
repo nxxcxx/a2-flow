@@ -1,6 +1,7 @@
 import { Injectable } from 'angular2/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
+import $ from 'jquery'
 
 // CodeMirror ( import order is important )
 import CodeMirror from 'codemirror'
@@ -11,7 +12,8 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 export class NodeGraphService {
 
 	constructor() {
-		window.NM = this
+		window.NGS= this
+		this.containerElem = null
 		this.nodes = []
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
@@ -20,6 +22,14 @@ export class NodeGraphService {
 		this.linking = false
 		// test
 		this.createTestNode()
+	}
+
+	registerContainerElem( containerElem ) {
+		this.containerElem = $( containerElem )
+	}
+
+	getContainerElem() {
+		return this.containerElem
 	}
 
 	initEditor( textareaElem ) {
@@ -90,7 +100,7 @@ export class NodeGraphService {
 				inp.disconnect()
 				this.disconnectInput( inp )
 			}
-		} else { throw 'wtf' }
+		}
 	}
 
 	disconnectInput( input ) {
@@ -139,45 +149,46 @@ export class NodeGraphService {
 	}
 
 	createTestNode() {
-		let n = nodeFactory.create( 'CONST' )
+		let n
+		n = nodeFactory.create( 'CONST' )
 		n.addOutput( 'X', 'Y', 'Z' )
 		n._fnstr = 'return { X: 42, Y: 33, Z: 76 }'
 		n.parse()
 		this.nodes.push( n )
 
 		n = nodeFactory.create( 'VEC3' )
-		n.addInput( 'U', 'V', 'W' )
-		n.addOutput( 'VEC3' )
+		n.addInput( 'U', 'BUFFER', 'W' )
+		n.addOutput( 'VEC3', 'U', 'V', 'W' )
 		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
 		n.parse()
 		this.nodes.push( n )
 
-		n = nodeFactory.create( 'VEC3' )
-		n.addInput( 'S', 'T', 'P' )
-		n.addOutput( 'VEC3' )
-		n._fnstr = 'return { VEC3: [ input.S, input.T, input.P ] }'
-		n.parse()
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'DOT' )
-		n.addInput( 'V1', 'V2' )
-		n.addOutput( 'F' )
-		n._fnstr = 'return { F: input.V1[0]*input.V2[0]+input.V1[1]*input.V2[1]+input.V1[2]*input.V2[2] }'
-		n.parse()
-		this.nodes.push( n )
-
+		// n = nodeFactory.create( 'VEC3' )
+		// n.addInput( 'S', 'T', 'P' )
+		// n.addOutput( 'VEC3' )
+		// n._fnstr = 'return { VEC3: [ input.S, input.T, input.P ] }'
+		// n.parse()
+		// this.nodes.push( n )
+		//
+		// n = nodeFactory.create( 'DOT' )
+		// n.addInput( 'V1', 'V2' )
+		// n.addOutput( 'F' )
+		// n._fnstr = 'return { F: input.V1[0]*input.V2[0]+input.V1[1]*input.V2[1]+input.V1[2]*input.V2[2] }'
+		// n.parse()
+		// this.nodes.push( n )
+		//
 		n = nodeFactory.create( 'CONSOLE' )
 		n.addInput( 'LOG' )
 		n._fnstr = 'console.log( input.LOG )'
 		n.parse()
 		this.nodes.push( n )
-
-		n = nodeFactory.create( 'BUFFER GEOMETRY' )
-		n.addInput( 'U', 'V', 'W' )
-		n.addOutput( 'VEC3' )
-		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
-		n.parse()
-		this.nodes.push( n )
+		//
+		// n = nodeFactory.create( 'BUFFER GEOMETRY' )
+		// n.addInput( 'U', 'V', 'W' )
+		// n.addOutput( 'VEC3' )
+		// n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
+		// n.parse()
+		// this.nodes.push( n )
 
 	}
 

@@ -1,84 +1,84 @@
-import { Component, Input, ViewChild, ElementRef } from 'angular2/core'
-import { SvgMovableDirective } from 'src/NodeGraph/NodeSvg/MovableSvg.dir'
+import { Component, Input, ViewChild, ViewChildren } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
-import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.dir'
+import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.cmp'
+
+import $ from 'jquery'
 
 @Component( {
 
-	selector: '[nodeModule]',
-	directives: [ SvgMovableDirective, NodeModuleIO ],
-	template: require( './NodeModule.html' ) // using require instad of templateUrl so webpack can watch the file
+	selector: 'nodeModule',
+	directives: [ NodeModuleIO ],
+	template:
+	`
+	<div #nodeElem style="position: absolute; padding: 4px 0px 4px 0px; background: rgb(24,26,28); border: 1px solid #5d5d5d">
+
+		<div #headerElem style="margin-left: 5px">
+			{{ node.name }} {{ node.order }}
+		</div>
+
+		<div #ioContainer style="background: rgba(255,127,0,0); padding: 0px;">
+
+			<div #inputColumn style="background: rgba(255,0,0,0); padding: 0px; float: left; display: inline-block">
+				<nodeModuleIO *ngFor="let input of node.input" [io]="input"></nodeModuleIO>
+			</div>
+
+			<div #separator style="background: rgba(0,255,0,0); width: 8px; display: inline-block"></div>
+
+			<div #outputColumn style="background: rgba(0,0,255,0); padding: 0px; float: right; display: inline-block">
+				<nodeModuleIO *ngFor="let output of node.output" [io]="output"></nodeModuleIO>
+			</div>
+
+		</div>
+
+	</div>
+	`
 
 } )
 export class NodeModule {
 
 	@Input() node
-	@ViewChild( 'headerElem' ) headerElem
-	@ViewChild( 'inputElem' ) inputElem
-	@ViewChild( 'outputElem' ) outputElem
+	@ViewChild( 'nodeElem' ) nodeElem
+	@ViewChildren( NodeModuleIO ) nodeIO
 
-	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
-		this.elRef = elRef
+	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
-		this.ui = {
-			node: { width: 0, height: 0 },
-			centerSpacing: 10,
-			lineHeight: 13,
-			header: { height: 16, x: 3, y: 4 },
-			io: { width: 10, height: 10 },
-			output: { label: { x: 4, y: 3 }, io: { x: 0, y: 0 } },
-			input: { label: { x: 4, y: 3 }, io: { x: 0, y: 0 } },
-			extraSpacing: { height: 4 }
-		}
-		// TODO:
-		// this.ui.settings
-		// this.ui.computed
 	}
+
+	ngOnInit() {}
 
 	ngAfterViewInit() {
-		// monkey patch setTimeout https://github.com/angular/angular/issues/6005
-		setTimeout( () => {
-			let ui = this.ui
-			ui.node.width = this.computeMaxLabelWidth() + ui.centerSpacing + ui.io.width * 2
-			ui.node.height = Math.max( this.node.input.length, this.node.output.length ) * ui.lineHeight + ui.header.height + ui.extraSpacing.height
-			ui.output.label.x = ui.node.width - ui.io.width - ui.output.label.x
-			ui.input.label.x = ui.io.width + ui.input.label.x
-			ui.output.io.x = ui.node.width - ui.io.width
-			ui.output.io.y
-		}, 0 )
-	}
+		this.nodeElem = $( this.nodeElem.nativeElement )
 
-	computeMaxLabelWidth() {
-		let maxWidthInp = 0, maxWidthOpt = 0
-		for ( let el of this.inputElem.nativeElement.children ) {
-			maxWidthOpt = Math.max( el.children[ 0 ].getComputedTextLength(), maxWidthOpt )
+		this.mousedownEvent = $event => {
+			this.ngs.setSelectedNode( this.node )
+			this.mousehold = true
+			this.prevMouse = { x: $event.clientX, y: $event.clientY }
+			this.prevPos = this.nodeElem.position()
 		}
-		for ( let el of this.outputElem.nativeElement.children ) {
-			maxWidthInp = Math.max( el.children[ 0 ].getComputedTextLength(), maxWidthInp )
+
+		this.mouseupEvent = () => {
+			this.mousehold = false
 		}
-		return Math.max( maxWidthInp + maxWidthOpt, this.headerElem.nativeElement.getComputedTextLength() )
+
+		this.mousemoveEvent = $event => {
+			if ( this.mousehold ) {
+				let [ dx, dy ] = [ $event.clientX - this.prevMouse.x, $event.clientY - this.prevMouse.y ]
+				this.nodeElem.css( { left: this.prevPos.left + dx, top: this.prevPos.top + dy } )
+				this.nodeIO.toArray().forEach( io => io.updatePosition() )
+			}
+		}
+
+		this.nodeElem.on( 'mousedown', this.mousedownEvent )
+		this.ngs.getContainerElem()
+		.on( 'mouseup', this.mouseupEvent )
+		.on( 'mousemove', this.mousemoveEvent )
 	}
 
-	getLabelPosY( idx ) {
-		// TODO: separate label for opt &  inp
-		return idx * this.ui.lineHeight + this.ui.header.height + this.ui.output.label.y
-	}
-
-	updateNodePosition( position ) {
-		this.node.ui.absolutePosition.x = position.x
-		this.node.ui.absolutePosition.y = position.y
-		this.node.output.forEach( ( io, idx ) => {
-			io.ui.absolutePosition.x = position.x + this.ui.output.io.x + this.ui.io.width
-			io.ui.absolutePosition.y = position.y + this.getLabelPosY( idx ) + this.ui.io.height * 0.5
-		} )
-		this.node.input.forEach( ( io, idx ) => {
-			io.ui.absolutePosition.x = position.x + this.ui.input.io.x
-			io.ui.absolutePosition.y = position.y + this.getLabelPosY( idx ) + this.ui.io.height * 0.5
-		} )
-	}
-
-	select() {
-		this.ngs.setSelectedNode( this.node )
+	ngOnDestroy() {
+		this.nodeElem.off( 'mousedown', this.mousedownEvent )
+		this.ngs.getContainerElem()
+		.off( 'mouseup', this.mouseupEvent )
+		.off( 'mousemove', this.mousemoveEvent )
 	}
 
 }

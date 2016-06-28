@@ -6,10 +6,14 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 
 @Component( {
 
-	selector: 'rootComponent',
-	template: '<nodeDetails></nodeDetails><nodeGraph></nodeGraph>',
+	selector: '[rootComponent]',
 	directives: [ NodeDetails, NodeGraph ],
-	providers: [ NodeGraphService ]
+	providers: [ NodeGraphService ],
+	template:
+	`
+	<div nodeDetails class="view left"></div>
+	<div nodeGraph class="view right"></div>
+	`
 
 } )
 export class RootComponent {

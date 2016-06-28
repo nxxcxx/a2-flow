@@ -1,6 +1,12 @@
 $grey: #ddd
-$w1: #fff
-$b1: #000
+$wf: #fff
+$b0: #000
+$b2: #222
+
+$w1: rgb(230, 230, 230)
+$d0: rgb(24,26,28)
+$d1: rgb(29,31,33)
+
 
 @font-face
 	font-family: 'dos437'
@@ -14,13 +20,13 @@ html, body
 	margin: 0px
 	padding: 0px
 	height: 100%
-	background: $b1
+	background: $b0
 	color: $w1
 
 button
 	border: none
-	border-right: 1px solid $w1
-	background: $b1
+	border-right: 1px solid $wf
+	background: $b0
 	color: $w1
 	display: block
 	float: left
@@ -30,52 +36,48 @@ pre
 	overflow-x: scroll
 
 ::-webkit-scrollbar
-	background: $b1
-	border-right: 1px solid $w1
+	background: $b2
+	border-right: 1px solid $wf
 	width: 5px
 	height: 5px
 ::-webkit-scrollbar-thumb
-	background: $w1
+	background: $wf
 
 .cm-s-black
 	&.CodeMirror
-		background-color: $b1
-		color: $w1
+		background-color: $d1
+		color: $wf
 		line-height: 1.4375
-		border-top: 1px solid $w1
-		border-bottom: 1px solid $w1
+		border-top: 1px solid $wf
+		border-bottom: 1px solid $wf
 	&.CodeMirror-focused div.CodeMirror-selected
-		background: rgba(255, 255, 255, 0.33)
+		background: rgba( 255, 255, 255, 0.33 )
 	.CodeMirror-gutters
 		border:none
-		border-right: 1px solid $w1
-		background-color: $b1
+		border-right: 1px solid $wf
+		background-color: $d1
 	.CodeMirror-cursor
 		width: auto
 		border: 0
-		background: $w1
+		background: $wf
 		z-index: 1
 	.CodeMirror-linenumber
 		padding: 0
-		color: $w1
-
+		color: $wf
 
 .view
 	height: 100%
-	float: left
+	position: absolute
 
 	&.left
 		width: 30%
 		overflow-y: scroll
+		background: $d0
 
 	&.right
+		left: 30%
 		width: 70%
-		&.backdrop
-			position: absolute
-			width: 70%
-			height: 100%
-			// background: url("img/grid.png") $b1
-			opacity: 0.33
+		background: $d1
 
 =no-select
 	-webkit-touch-callout: none
@@ -91,3 +93,11 @@ pre
 	width: 70%
 	cursor: default
 	+no-select
+
+#nodeContainer, #nodeContainerSvg
+	position: absolute
+	height: 100%
+	width: 100%
+	cursor: default
+	+no-select
+	background: rgba( 0, 0, 0, 0 )
