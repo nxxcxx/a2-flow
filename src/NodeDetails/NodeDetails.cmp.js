@@ -1,7 +1,7 @@
 import { Component } from 'angular2/core'
-import { NodeManager } from './nodeManager.service'
-import { CircularJSON } from './circularJSON.pipe'
-import { NodeEditor } from './nodeEditor.component'
+import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { CircularJSON } from 'src/circularJSON.pipe'
+import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 
 @Component( {
 
@@ -16,7 +16,7 @@ import { NodeEditor } from './nodeEditor.component'
 			<button (click)="run()">RUN</button>
 		</div>
 		<div style="clear: left"></div>
-		<node-editor></node-editor>
+		<nodeEditor></nodeEditor>
 		<br>
 		<input [(ngModel)]="debugEnabled" type="checkbox"> DEBUG
 		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
@@ -26,23 +26,23 @@ import { NodeEditor } from './nodeEditor.component'
 } )
 export class NodeDetails {
 
-	constructor( nodeManager: NodeManager ) {
-		this.nodeMan = nodeManager
+	constructor( ngs: NodeGraphService ) {
+		this.ngs = ngs
 		this.cjson = new CircularJSON()
 		this.debugEnabled = false
 	}
 
 	getNodeInfo() {
-		return this.cjson.transform( this.nodeMan.getSelectedNode(), 2 )
+		return this.cjson.transform( this.ngs.getSelectedNode(), 2 )
 	}
 
 	run() {
-		this.nodeMan.computeTopologicalOrder()
-		this.nodeMan.run()
+		this.ngs.computeTopologicalOrder()
+		this.ngs.run()
 	}
 
 	createTestNodes() {
-		this.nodeMan.createTestNode2()
+		this.ngs.createTestNode2()
 	}
 
 }

@@ -1,19 +1,19 @@
 import { Directive, ElementRef, HostListener, Input } from 'angular2/core'
-import { NodeManager } from './nodeManager.service'
+import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 
 @Directive( {
 
 	selector: '[nodeIO]'
 
 } )
-export class NodeIO {
+export class NodeModuleIO {
 
 	@Input() io
 	@Input() ioFree
 
-	constructor( elRef: ElementRef, nodeMan: NodeManager ) {
+	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
 		this.el = elRef.nativeElement
-		this.nodeMan = nodeMan
+		this.ngs = ngs
 	}
 
 	ngOnChanges() {
@@ -27,11 +27,11 @@ export class NodeIO {
 	}
 
 	@HostListener( 'mousedown' ) onMouseDown() {
-		this.nodeMan.startConnectingIO( this.io )
+		this.ngs.startConnectingIO( this.io )
 	}
 
 	@HostListener( 'mouseup' ) onMouseUp() {
-		this.nodeMan.endConnectingIO( this.io )
+		this.ngs.endConnectingIO( this.io )
 	}
 
 	@HostListener( 'mouseenter' ) onMouseEnter() {
@@ -43,7 +43,7 @@ export class NodeIO {
 	}
 
 	@HostListener( 'dblclick' ) onDblClick() {
-		this.nodeMan.disconnectIO( this.io )
+		this.ngs.disconnectIO( this.io )
 	}
 
 }

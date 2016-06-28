@@ -1,9 +1,9 @@
 import { Component, ViewChild } from 'angular2/core'
-import { NodeManager } from './nodeManager.service'
+import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 
 @Component( {
 
-	selector: 'node-editor',
+	selector: 'nodeEditor',
 	template: '<textarea #editor></textarea>'
 
 } )
@@ -11,12 +11,12 @@ export class NodeEditor {
 
 	@ViewChild( 'editor' ) editor
 
-	constructor( nodeManager: NodeManager ) {
-		this.nodeMan = nodeManager
+	constructor( ngs: NodeGraphService ) {
+		this.ngs = ngs
 	}
 
 	ngAfterViewInit() {
-		this.nodeMan.initEditor( this.editor.nativeElement )
+		this.ngs.initEditor( this.editor.nativeElement )
 	}
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from 'angular2/core'
-import nodeFactory from './nodeFactory'
+import nodeFactory from './NodeFactory.svc'
 import toposort from 'toposort'
 
 // CodeMirror ( import order is important )
@@ -8,7 +8,7 @@ import 'root/node_modules/codemirror/mode/javascript/javascript.js'
 import 'root/node_modules/codemirror/lib/codemirror.css'
 
 @Injectable()
-export class NodeManager {
+export class NodeGraphService {
 
 	constructor() {
 		window.NM = this

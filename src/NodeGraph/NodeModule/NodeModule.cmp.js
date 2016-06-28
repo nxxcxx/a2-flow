@@ -1,25 +1,25 @@
 import { Component, Input, ViewChild, ElementRef } from 'angular2/core'
-import { SvgMovableDirective } from './svgMovable.directive'
-import { NodeManager } from './nodeManager.service'
-import { NodeIO } from './nodeIO.directive'
+import { SvgMovableDirective } from 'src/NodeGraph/NodeSvg/MovableSvg.dir'
+import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.dir'
 
 @Component( {
 
-	selector: '[nodeItem]',
-	directives: [ SvgMovableDirective, NodeIO ],
-	template: require( './nodeItem.html' ) // using require instad of templateUrl so webpack can watch the file
+	selector: '[nodeModule]',
+	directives: [ SvgMovableDirective, NodeModuleIO ],
+	template: require( './NodeModule.html' ) // using require instad of templateUrl so webpack can watch the file
 
 } )
-export class NodeItem {
+export class NodeModule {
 
 	@Input() node
 	@ViewChild( 'headerElem' ) headerElem
 	@ViewChild( 'inputElem' ) inputElem
 	@ViewChild( 'outputElem' ) outputElem
 
-	constructor( elRef: ElementRef, nodeManager: NodeManager ) {
+	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
 		this.elRef = elRef
-		this.nodeManager = nodeManager
+		this.ngs = ngs
 		this.ui = {
 			node: { width: 0, height: 0 },
 			centerSpacing: 10,
@@ -78,7 +78,7 @@ export class NodeItem {
 	}
 
 	select() {
-		this.nodeManager.setSelectedNode( this.node )
+		this.ngs.setSelectedNode( this.node )
 	}
 
 }

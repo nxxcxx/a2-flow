@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input } from 'angular2/core'
-import { NodeManager } from './nodeManager.service'
+import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 
 @Component( {
 
@@ -18,9 +18,9 @@ export class NodeConnection {
 
 	@Input() connection
 
-	constructor( elRef: ElementRef, nodeManager: NodeManager ) {
+	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
 		this.el = elRef.nativeElement
-		this.nodeMan = nodeManager
+		this.ngs = ngs
 	}
 
 	getBezierCurveString() {
@@ -35,7 +35,7 @@ export class NodeConnection {
 	}
 
 	disconnect() {
-		this.nodeMan.disconnectIO( this.connection[ 1 ] )
+		this.ngs.disconnectIO( this.connection[ 1 ] )
 	}
 
 }

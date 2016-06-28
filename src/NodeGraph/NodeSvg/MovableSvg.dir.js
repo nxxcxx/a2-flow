@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener, Input, Output, EventEmitter } from 'angular2/core'
-import { SvgUIService } from './svgUI.service'
+import { NodeSvgService } from 'src/NodeGraph/NodeSvg/NodeSvg.svc'
 
 @Directive( {
 
@@ -11,9 +11,9 @@ export class SvgMovableDirective {
 	@Input() targetId
 	@Output() positionUpdated = new EventEmitter()
 
-	constructor( elRef: ElementRef, svgUI: SvgUIService ) {
+	constructor( elRef: ElementRef, nss: NodeSvgService ) {
 		this.el = elRef.nativeElement
-		this.svgUI = svgUI
+		this.nss = nss
 	}
 
 	ngOnInit() {
@@ -44,14 +44,14 @@ export class SvgMovableDirective {
 	}
 
 	ngAfterViewInit() {
-		this.svgUI.addEventListener( 'mouseup', this.mouseupEvent )
-		this.svgUI.addEventListener( 'mousemove', this.mousemoveEvent)
+		this.nss.addEventListener( 'mouseup', this.mouseupEvent )
+		this.nss.addEventListener( 'mousemove', this.mousemoveEvent)
 	}
 
 	ngOnDestroy() {
 		// detatch event listener that is not bound using @HostListener to prevent memory leak
-		this.svgUI.removeEventListener( 'mouseup', this.mouseupEvent )
-		this.svgUI.removeEventListener( 'mousemove', this.mousemoveEvent )
+		this.nss.removeEventListener( 'mouseup', this.mouseupEvent )
+		this.nss.removeEventListener( 'mousemove', this.mousemoveEvent )
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
@@ -69,10 +69,10 @@ export class SvgMovableDirective {
 	getMousePositionSVG( $event ) {
 		// return relative mouse position in SVG element
 		// if the elem to move is the viewport, dont apply any transformation
-		if ( this.el === this.svgUI.getViewport() ) {
+		if ( this.el === this.nss.getViewport() ) {
 			return { x: $event.clientX, y: $event.clientY }
 		}
-		return this.svgUI.getMousePositionSVG( $event )
+		return this.nss.getMousePositionSVG( $event )
 	}
 
 }
