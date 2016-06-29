@@ -53,8 +53,8 @@ export class NodeModule {
 		this.mousedownEvent = $event => {
 			this.ngs.setSelectedNode( this.node )
 			this.mousehold = true
-			this.prevMouse = { x: $event.clientX, y: $event.clientY }
-			this.prevPos = this.nodeElem.position()
+			this.prevMouse = { x: $event.pageX, y: $event.pageY }
+			this.prevPos = this.nodeElem.position() // TODO:
 		}
 
 		this.mouseupEvent = () => {
@@ -66,7 +66,7 @@ export class NodeModule {
 			if ( this.disableMove ) return
 			if ( this.mousehold ) {
 
-				let [ dx, dy ] = [ $event.clientX - this.prevMouse.x, $event.clientY - this.prevMouse.y ]
+				let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
 				let zf = this.ngs.zoomFactor
 				this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
 				this.updatePositionIO()

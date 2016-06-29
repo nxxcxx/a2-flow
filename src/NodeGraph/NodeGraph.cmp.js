@@ -12,7 +12,8 @@ import $ from 'jquery'
 	template:
 	`
 	<div #container id="nodeGraphContainer"
-		style="pointer-events: none; position: absolute; width: 4000px; height: 4000px; transform-origin: 0px 0px"
+		style="pointer-events: none; position: absolute; width: 4000px; height: 4000px;
+				transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0) "
 	>
 
 		<svg id="nodeContainerSvg" style="pointer-events: none">
@@ -49,42 +50,23 @@ export class NodeGraph {
 		// TODO: use transform: scale
 		// TODO: fix position after zoom for IO, mouse, ...
 		$event.preventDefault()
-		let dy = Math.sign( $event.wheelDelta )
+
 		let container = $( this.container.nativeElement )
+		, mat = container.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		, viewport = this.ngs.getContainerElem()
+		, viewportOffset = viewport.offset()
+		, dd = Math.sign( $event.wheelDelta ) * 0.1
+		, ss = mat[ 0 ] * ( 1.0 + dd )
+		, sd = ss / mat[ 0 ]
+		, ox = $event.clientX - viewportOffset.left + viewport.scrollLeft()
+		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
+		, cx = mat[ 4 ]
+		, cy = mat[ 5 ]
+		, xx = sd * ( cx - ox ) + ox
+		, yy = sd * ( cy - oy ) + oy
+		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
+		this.ngs.zoomFactor = ss
 
-
-
-		if ( container.css( 'transform' ) === 'none' ) {
-			container.css( 'transform', 'matrix(1,0,0,1,0,0)' )
-		}
-		let pz = container.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
-		pz = pz[ 0 ]
-
-		let gain = 0.05
-		let zf = clamp( pz + dy * gain, 0.1, 2.0 )
-		this.ngs.zoomFactor = zf
-
-
-
-
-		// let viewport = this.ngs.getContainerElem()
-		// let viewportOffset = viewport.offset()
-		// let viewportScrollLeft = viewport.scrollLeft()
-		// let viewportScrollTop = viewport.scrollTop()
-		// let orig = [
-		// 	( $event.clientX - viewportOffset.left + viewportScrollLeft ) / zf,
-		// 	( $event.clientY - viewportOffset.top + viewportScrollTop ) / zf
-		// ].map( v => v + 'px' ).join( ' ' )
-		// container.css( 'transform-origin', orig )
-
-		let xx = 0
-		let yy = 0
-
-		container.css( 'transform', `matrix(${zf},0,0,${zf},${xx},${yy})` )
-
-		function clamp( v, min, max ) {
-			return Math.min( max, Math.max( min, v ) )
-		}
 	}
 
 }

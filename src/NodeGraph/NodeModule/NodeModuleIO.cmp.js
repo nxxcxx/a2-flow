@@ -90,10 +90,10 @@ export class NodeModuleIO {
 		let viewportScrollLeft = viewport.scrollLeft()
 		let viewportScrollTop = viewport.scrollTop()
 		let zf = this.ngs.zoomFactor
-		// this.io.ui.absolutePosition.x = ioOffset.left - viewportOffset.left / zf + viewportScrollLeft / zf + hw
 
-		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewportScrollLeft + hw ) / zf
-		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewportScrollTop + hh ) / zf
+		let mat = $( '#nodeGraphContainer' ).css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewportScrollLeft + hw - mat[ 4 ] ) / zf
+		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewportScrollTop + hh  - mat[ 5 ] ) / zf
 	}
 
 }
