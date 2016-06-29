@@ -25,18 +25,24 @@ export class NodeTempConnection {
 
 	ngOnInit() {
 		this.mousedownEvent = $event => {
-			let containerOffset = this.ngs.getContainerElem().offset()
-			this.mousePos = { x: $event.clientX - containerOffset.left, y: $event.clientY - containerOffset.top }
+			this.mousePos = this.getMousePositionAbsolute( $event )
 		}
 		this.mouseupEvent = () => {
 			this.ngs.linking = false
 		}
 		this.mousemoveEvent = $event => {
 			if ( this.ngs.linking ) {
-				let containerOffset = this.ngs.getContainerElem().offset()
-				this.mousePos = { x: $event.clientX - containerOffset.left, y: $event.clientY - containerOffset.top }
+				this.mousePos = this.getMousePositionAbsolute( $event )
 			}
 		}
+	}
+
+	getMousePositionAbsolute( $event ) {
+		let viewport = this.ngs.getContainerElem()
+		let offset = viewport.offset()
+		let scrollLeft = viewport.scrollLeft()
+		let scrollTop = viewport.scrollTop()
+		return { x: $event.clientX - offset.left + scrollLeft, y: $event.clientY - offset.top + scrollTop }
 	}
 
 	ngAfterViewInit() {

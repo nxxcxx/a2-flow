@@ -14,7 +14,7 @@ $d1: rgb(29,31,33)
 
 *
 	font-family: 'monaco'
-	font-size: 13px
+	font-size: 12px
 
 html, body
 	margin: 0px
@@ -38,8 +38,8 @@ pre
 ::-webkit-scrollbar
 	background: $b2
 	border-right: 1px solid $wf
-	width: 5px
-	height: 5px
+	width: 8px
+	height: 8px
 ::-webkit-scrollbar-thumb
 	background: $wf
 
@@ -77,6 +77,7 @@ pre
 	&.right
 		left: 30%
 		width: 70%
+		overflow: scroll
 		background: $d1
 
 =no-select
@@ -87,12 +88,8 @@ pre
 	-ms-user-select: none
 	user-select: none
 
-#nodeGraph
-	position: absolute
-	height: 100%
-	width: 70%
-	cursor: default
-	+no-select
+#nodeGraphContainer
+	background: url( 'img/grid.png' )
 
 #nodeContainer, #nodeContainerSvg
 	position: absolute

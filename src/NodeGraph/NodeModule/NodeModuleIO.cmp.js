@@ -27,39 +27,30 @@ export class NodeModuleIO {
 	@ViewChild( 'ioPort' ) ioPort
 	@ViewChild( 'ioLabel' ) ioLabel
 
-
 	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
 	}
 
-	ngOnInit() {}
-
 	ngAfterViewInit() {
-
 		let ioPort = $( this.ioPort.nativeElement )
 		let ioRow = $( this.ioRow.nativeElement )
 		let ioLabel = $( this.ioLabel.nativeElement )
-
 		// TODO: use angular component css metadata
 		if ( this.io instanceof NodeFactory.Input ) {
 			ioRow.css( 'flex-direction', 'row' )
 			ioLabel.css( 'margin-left', '10px' )
 			ioPort.css( 'border', '1px solid #5d5d5d')
 			ioPort.css( 'border-left', '0px')
-
 		} else {
 			ioRow.css( 'flex-direction', 'row-reverse' )
 			ioLabel.css( 'margin-right', '10px' )
 			ioPort.css( 'border', '1px solid #5d5d5d')
 			ioPort.css( 'border-right', '0px')
 		}
-
 		this.mouseenterEvent = () => {
-
 			if ( this.io.free ) ioPort.css( 'background', '#e6e6e6' )
 		}
 		this.mouseleaveEvent = () => {
-
 			if ( this.io.free ) ioPort.css( 'background', 'rgba(0,0,0,0)' )
 		}
 		this.mousedownEvent = () => {
@@ -72,13 +63,11 @@ export class NodeModuleIO {
 		this.dblclickEvent = () => {
 			this.ngs.disconnectIO( this.io )
 		}
-
 		ioPort.on( 'mouseenter', this.mouseenterEvent )
 		.on( 'mouseleave', this.mouseleaveEvent )
 		.on( 'mousedown', this.mousedownEvent )
 		.on( 'mouseup', this.mouseupEvent )
 		.on( 'dblclick', this.dblclickEvent )
-
 	}
 
 	ngOnDestroy() {
@@ -91,14 +80,20 @@ export class NodeModuleIO {
 	}
 
 	updatePosition() {
-		// TODO: cnodeContainer thru service
+		// TODO: nodeContainer thru service
 		let ioPort = $( this.ioPort.nativeElement )
 		let hw = ioPort.width() * 0.5
 		let hh = ioPort.height() * 0.5
 		let ioOffset = ioPort.offset()
-		let containerOffset = this.ngs.getContainerElem().offset()
-		this.io.ui.absolutePosition.x = ioOffset.left - containerOffset.left + hw
-		this.io.ui.absolutePosition.y = ioOffset.top - containerOffset.top + hh
+		let viewport = this.ngs.getContainerElem()
+		let viewportOffset = viewport.offset()
+		let viewportScrollLeft = viewport.scrollLeft()
+		let viewportScrollTop = viewport.scrollTop()
+		let zf = this.ngs.zoomFactor
+		// this.io.ui.absolutePosition.x = ioOffset.left - viewportOffset.left / zf + viewportScrollLeft / zf + hw
+
+		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewportScrollLeft + hw ) / zf
+		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewportScrollTop + hh ) / zf
 	}
 
 }

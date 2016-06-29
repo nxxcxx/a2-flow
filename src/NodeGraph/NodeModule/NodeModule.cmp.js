@@ -65,12 +65,15 @@ export class NodeModule {
 		this.mousemoveEvent = $event => {
 			if ( this.disableMove ) return
 			if ( this.mousehold ) {
+
 				let [ dx, dy ] = [ $event.clientX - this.prevMouse.x, $event.clientY - this.prevMouse.y ]
-				this.nodeElem.css( { left: this.prevPos.left + dx, top: this.prevPos.top + dy } )
-				this.nodeIO.toArray().forEach( io => io.updatePosition() )
+				let zf = this.ngs.zoomFactor
+				this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
+				this.updatePositionIO()
 			}
 		}
 
+		this.updatePositionIO()
 		this.nodeElem.on( 'mousedown', this.mousedownEvent )
 		this.ngs.getContainerElem()
 		.on( 'mouseup', this.mouseupEvent )
@@ -82,6 +85,10 @@ export class NodeModule {
 		this.ngs.getContainerElem()
 		.off( 'mouseup', this.mouseupEvent )
 		.off( 'mousemove', this.mousemoveEvent )
+	}
+
+	updatePositionIO() {
+		this.nodeIO.toArray().forEach( io => io.updatePosition() )
 	}
 
 	onLink( bool ) {

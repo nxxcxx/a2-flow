@@ -22,6 +22,8 @@ export class NodeGraphService {
 		this.linking = false
 		// test
 		this.createTestNode()
+
+		this.zoomFactor = 1.0
 	}
 
 	registerContainerElem( containerElem ) {
