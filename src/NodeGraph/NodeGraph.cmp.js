@@ -61,7 +61,7 @@ export class NodeGraph {
 		, cy = mat[ 5 ]
 		, xx = sd * ( cx - ox ) + ox
 		, yy = sd * ( cy - oy ) + oy
-		if ( ss <= 0.2 ) return
+		if ( ss <= 0.2 ) return // clamp scaling
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		this.ngs.zoomFactor = ss
 	}
@@ -86,6 +86,10 @@ export class NodeGraph {
 			this.ngs.getContainerElem().scrollLeft( prevScrollLeft - dt.x )
 			this.prevMouse = { x: $event.clientX, y: $event.clientY }
 		}
+	}
+
+	@HostListener( 'contextmenu', [ '$event' ] ) onContextMenu( $event ) {
+		$event.preventDefault()
 	}
 
 }

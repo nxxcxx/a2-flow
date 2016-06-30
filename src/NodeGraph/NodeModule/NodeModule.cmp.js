@@ -45,34 +45,34 @@ export class NodeModule {
 		this.disableMove = false
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		// this.node.setAngularComponent( this )
+	}
 
 	ngAfterViewInit() {
 		this.nodeElem = $( this.nodeElem.nativeElement )
-
 		this.mousedownEvent = $event => {
 			this.ngs.setSelectedNode( this.node )
 			this.mousehold = true
 			this.prevMouse = { x: $event.pageX, y: $event.pageY }
 			this.prevPos = this.nodeElem.position() // TODO:
 		}
-
 		this.mouseupEvent = () => {
 			this.mousehold = false
 			this.disableMove = false
 		}
-
 		this.mousemoveEvent = $event => {
 			if ( this.disableMove ) return
 			if ( this.mousehold ) {
-
+				// TODO: multiple selection
+				// if select multiple, trigger the events to all selected node
+				// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
 				let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
 				let zf = this.ngs.zoomFactor
 				this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
 				this.updatePositionIO()
 			}
 		}
-
 		this.updatePositionIO()
 		this.nodeElem.on( 'mousedown', this.mousedownEvent )
 		this.ngs.getContainerElem()
