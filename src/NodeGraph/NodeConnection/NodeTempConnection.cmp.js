@@ -1,5 +1,6 @@
 import { Component } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import $ from 'jquery'
 
 @Component( {
 
@@ -38,11 +39,15 @@ export class NodeTempConnection {
 	}
 
 	getMousePositionAbsolute( $event ) {
+		// TODO: no ID selector
 		let viewport = this.ngs.getContainerElem()
 		let offset = viewport.offset()
-		let scrollLeft = viewport.scrollLeft()
-		let scrollTop = viewport.scrollTop()
-		return { x: $event.clientX - offset.left + scrollLeft, y: $event.clientY - offset.top + scrollTop }
+		let zf = this.ngs.zoomFactor
+		let mat = $( '#nodeGraphContainer' ).css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		return {
+			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
+			y: ( $event.clientY - offset.top + viewport.scrollTop() - mat[ 5 ] ) / zf
+		}
 	}
 
 	ngAfterViewInit() {

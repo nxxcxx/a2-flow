@@ -47,10 +47,7 @@ export class NodeGraph {
 	}
 
 	@HostListener( 'mousewheel', [ '$event' ] ) onMouseWheel( $event ) {
-		// TODO: use transform: scale
-		// TODO: fix position after zoom for IO, mouse, ...
 		$event.preventDefault()
-
 		let container = $( this.container.nativeElement )
 		, mat = container.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 		, viewport = this.ngs.getContainerElem()
@@ -64,9 +61,31 @@ export class NodeGraph {
 		, cy = mat[ 5 ]
 		, xx = sd * ( cx - ox ) + ox
 		, yy = sd * ( cy - oy ) + oy
+		if ( ss <= 0.2 ) return
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		this.ngs.zoomFactor = ss
+	}
 
+	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
+		if ( !( $event.target === this.ngs.getContainerElem()[ 0 ] ) ) return
+		this.mousehold = true
+		this.prevMouse = { x: $event.clientX, y: $event.clientY }
+	}
+
+	@HostListener( 'mouseup' ) onMouseUp() {
+		this.mousehold = false
+	}
+
+	@HostListener( 'mousemove', [ '$event' ] ) onMouseMove( $event ) {
+		if ( !( $event.target === this.ngs.getContainerElem().get(0) ) ) return
+		if ( this.mousehold  ) {
+			let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
+			let prevScrollTop = this.ngs.getContainerElem().scrollTop()
+			let prevScrollLeft = this.ngs.getContainerElem().scrollLeft()
+			this.ngs.getContainerElem().scrollTop( prevScrollTop - dt.y )
+			this.ngs.getContainerElem().scrollLeft( prevScrollLeft - dt.x )
+			this.prevMouse = { x: $event.clientX, y: $event.clientY }
+		}
 	}
 
 }

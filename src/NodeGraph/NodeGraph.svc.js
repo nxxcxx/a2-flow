@@ -12,7 +12,6 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 export class NodeGraphService {
 
 	constructor() {
-		window.NGS= this
 		this.containerElem = null
 		this.nodes = []
 		this.connections = []
@@ -20,10 +19,10 @@ export class NodeGraphService {
 		this.selectedNode = null
 		this.codeMirror = null
 		this.linking = false
-		// test
-		this.createTestNode()
-
 		this.zoomFactor = 1.0
+		// DEBUG
+		window.NGS= this
+		this.createTestNode()
 	}
 
 	registerContainerElem( containerElem ) {
@@ -84,7 +83,6 @@ export class NodeGraphService {
 		if ( this.isValidConnection( output, input ) ) {
 		// many -> one connection, if the same input already exists, remove & disconnect it
 			if ( !input.free ) {
-				input.disconnect()
 				this.disconnectInput( input )
 			}
 			input.connect( output )
@@ -94,18 +92,17 @@ export class NodeGraphService {
 
 	disconnectIO( io ) {
 		if ( io instanceof nodeFactory.Input ) {
-			io.disconnect()
 			this.disconnectInput( io )
 		} else if ( io instanceof nodeFactory.Output ) {
 			// need to make a new copy because cannot call disconnectInput inside a loop
-			for ( let inp of Array.from( io.input ) ) {
-				inp.disconnect()
-				this.disconnectInput( inp )
+			for ( let input of Array.from( io.input ) ) {
+				this.disconnectInput( input )
 			}
 		}
 	}
 
 	disconnectInput( input ) {
+		input.disconnect()
 		this.connections = this.connections.filter( io => io[ 1 ] !== input )
 	}
 
@@ -126,7 +123,7 @@ export class NodeGraphService {
 	validateCyclicConnection( output, input ) {
 		let test = Array.from( this.connections ).concat( [ [ output, input] ] )
 		try { this.computeToposort( test ) }
-		catch( e ) { return true }
+		catch( ex ) { return true }
 		return false
 	}
 

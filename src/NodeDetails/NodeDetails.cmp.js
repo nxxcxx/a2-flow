@@ -17,7 +17,7 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 		<div style="clear: left"></div>
 		<nodeEditor></nodeEditor>
 		<br>
-		<input [(ngModel)]="debugEnabled" type="checkbox"> DEBUG
+		<div style="margin-left: 5px; width: 8px; height: 8px; border: 1px solid #fff; display: inline-block" [ngStyle]="{'background': debugEnabled ? '#fff':'rgba(0,0,0,0)'}" (click)="toggleDebug()"></div> DEBUG
 		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
 	`
 
@@ -28,6 +28,10 @@ export class NodeDetails {
 		this.ngs = ngs
 		this.cjson = new CircularJSON()
 		this.debugEnabled = false
+	}
+
+	toggleDebug() {
+		this.debugEnabled = !this.debugEnabled
 	}
 
 	getNodeInfo() {

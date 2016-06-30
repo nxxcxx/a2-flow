@@ -87,13 +87,12 @@ export class NodeModuleIO {
 		let ioOffset = ioPort.offset()
 		let viewport = this.ngs.getContainerElem()
 		let viewportOffset = viewport.offset()
-		let viewportScrollLeft = viewport.scrollLeft()
-		let viewportScrollTop = viewport.scrollTop()
 		let zf = this.ngs.zoomFactor
 
+		// TODO: no ID selector
 		let mat = $( '#nodeGraphContainer' ).css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
-		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewportScrollLeft + hw - mat[ 4 ] ) / zf
-		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewportScrollTop + hh  - mat[ 5 ] ) / zf
+		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / zf
+		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / zf
 	}
 
 }
