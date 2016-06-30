@@ -1,30 +1,30 @@
 import { Component, Input, ViewChild, ViewChildren } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.cmp'
-
 import $ from 'jquery'
 
 @Component( {
 
 	selector: 'nodeModule',
 	directives: [ NodeModuleIO ],
+	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	`
-	<div #nodeElem style="position: absolute; padding: 4px 0px 4px 0px; background: rgb(24,26,28); border: 1px solid #5d5d5d">
+	<div #nodeElem class="nodeElem">
 
-		<div #headerElem style="margin: 0px 5px 0px 5px">
+		<div #headerElem class="headerElem">
 			{{ node.name }} {{ node.order }}
 		</div>
 
-		<div #ioContainer style="background: rgba(255,127,0,0); padding: 0px;">
+		<div #ioContainer class="ioContainer">
 
-			<div #inputColumn style="background: rgba(255,0,0,0); padding: 0px; float: left; display: inline-block">
+			<div #inputColumn class="inputColumn">
 				<nodeModuleIO *ngFor="let input of node.input" [io]="input" (onLink)="onLink( $event )"></nodeModuleIO>
 			</div>
 
-			<div #separator style="background: rgba(0,255,0,0); width: 8px; display: inline-block"></div>
+			<div #separator class="separator"></div>
 
-			<div #outputColumn style="background: rgba(0,0,255,0); padding: 0px; float: right; display: inline-block">
+			<div #outputColumn class="outputColumn">
 				<nodeModuleIO *ngFor="let output of node.output" [io]="output" (onLink)="onLink( $event )"></nodeModuleIO>
 			</div>
 

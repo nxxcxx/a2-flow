@@ -7,7 +7,7 @@ import $ from 'jquery'
 	selector: '[nodeTempConnection]',
 	template:
 	`
-		<svg:line style="pointer-events: none" stroke="#666"
+		<svg:line style="pointer-events: none" stroke="#0bb1f9"
 			[attr.visibility]="ngs.linking ? 'visible' : 'hidden'"
 			[attr.x1]="getStartCoord().x"
 			[attr.y1]="getStartCoord().y"

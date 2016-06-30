@@ -7,14 +7,12 @@ import $ from 'jquery'
 @Component( {
 
 	selector: 'nodeModuleIO',
+	styles: [ require( '!raw!sass!root/sass/NodeModuleIO.cmp.sass') ],
 	template:
 	`
-	<div #ioRow style="display: flex">
-		<div #ioPort style="width: 10px; height: 10px; align-self: center;"
-			[ngStyle]="{ background: io.free ? 'rgba(0,0,0,0)' : '#e6e6e6' }"
-		>
-		</div>
-		<div #ioLabel style="align-self: center">{{ io.name }}</div>
+	<div #ioRow class="ioRow">
+		<div #ioPort class="ioPort" [ngClass]="{ ioActive: !io.free, ioDisabled: io.free }"></div>
+		<div #ioLabel class="ioLabel">{{ io.name }}</div>
 	</div>
 	`
 
@@ -35,23 +33,20 @@ export class NodeModuleIO {
 		let ioPort = $( this.ioPort.nativeElement )
 		let ioRow = $( this.ioRow.nativeElement )
 		let ioLabel = $( this.ioLabel.nativeElement )
-		// TODO: use angular component css metadata
 		if ( this.io instanceof NodeFactory.Input ) {
-			ioRow.css( 'flex-direction', 'row' )
-			ioLabel.css( 'margin-left', '10px' )
-			ioPort.css( 'border', '1px solid #5d5d5d')
-			ioPort.css( 'border-left', '0px')
+			ioRow.addClass( 'inputRow' )
+			ioLabel.addClass( 'inputLabel' )
+			ioPort.addClass( 'inputPort' )
 		} else {
-			ioRow.css( 'flex-direction', 'row-reverse' )
-			ioLabel.css( 'margin-right', '10px' )
-			ioPort.css( 'border', '1px solid #5d5d5d')
-			ioPort.css( 'border-right', '0px')
+			ioRow.addClass( 'outputRow' )
+			ioLabel.addClass( 'outputLabel' )
+			ioPort.addClass( 'outputPort' )
 		}
 		this.mouseenterEvent = () => {
-			if ( this.io.free ) ioPort.css( 'background', '#e6e6e6' )
+			if ( this.io.free ) ioPort.addClass( 'ioHover' )
 		}
 		this.mouseleaveEvent = () => {
-			if ( this.io.free ) ioPort.css( 'background', 'rgba(0,0,0,0)' )
+			ioPort.removeClass( 'ioHover' )
 		}
 		this.mousedownEvent = () => {
 			this.onLink.emit( true )
@@ -80,7 +75,6 @@ export class NodeModuleIO {
 	}
 
 	updatePosition() {
-		// TODO: nodeContainer thru service
 		let ioPort = $( this.ioPort.nativeElement )
 		let hw = ioPort.width() * 0.5
 		let hh = ioPort.height() * 0.5
@@ -88,7 +82,6 @@ export class NodeModuleIO {
 		let viewport = this.ngs.getContainerElem()
 		let viewportOffset = viewport.offset()
 		let zf = this.ngs.zoomFactor
-
 		// TODO: no ID selector
 		let mat = $( '#nodeGraphContainer' ).css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / zf

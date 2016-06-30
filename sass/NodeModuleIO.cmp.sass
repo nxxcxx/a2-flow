@@ -1,0 +1,43 @@
+$borderColor: #5d5d5d
+$ioActiveColor: #e6e6e6
+$ioDisabledColor: rgba(0,0,0,0)
+
+.ioRow
+	display: flex
+
+.ioPort
+	width: 10px
+	height: 10px
+	align-self: center
+
+.ioLabel
+	align-self: center
+
+.ioActive
+	background: $ioActiveColor
+
+.ioDisabled
+	background: $ioDisabledColor
+
+.inputRow
+	flex-direction: row
+
+.inputLabel
+	margin-left: 10px
+
+.inputPort
+	border: 1px solid $borderColor
+	border-left: 0px
+
+.outputRow
+	flex-direction: row-reverse
+
+.outputLabel
+	margin-right: 10px
+
+.outputPort
+	border: 1px solid $borderColor
+	border-right: 0px
+
+.ioHover
+	background: $ioActiveColor
