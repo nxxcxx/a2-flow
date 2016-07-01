@@ -43,14 +43,15 @@ export class NodeGraph {
 	}
 
 	ngOnInit() {
-		this.ngs.registerContainerElem( this.el )
+		this.ngs.registerViewportElem( this.el )
+		this.ngs.setNodeContainerElemId( 'nodeGraphContainer' )
 	}
 
 	@HostListener( 'mousewheel', [ '$event' ] ) onMouseWheel( $event ) {
 		$event.preventDefault()
-		let container = $( this.container.nativeElement )
-		, mat = container.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
-		, viewport = this.ngs.getContainerElem()
+		let container = this.ngs.getNodeContainerElem()
+		, mat = this.ngs.getNodeContainerTransformationMatrix()
+		, viewport = this.ngs.getViewportElem()
 		, viewportOffset = viewport.offset()
 		, dd = Math.sign( $event.wheelDelta ) * 0.1
 		, ss = mat[ 0 ] * ( 1.0 + dd )
@@ -67,7 +68,7 @@ export class NodeGraph {
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
-		if ( !( $event.target === this.ngs.getContainerElem()[ 0 ] ) ) return
+		if ( !( $event.target === this.ngs.getViewportElem()[ 0 ] ) ) return
 		this.mousehold = true
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
@@ -77,13 +78,14 @@ export class NodeGraph {
 	}
 
 	@HostListener( 'mousemove', [ '$event' ] ) onMouseMove( $event ) {
-		if ( !( $event.target === this.ngs.getContainerElem().get(0) ) ) return
+		let viewport = this.ngs.getViewportElem()
+		if ( !( $event.target === viewport.get(0) ) ) return
 		if ( this.mousehold  ) {
 			let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
-			let prevScrollTop = this.ngs.getContainerElem().scrollTop()
-			let prevScrollLeft = this.ngs.getContainerElem().scrollLeft()
-			this.ngs.getContainerElem().scrollTop( prevScrollTop - dt.y )
-			this.ngs.getContainerElem().scrollLeft( prevScrollLeft - dt.x )
+			let prevScrollTop = viewport.scrollTop()
+			let prevScrollLeft = viewport.scrollLeft()
+			viewport.scrollTop( prevScrollTop - dt.y )
+			viewport.scrollLeft( prevScrollLeft - dt.x )
 			this.prevMouse = { x: $event.clientX, y: $event.clientY }
 		}
 	}

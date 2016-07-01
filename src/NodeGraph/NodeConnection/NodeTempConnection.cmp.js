@@ -39,11 +39,10 @@ export class NodeTempConnection {
 	}
 
 	getMousePositionAbsolute( $event ) {
-		// TODO: no ID selector
-		let viewport = this.ngs.getContainerElem()
+		let viewport = this.ngs.getViewportElem()
 		let offset = viewport.offset()
 		let zf = this.ngs.zoomFactor
-		let mat = $( '#nodeGraphContainer' ).css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		let mat = this.ngs.getNodeContainerTransformationMatrix()
 		return {
 			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
 			y: ( $event.clientY - offset.top + viewport.scrollTop() - mat[ 5 ] ) / zf
@@ -51,14 +50,14 @@ export class NodeTempConnection {
 	}
 
 	ngAfterViewInit() {
-		this.ngs.getContainerElem()
+		this.ngs.getViewportElem()
 		.on( 'mousedown', this.mousedownEvent )
 		.on( 'mouseup', this.mouseupEvent )
 		.on( 'mousemove', this.mousemoveEvent )
 	}
 
 	ngOnDestroy() {
-		this.ngs.getContainerElem()
+		this.ngs.getViewportElem()
 		.off( 'mousedown', this.mousedownEvent )
 		.off( 'mouseup', this.mouseupEvent )
 		.off( 'mousemove', this.mousemoveEvent )

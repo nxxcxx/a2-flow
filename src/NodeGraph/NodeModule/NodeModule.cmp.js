@@ -46,7 +46,7 @@ export class NodeModule {
 	}
 
 	ngOnInit() {
-		// this.node.setAngularComponent( this )
+		// TODO: this.node.setAngularComponent( this )
 	}
 
 	ngAfterViewInit() {
@@ -55,7 +55,7 @@ export class NodeModule {
 			this.ngs.setSelectedNode( this.node )
 			this.mousehold = true
 			this.prevMouse = { x: $event.pageX, y: $event.pageY }
-			this.prevPos = this.nodeElem.position() // TODO:
+			this.prevPos = this.nodeElem.position() // TODO: ?
 		}
 		this.mouseupEvent = () => {
 			this.mousehold = false
@@ -75,14 +75,14 @@ export class NodeModule {
 		}
 		this.updatePositionIO()
 		this.nodeElem.on( 'mousedown', this.mousedownEvent )
-		this.ngs.getContainerElem()
+		this.ngs.getViewportElem()
 		.on( 'mouseup', this.mouseupEvent )
 		.on( 'mousemove', this.mousemoveEvent )
 	}
 
 	ngOnDestroy() {
 		this.nodeElem.off( 'mousedown', this.mousedownEvent )
-		this.ngs.getContainerElem()
+		this.ngs.getViewportElem()
 		.off( 'mouseup', this.mouseupEvent )
 		.off( 'mousemove', this.mousemoveEvent )
 	}

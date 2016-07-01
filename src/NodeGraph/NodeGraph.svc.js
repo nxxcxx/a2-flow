@@ -12,7 +12,7 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 export class NodeGraphService {
 
 	constructor() {
-		this.containerElem = null
+		this.viewportElem = null
 		this.nodes = []
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
@@ -25,12 +25,24 @@ export class NodeGraphService {
 		this.createTestNode()
 	}
 
-	registerContainerElem( containerElem ) {
-		this.containerElem = $( containerElem )
+	registerViewportElem( viewportElem ) {
+		this.viewportElem = $( viewportElem )
 	}
 
-	getContainerElem() {
-		return this.containerElem
+	getViewportElem() {
+		return this.viewportElem
+	}
+
+	setNodeContainerElemId( id ) {
+		this.nodeContainerElem = this.viewportElem.find( '#' + id )
+	}
+
+	getNodeContainerElem() {
+		return this.nodeContainerElem
+	}
+
+	getNodeContainerTransformationMatrix() {
+		return this.nodeContainerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 	}
 
 	initEditor( textareaElem ) {
@@ -151,43 +163,23 @@ export class NodeGraphService {
 		let n
 		n = nodeFactory.create( 'CONST' )
 		n.addOutput( 'X', 'Y', 'Z' )
-		n._fnstr = 'return { X: 42, Y: 33, Z: 76 }'
+		n._fnstr = 'return { X: Math.random(), Y: Math.random(), Z: Math.random() }'
 		n.parse()
 		this.nodes.push( n )
 
 		n = nodeFactory.create( 'VEC3' )
-		n.addInput( 'U', 'BUFFER', 'W' )
+		n.addInput( 'U', 'V', 'W' )
 		n.addOutput( 'VEC3', 'U', 'V', 'W' )
-		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
+		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ], U: input.U, V: input.V, W: input.W }'
 		n.parse()
 		this.nodes.push( n )
 
-		// n = nodeFactory.create( 'VEC3' )
-		// n.addInput( 'S', 'T', 'P' )
-		// n.addOutput( 'VEC3' )
-		// n._fnstr = 'return { VEC3: [ input.S, input.T, input.P ] }'
-		// n.parse()
-		// this.nodes.push( n )
-		//
-		// n = nodeFactory.create( 'DOT' )
-		// n.addInput( 'V1', 'V2' )
-		// n.addOutput( 'F' )
-		// n._fnstr = 'return { F: input.V1[0]*input.V2[0]+input.V1[1]*input.V2[1]+input.V1[2]*input.V2[2] }'
-		// n.parse()
-		// this.nodes.push( n )
-		//
 		n = nodeFactory.create( 'CONSOLE' )
 		n.addInput( 'LOG' )
 		n._fnstr = 'console.log( input.LOG )'
 		n.parse()
 		this.nodes.push( n )
-		//
-		// n = nodeFactory.create( 'BUFFER GEOMETRY' )
-		// n.addInput( 'U', 'V', 'W' )
-		// n.addOutput( 'VEC3' )
-		// n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ] }'
-		// n.parse()
-		// this.nodes.push( n )
+
 
 	}
 

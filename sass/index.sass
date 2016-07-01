@@ -1,13 +1,13 @@
 $b0: #000
 $b2: #222
 
-$w1: rgb(230, 230, 230)
-$w2: rgb(200,200,200)
-$g0: rgb(127,127,127)
+$w1: #e6e6e6
+$w2: #c8c8c8
+$g0: #7f7f7f
 
-$dz: rgb(19,21,23)
-$d0: rgb(24,26,28)
-$d1: rgb(29,31,33)
+$dz: rgb(19, 21, 23)
+$d0: rgb(24, 26, 28)
+$d1: rgb(29, 31, 33)
 
 =no-select
 	-webkit-touch-callout: none
@@ -53,6 +53,39 @@ pre
 ::-webkit-scrollbar-thumb
 	background: $w1
 
+svg
+	overflow: visible
+
+.view
+	height: 100%
+	position: absolute
+
+	&.left
+		width: 30%
+		overflow-y: scroll
+		background: $d0
+
+	&.right
+		left: 30%
+		width: 70%
+		overflow: scroll
+		background: url( 'img/grid.png' )
+		background-size: 25px
+		cursor: default
+		+no-select
+
+
+#nodeGraphContainer
+	overflow: visible
+
+#nodeContainer, #nodeContainerSvg
+	position: absolute
+	height: 100%
+	width: 100%
+	cursor: default
+	background: rgba( 0, 0, 0, 0 )
+	overflow:visible
+
 .cm-s-black
 	&.CodeMirror
 		background-color: $d1
@@ -74,30 +107,3 @@ pre
 	.CodeMirror-linenumber
 		padding: 0
 		color: $w1
-
-.view
-	height: 100%
-	position: absolute
-
-	&.left
-		width: 30%
-		overflow-y: scroll
-		background: $d0
-
-	&.right
-		left: 30%
-		width: 70%
-		overflow: scroll
-		background: url( 'img/grid.png' )
-		background-size: 25px
-		+no-select
-		cursor: default
-
-// #nodeGraphContainer
-
-#nodeContainer, #nodeContainerSvg
-	position: absolute
-	height: 100%
-	width: 100%
-	cursor: default
-	background: rgba( 0, 0, 0, 0 )

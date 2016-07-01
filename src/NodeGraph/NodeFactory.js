@@ -54,13 +54,13 @@ class Executable {
 	}
 	parse() {
 		try { this._task = new Function( 'input', this._fnstr ) }
-		catch ( e ) { throw e }
+		catch ( ex ) { console.error( ex, this ) }
 	}
 	execute() {
 		var inpObj = {}
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
-		try { var res = this._task.call( null, inpObj ) }
-		catch ( e ) { throw e }
+		try { var res = this._task.call( this, inpObj ) }
+		catch ( ex ) { console.error( ex, this ) }
 		this.output.forEach( io => { io.data = res[ io.name ] } )
 	}
 }
