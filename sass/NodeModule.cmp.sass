@@ -1,11 +1,17 @@
 $d0: rgb(24,26,28)
 $g5: #5d5d5d
+$g6: #bababa
 
 .nodeElem
 	position: absolute
 	padding: 4px 0px 4px 0px
 	background: $d0
-	border: 1px solid $g5
+
+	&.deselected
+		border: 1px solid $g5
+
+	&.selected
+		border: 1px solid $g6
 
 .headerElem
 	margin: 0px 5px 0px 5px

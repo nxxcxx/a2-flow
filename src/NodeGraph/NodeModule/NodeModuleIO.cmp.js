@@ -11,7 +11,9 @@ import $ from 'jquery'
 	template:
 	`
 	<div #ioRow class="ioRow">
-		<div #ioPort class="ioPort" [ngClass]="{ ioActive: !io.free, ioDisabled: io.free }"></div>
+		<div #ioPort class="ioPort"
+			[ngClass]="{ ioActive: !io.free, ioDisabled: io.free, selected: isSelected(), deselected: !isSelected() }"
+		></div>
 		<div #ioLabel class="ioLabel">{{ io.name }}</div>
 	</div>
 	`
@@ -85,6 +87,10 @@ export class NodeModuleIO {
 		let mat = this.ngs.getNodeContainerTransformationMatrix()
 		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / zf
 		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / zf
+	}
+
+	isSelected() {
+		return this.io.parent === this.ngs.getSelectedNode()
 	}
 
 }

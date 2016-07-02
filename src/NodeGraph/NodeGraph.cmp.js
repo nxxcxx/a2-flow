@@ -3,7 +3,6 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
-import $ from 'jquery'
 
 @Component( {
 
@@ -12,7 +11,7 @@ import $ from 'jquery'
 	template:
 	`
 	<div #container id="nodeGraphContainer"
-		style="pointer-events: none; position: absolute; width: 4000px; height: 4000px;
+		style="pointer-events: none; position: absolute; width: 5000px; height: 5000px;
 				transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0) "
 	>
 
@@ -58,10 +57,8 @@ export class NodeGraph {
 		, sd = ss / mat[ 0 ]
 		, ox = $event.clientX - viewportOffset.left + viewport.scrollLeft()
 		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
-		, cx = mat[ 4 ]
-		, cy = mat[ 5 ]
-		, xx = sd * ( cx - ox ) + ox
-		, yy = sd * ( cy - oy ) + oy
+		, xx = sd * ( mat[ 4 ] - ox ) + ox
+		, yy = sd * ( mat[ 5 ] - oy ) + oy
 		if ( ss <= 0.2 ) return // clamp scaling
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		this.ngs.zoomFactor = ss
@@ -79,15 +76,13 @@ export class NodeGraph {
 
 	@HostListener( 'mousemove', [ '$event' ] ) onMouseMove( $event ) {
 		let viewport = this.ngs.getViewportElem()
-		if ( !( $event.target === viewport.get(0) ) ) return
-		if ( this.mousehold  ) {
-			let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
-			let prevScrollTop = viewport.scrollTop()
-			let prevScrollLeft = viewport.scrollLeft()
-			viewport.scrollTop( prevScrollTop - dt.y )
-			viewport.scrollLeft( prevScrollLeft - dt.x )
-			this.prevMouse = { x: $event.clientX, y: $event.clientY }
-		}
+		if ( !this.mousehold || ( $event.target !== viewport.get(0) ) ) return
+		let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
+		let prevScrollTop = viewport.scrollTop()
+		let prevScrollLeft = viewport.scrollLeft()
+		viewport.scrollTop( prevScrollTop - dt.y )
+		viewport.scrollLeft( prevScrollLeft - dt.x )
+		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
 
 	@HostListener( 'contextmenu', [ '$event' ] ) onContextMenu( $event ) {

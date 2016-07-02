@@ -10,7 +10,7 @@ import $ from 'jquery'
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	`
-	<div #nodeElem class="nodeElem">
+	<div #nodeElem class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}">
 
 		<div #headerElem class="headerElem">
 			{{ node.name }} {{ node.order }}
@@ -62,16 +62,14 @@ export class NodeModule {
 			this.disableMove = false
 		}
 		this.mousemoveEvent = $event => {
-			if ( this.disableMove ) return
-			if ( this.mousehold ) {
-				// TODO: multiple selection
-				// if select multiple, trigger the events to all selected node
-				// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
-				let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
-				let zf = this.ngs.zoomFactor
-				this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
-				this.updatePositionIO()
-			}
+			if ( !this.mousehold || this.disableMove ) return
+			// TODO: multiple selection
+			// if select multiple, trigger the events to all selected node
+			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
+			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
+			let zf = this.ngs.zoomFactor
+			this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
+			this.updatePositionIO()
 		}
 		this.updatePositionIO()
 		this.nodeElem.on( 'mousedown', this.mousedownEvent )
@@ -93,6 +91,10 @@ export class NodeModule {
 
 	onLink( bool ) {
 		this.disableMove = bool
+	}
+
+	isSelected() {
+		return this.node === this.ngs.getSelectedNode()
 	}
 
 }

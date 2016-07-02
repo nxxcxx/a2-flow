@@ -22,7 +22,7 @@ export class NodeGraphService {
 		this.zoomFactor = 1.0
 		// DEBUG
 		window.NGS= this
-		this.createTestNode()
+		this.createTestNode3()
 	}
 
 	registerViewportElem( viewportElem ) {
@@ -180,7 +180,6 @@ export class NodeGraphService {
 		n.parse()
 		this.nodes.push( n )
 
-
 	}
 
 	createTestNode2() {
@@ -193,6 +192,51 @@ export class NodeGraphService {
 		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
 		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
 		this.nodes.push( n )
+	}
+
+	createTestNode3() {
+		let n
+		n = nodeFactory.create( 'SRC' )
+		n.addOutput( 'X', 'Y', 'Z' )
+		n._fnstr =
+		`this._initfn = function( input ) {
+	console.log( 'SRC: initfn', this, input )
+	this.t = 1
+}
+this._process = function( input ) {
+	console.log( 'SRC: process', this, input )
+  return {
+  	X: this.t++, Y: 2, Z: 3
+  }
+}
+console.log( 'SRC: parse', this )`
+		this.nodes.push( n )
+		n = nodeFactory.create( 'SINK' )
+		n.addInput( 'U', 'V', 'W' )
+		n._fnstr =
+		`this._initfn = function( input ) {
+	console.log( 'SINK: initfn', this, input )
+}
+this._process = function( input ) {
+	console.log( 'SINK: process', this )
+  console.log( input.U, input.V, input.W )
+}
+console.log( 'SINK: parse', this )`
+		this.nodes.push( n )
+	}
+
+	parse() {
+		this.sortNodes()
+		this.nodes.forEach( n => {
+			n.parse()
+		} )
+	}
+
+	run2() {
+		this.sortNodes()
+		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			n.execute()
+		} )
 	}
 
 }

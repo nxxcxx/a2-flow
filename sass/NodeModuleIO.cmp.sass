@@ -1,6 +1,6 @@
-$borderColor: #5d5d5d
-$ioActiveColor: #e6e6e6
-$ioDisabledColor: rgba(0,0,0,0)
+$g0: #5d5d5d
+$w0: #bababa
+$t0: rgba(0,0,0,0)
 
 .ioRow
 	display: flex
@@ -14,10 +14,10 @@ $ioDisabledColor: rgba(0,0,0,0)
 	align-self: center
 
 .ioActive
-	background: $ioActiveColor
+	background: $w0
 
 .ioDisabled
-	background: $ioDisabledColor
+	background: $t0
 
 .inputRow
 	flex-direction: row
@@ -26,8 +26,14 @@ $ioDisabledColor: rgba(0,0,0,0)
 	margin-left: 10px
 
 .inputPort
-	border: 1px solid $borderColor
-	border-left: 0px
+
+	&.deselected
+		border: 1px solid $g0
+		border-left: 0px
+
+	&.selected
+		border: 1px solid $w0
+		border-left: 0px
 
 .outputRow
 	flex-direction: row-reverse
@@ -36,8 +42,15 @@ $ioDisabledColor: rgba(0,0,0,0)
 	margin-right: 10px
 
 .outputPort
-	border: 1px solid $borderColor
-	border-right: 0px
+
+	&.deselected
+		border: 1px solid $g0
+		border-right: 0px
+
+	&.selected
+		border: 1px solid $w0
+		border-right: 0px
+
 
 .ioHover
-	background: $ioActiveColor
+	background: $w0

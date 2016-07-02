@@ -11,10 +11,12 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 	template:
 	`
 		<div>
-			<button (click)="createTestNodes()">TEST</button>
-			<button (click)="run()">RUN</button>
+			<!-- <button (click)="createTestNodes()">TEST</button> -->
+			<button (click)="parse()">PAR</button>
+			<button (click)="run()">EXE</button>
 		</div>
 		<div style="clear: left"></div>
+		<span>{{ ngs.getSelectedNode()?.name }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
 		<br>
 		<div style="margin-left: 5px; width: 8px; height: 8px; border: 1px solid #fff; display: inline-block" [ngStyle]="{'background': debugEnabled ? '#fff':'rgba(0,0,0,0)'}" (click)="toggleDebug()"></div> DEBUG
@@ -38,12 +40,16 @@ export class NodeDetails {
 		return this.cjson.transform( this.ngs.getSelectedNode(), 2 )
 	}
 
-	run() {
-		this.ngs.run()
-	}
-
 	createTestNodes() {
 		this.ngs.createTestNode2()
+	}
+
+	parse() {
+		this.ngs.parse()
+	}
+
+	run() {
+		this.ngs.run2()
 	}
 
 }
