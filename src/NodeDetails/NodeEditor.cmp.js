@@ -4,7 +4,7 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 @Component( {
 
 	selector: 'nodeEditor',
-	template: '<textarea #editor></textarea>'
+	template: '<textarea #editor ></textarea>'
 
 } )
 export class NodeEditor {

@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import NodeFactory from 'src/NodeGraph/NodeFactory'
-
 import $ from 'jquery'
 
 @Component( {

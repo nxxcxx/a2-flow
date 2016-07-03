@@ -19,7 +19,7 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 		<span>{{ ngs.getSelectedNode()?.name }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
 		<br>
-		<div style="margin-left: 5px; width: 8px; height: 8px; border: 1px solid #fff; display: inline-block" [ngStyle]="{'background': debugEnabled ? '#fff':'rgba(0,0,0,0)'}" (click)="toggleDebug()"></div> DEBUG
+		<div style="-webkit-user-select: none; margin-left: 5px; width: 8px; height: 8px; border: 1px solid #fff; display: inline-block" [ngStyle]="{'background': debugEnabled ? '#fff':'rgba(0,0,0,0)'}" (click)="toggleDebug()"></div><span style="-webkit-user-select: none"> DEBUG</span>
 		<pre *ngIf="debugEnabled">{{ getNodeInfo() }}</pre>
 	`
 
@@ -49,7 +49,7 @@ export class NodeDetails {
 	}
 
 	run() {
-		this.ngs.run2()
+		this.ngs.run()
 	}
 
 }

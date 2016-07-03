@@ -46,13 +46,14 @@ export class NodeGraphService {
 	}
 
 	initEditor( textareaElem ) {
-		this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
+		let cm = this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
 			lineNumbers: true,
 			mode: 'javascript',
 			theme: 'black',
 			tabSize: 2
 		} )
-		this.codeMirror.on( 'change', cm => {
+		cm.setSize( '100%', 400 )
+		cm.on( 'change', cm => {
 			// set selected node content
 			if ( !this.selectedNode ) return
 			this.selectedNode._fnstr = cm.doc.getValue()
@@ -151,35 +152,18 @@ export class NodeGraphService {
 		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
 	}
 
-	run() {
+	parse() {
 		this.sortNodes()
-		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+		this.nodes.forEach( n => {
 			n.parse()
-			n.execute()
 		} )
 	}
 
-	createTestNode() {
-		let n
-		n = nodeFactory.create( 'CONST' )
-		n.addOutput( 'X', 'Y', 'Z' )
-		n._fnstr = 'return { X: Math.random(), Y: Math.random(), Z: Math.random() }'
-		n.parse()
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'VEC3' )
-		n.addInput( 'U', 'V', 'W' )
-		n.addOutput( 'VEC3', 'U', 'V', 'W' )
-		n._fnstr = 'return { VEC3: [ input.U, input.V, input.W ], U: input.U, V: input.V, W: input.W }'
-		n.parse()
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'CONSOLE' )
-		n.addInput( 'LOG' )
-		n._fnstr = 'console.log( input.LOG )'
-		n.parse()
-		this.nodes.push( n )
-
+	run() {
+		this.sortNodes()
+		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			n.execute()
+		} )
 	}
 
 	createTestNode2() {
@@ -199,44 +183,59 @@ export class NodeGraphService {
 		n = nodeFactory.create( 'SRC' )
 		n.addOutput( 'X', 'Y', 'Z' )
 		n._fnstr =
-		`this._initfn = function( input ) {
-	console.log( 'SRC: initfn', this, input )
+		`this.init = function( input ) {
+	console.log( 'SRC: initfn', input )
 	this.t = 1
 }
-this._process = function( input ) {
-	console.log( 'SRC: process', this, input )
-  return {
-  	X: this.t++, Y: 2, Z: 3
-  }
+this.process = function( input ) {
+	console.log( 'SRC: process', input )
+	return {
+		X: this.t++, Y: Math.random(), Z: Math.random()
+	}
 }
-console.log( 'SRC: parse', this )`
+console.log( 'SRC: parse' )`
 		this.nodes.push( n )
-		n = nodeFactory.create( 'SINK' )
+
+		n = nodeFactory.create( 'SINK0' )
 		n.addInput( 'U', 'V', 'W' )
 		n._fnstr =
-		`this._initfn = function( input ) {
-	console.log( 'SINK: initfn', this, input )
+		`this.init = function( input ) {
+	console.log( 'SINK0: initfn', input )
 }
-this._process = function( input ) {
-	console.log( 'SINK: process', this )
-  console.log( input.U, input.V, input.W )
+this.process = function( input ) {
+	console.log( 'SINK0: process', input )
 }
-console.log( 'SINK: parse', this )`
+console.log( 'SINK0: parse' )`
 		this.nodes.push( n )
-	}
 
-	parse() {
-		this.sortNodes()
-		this.nodes.forEach( n => {
-			n.parse()
-		} )
-	}
+		n = nodeFactory.create( 'SINK1' )
+		n.addInput( 'X', 'Y', 'Z' )
+		n._fnstr =
+		`this.init = function( input ) {
+	console.log( 'SINK1: initfn', input )
+}
+this.process = function( input ) {
+	console.log( 'SINK1: process', input )
+}
+console.log( 'SINK1: parse' )`
+		this.nodes.push( n )
 
-	run2() {
-		this.sortNodes()
-		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-			n.execute()
-		} )
+		n = nodeFactory.create( 'V3' )
+		n.addInput( 'U', 'V', 'W' )
+		n.addOutput( 'V3', 'U', 'V', 'W' )
+		n._fnstr =
+`this.init = function( input ) {
+	console.log( 'V3: initfn', input )
+}
+this.process = function( input ) {
+	console.log( 'V3: process', input )
+	return {
+		V3: [ input.U, input.V, input.W ], U: input.U, V: input.V, W: input.W
+	}
+}
+console.log( 'V3: parse' )`
+		this.nodes.push( n )
+
 	}
 
 }

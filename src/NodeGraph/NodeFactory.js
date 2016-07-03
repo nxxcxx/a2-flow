@@ -54,18 +54,15 @@ class Executable {
 		this._parseTask = null
 		this._initialized = false
 	}
-	_process() {
-	}
-	_initfn() {
-
-	}
 	_init( inputObj ) {
 		if ( this._initialized ) return
-		this._initfn( inputObj )
+		this.init( inputObj )
 		this._initialized = true
 	}
 	parse() {
 		try {
+			this._initfn = () => {}
+			this._process = () => {}
 			this._parseTask = new Function( this._fnstr )
 			this._parseTask()
 			this._initialized = false
@@ -78,23 +75,12 @@ class Executable {
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
 		try {
 			this._init.call( this, inpObj )
-			var res = this._process.call( this, inpObj )
+			var res = this.process.call( this, inpObj )
 		} catch ( ex ) {
 			console.error( ex, this )
 		}
 		this.output.forEach( io => { io.data = res[ io.name ] } )
 	}
-	// parse() {
-	// 	try { this._task = new Function( 'input', this._fnstr ) }
-	// 	catch ( ex ) { console.error( ex, this ) }
-	// }
-	// execute() {
-	// 	var inpObj = {}
-	// 	this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
-	// 	try { var res = this._task.call( this, inpObj ) }
-	// 	catch ( ex ) { console.error( ex, this ) }
-	// 	this.output.forEach( io => { io.data = res[ io.name ] } )
-	// }
 }
 
 class Node extends Executable {
