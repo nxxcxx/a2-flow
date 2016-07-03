@@ -29,17 +29,11 @@ export class NodeGraphService {
 		this.viewportElem = $( viewportElem )
 	}
 
-	getViewportElem() {
-		return this.viewportElem
-	}
+	getViewportElem() { return this.viewportElem }
 
-	setNodeContainerElemId( id ) {
-		this.nodeContainerElem = this.viewportElem.find( '#' + id )
-	}
+	setNodeContainerElemId( id ) { this.nodeContainerElem = this.viewportElem.find( '#' + id ) }
 
-	getNodeContainerElem() {
-		return this.nodeContainerElem
-	}
+	getNodeContainerElem() { return this.nodeContainerElem }
 
 	getNodeContainerTransformationMatrix() {
 		return this.nodeContainerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
@@ -68,10 +62,8 @@ export class NodeGraphService {
 
 	setSelectedNode( node ) {
 		this.selectedNode = node
-		// bring selected node to end of array so it render last in view
 		let swapIndex = this.nodes.findIndex( currentNode => currentNode === node )
 		this.nodes.push( this.nodes.splice( swapIndex, 1 )[ 0 ] )
-		// set editor content
 		this.codeMirror.doc.setValue( node._fnstr )
 	}
 
@@ -80,24 +72,18 @@ export class NodeGraphService {
 	}
 
 	isValidConnection( output, input ) {
-		if (
+		return (
 			( output instanceof nodeFactory.Output ) &&
 			( input instanceof nodeFactory.Input ) &&
 			( output.parent.uuid !== input.parent.uuid ) &&
-			!this.isConnectionExists( output, input )
-		) {
-			if ( this.validateCyclicConnection( output, input ) ) return false
-			return true
-		}
-		return false
+			!this.isConnectionExists( output, input ) &&
+			!this.isConnectionCyclic( output, input )
+		)
 	}
 
 	connectIO( output, input ) {
 		if ( this.isValidConnection( output, input ) ) {
-		// many -> one connection, if the same input already exists, remove & disconnect it
-			if ( !input.free ) {
-				this.disconnectInput( input )
-			}
+			this.disconnectInput( input )
 			input.connect( output )
 			this.connections.push( [ output, input ] )
 		}
@@ -133,7 +119,7 @@ export class NodeGraphService {
 		this.linking = false
 	}
 
-	validateCyclicConnection( output, input ) {
+	isConnectionCyclic( output, input ) {
 		let test = Array.from( this.connections ).concat( [ [ output, input] ] )
 		try { this.computeToposort( test ) }
 		catch( ex ) { return true }
@@ -147,7 +133,7 @@ export class NodeGraphService {
 	}
 
 	sortNodes() {
-		let sorted = this.computeToposort( this.connections )
+		let sorted = this.computeToposort()
 		this.nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
 		this.nodes.sort( ( a, b ) => { return a.order - b.order } )
 	}
@@ -166,17 +152,6 @@ export class NodeGraphService {
 		} )
 	}
 
-	createTestNode2() {
-		function genID() {
-			let id = String.fromCharCode( Math.floor( Math.random() * 23 ) + 65 ) + ~~( Math.random() * 9 )
-			return id
-		}
-		let n = nodeFactory.create( genID() )
-		let [ ilen, olen ] = [ ~~( Math.random() * 6 ), ~~( Math.random() * 6 ) ]
-		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
-		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
-		this.nodes.push( n )
-	}
 
 	createTestNode3() {
 		let n

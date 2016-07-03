@@ -1,6 +1,5 @@
 import { Component } from 'angular2/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
-import $ from 'jquery'
 
 @Component( {
 
@@ -65,9 +64,11 @@ export class NodeTempConnection {
 
 	getStartCoord() {
 		let p = { x: 0, y: 0 }
-		if ( this.ngs.connectingIO.src ) {
-			p.x = this.ngs.connectingIO.src.ui.absolutePosition.x
-			p.y = this.ngs.connectingIO.src.ui.absolutePosition.y
+		let io = this.ngs.connectingIO.src
+		if ( io ) {
+			// TODO: no hard coded offset
+			p.x = io.ui.absolutePosition.x + 5 * ( io.type === 0 ? 1 : -1 )
+			p.y = io.ui.absolutePosition.y
 		}
 		return p
 	}
