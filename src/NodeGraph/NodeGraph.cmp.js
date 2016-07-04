@@ -61,6 +61,7 @@ export class NodeGraph {
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
 		if ( ss <= 0.2 ) return // clamp scaling
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
+		// TODO: no direct access to zoomFactor
 		this.ngs.zoomFactor = ss
 	}
 
@@ -78,10 +79,8 @@ export class NodeGraph {
 		let viewport = this.ngs.getViewportElem()
 		if ( !this.mousehold || ( $event.target !== viewport.get(0) ) ) return
 		let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
-		let prevScrollTop = viewport.scrollTop()
-		let prevScrollLeft = viewport.scrollLeft()
-		viewport.scrollTop( prevScrollTop - dt.y )
-		viewport.scrollLeft( prevScrollLeft - dt.x )
+		viewport.scrollTop( viewport.scrollTop() - dt.y )
+		viewport.scrollLeft( viewport.scrollLeft() - dt.x )
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
 

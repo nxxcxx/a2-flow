@@ -94,13 +94,13 @@ class Node extends Executable {
 		this.ui = { absolutePosition: { x: 0, y: 0 } }
 	}
 	addInput() {
-		for ( let i = 0; i < arguments.length; i++ ) {
-			this.input.push( new Input( arguments[ i ], this ) )
+		for ( let arg of arguments ) {
+			this.input.push( new Input( arg, this ) )
 		}
 	}
 	addOutput() {
-		for ( let i = 0; i < arguments.length; i++ ) {
-			this.output.push( new Output( arguments[ i ], this ) )
+		for ( let arg of arguments ) {
+			this.output.push( new Output( arg, this ) )
 		}
 	}
 }

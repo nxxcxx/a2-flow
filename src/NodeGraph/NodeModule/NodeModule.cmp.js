@@ -78,13 +78,6 @@ export class NodeModule {
 		.on( 'mousemove', this.mousemoveEvent )
 	}
 
-	ngOnDestroy() {
-		this.nodeElem.off( 'mousedown', this.mousedownEvent )
-		this.ngs.getViewportElem()
-		.off( 'mouseup', this.mouseupEvent )
-		.off( 'mousemove', this.mousemoveEvent )
-	}
-
 	updatePositionIO() {
 		this.nodeIO.toArray().forEach( io => io.updatePosition() )
 	}

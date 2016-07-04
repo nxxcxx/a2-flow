@@ -31,9 +31,9 @@ export class NodeModuleIO {
 	}
 
 	ngAfterViewInit() {
-		let ioPort = $( this.ioPort.nativeElement )
-		let ioRow = $( this.ioRow.nativeElement )
-		let ioLabel = $( this.ioLabel.nativeElement )
+		let ioPort = this.ioPort = $( this.ioPort.nativeElement )
+		, ioRow = $( this.ioRow.nativeElement )
+		, ioLabel = $( this.ioLabel.nativeElement )
 		if ( this.io instanceof NodeFactory.Input ) {
 			ioRow.addClass( 'inputRow' )
 			ioLabel.addClass( 'inputLabel' )
@@ -66,26 +66,14 @@ export class NodeModuleIO {
 		.on( 'dblclick', this.dblclickEvent )
 	}
 
-	ngOnDestroy() {
-		let ioPort = $( this.ioPort.nativeElement )
-		ioPort.off( 'mouseenter', this.mouseenterEvent )
-		.off( 'mouseleave', this.mouseleaveEvent )
-		.off( 'mousedown', this.mousedownEvent )
-		.off( 'mouseup', this.mouseupEvent )
-		.off( 'dblclick', this.dblclickEvent )
-	}
-
 	updatePosition() {
-		let ioPort = $( this.ioPort.nativeElement )
-		let hw = ioPort.width() * 0.5
-		let hh = ioPort.height() * 0.5
-		let ioOffset = ioPort.offset()
-		let viewport = this.ngs.getViewportElem()
-		let viewportOffset = viewport.offset()
-		let zf = this.ngs.zoomFactor
-		let mat = this.ngs.getNodeContainerTransformationMatrix()
-		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / zf
-		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / zf
+		let [ hw, hh ] = [ this.ioPort.width() * 0.5, this.ioPort.height() * 0.5 ]
+		, ioOffset = this.ioPort.offset()
+		, viewport = this.ngs.getViewportElem()
+		, viewportOffset = viewport.offset()
+		, mat = this.ngs.getNodeContainerTransformationMatrix()
+		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / mat[ 0 ]
+		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / mat[ 0 ]
 	}
 
 	isSelected() {
