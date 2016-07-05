@@ -57,8 +57,8 @@ export class NodeTempConnection {
 		, io = this.ngs.connectingIO.src
 		if ( io ) {
 			// TODO: no hard coded offset
-			p.x = io.ui.absolutePosition.x + 5 * ( io.type === 0 ? 1 : -1 )
-			p.y = io.ui.absolutePosition.y
+			p.x = io.position.x + 5 * ( io.type === 0 ? 1 : -1 )
+			p.y = io.position.y
 		}
 		return p
 	}

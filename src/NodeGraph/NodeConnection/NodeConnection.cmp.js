@@ -24,10 +24,10 @@ export class NodeConnection {
 
 	getBezierCurveString() {
 		// TODO: optimize this fn
-		let x1 = this.connection[ 0 ].ui.absolutePosition.x
-		, y1 = this.connection[ 0 ].ui.absolutePosition.y
-		, x2 = this.connection[ 1 ].ui.absolutePosition.x
-		, y2 = this.connection[ 1 ].ui.absolutePosition.y
+		let x1 = this.connection[ 0 ].position.x
+		, y1 = this.connection[ 0 ].position.y
+		, x2 = this.connection[ 1 ].position.x
+		, y2 = this.connection[ 1 ].position.y
 		, hf = Math.abs( x1 - x2 ) * 0.5
 		, cx1 = x1 + hf
 		, cx2 = x2 - hf

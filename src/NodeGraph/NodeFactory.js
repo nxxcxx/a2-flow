@@ -6,7 +6,7 @@ class Connection {
 		this.name = name
 		this.parent = parent
 		this.free = true
-		this.ui = { absolutePosition: { x: 0, y:0 } }
+		this.position = { x: 0, y: 0 }
 	}
 }
 
@@ -94,7 +94,7 @@ class Node extends Executable {
 		this.input = []
 		this.output = []
 		this.order = -1
-		this.ui = { absolutePosition: { x: 100, y: 100 } }
+		this.position = { x: 0, y: 0 }
 	}
 	addInput() {
 		for ( let arg of arguments ) {

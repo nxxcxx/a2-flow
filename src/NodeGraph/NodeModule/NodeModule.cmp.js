@@ -21,13 +21,13 @@ import $ from 'jquery'
 		<div #ioContainer class="ioContainer">
 
 			<div #inputColumn class="inputColumn">
-				<nodeModuleIO *ngFor="let input of node.input" [io]="input" (onLink)="onLink( $event )"></nodeModuleIO>
+				<nodeModuleIO *ngFor="let input of node.input" [io]="input" (onConnecting)="onConnecting( $event )"></nodeModuleIO>
 			</div>
 
 			<div #separator class="separator"></div>
 
 			<div #outputColumn class="outputColumn">
-				<nodeModuleIO *ngFor="let output of node.output" [io]="output" (onLink)="onLink( $event )"></nodeModuleIO>
+				<nodeModuleIO *ngFor="let output of node.output" [io]="output" (onConnecting)="onConnecting( $event )"></nodeModuleIO>
 			</div>
 
 		</div>
@@ -56,8 +56,8 @@ export class NodeModule {
 
 		// TODO: clean up
 		let zf = this.ngs.zoomFactor
-		let xx = this.node.ui.absolutePosition.x / zf
-		let yy = this.node.ui.absolutePosition.y / zf
+		let xx = this.node.position.x / zf
+		let yy = this.node.position.y / zf
 		this.nodeElem.css( { top: yy, left: xx } )
 
 		this.mousedownEvent = $event => {
@@ -80,8 +80,8 @@ export class NodeModule {
 			, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
 			this.nodeElem.css( { left: xx, top: yy } )
 			// TODO: rename absolutePosition ?
-			this.node.ui.absolutePosition.x = xx
-			this.node.ui.absolutePosition.y = yy
+			this.node.position.x = xx
+			this.node.position.y = yy
 			this.updatePositionIO()
 		}
 		this.updatePositionIO()
@@ -95,7 +95,7 @@ export class NodeModule {
 		this.nodeIO.toArray().forEach( io => io.updatePosition() )
 	}
 
-	onLink( bool ) {
+	onConnecting( bool ) {
 		this.disableMove = bool
 	}
 

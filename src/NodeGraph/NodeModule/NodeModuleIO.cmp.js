@@ -20,7 +20,7 @@ import $ from 'jquery'
 } )
 export class NodeModuleIO {
 
-	@Output() onLink = new EventEmitter()
+	@Output() onConnecting = new EventEmitter()
 	@Input() io
 	@ViewChild( 'ioRow' ) ioRow
 	@ViewChild( 'ioPort' ) ioPort
@@ -50,7 +50,7 @@ export class NodeModuleIO {
 			ioPort.removeClass( 'ioHover' )
 		}
 		this.mousedownEvent = () => {
-			this.onLink.emit( true )
+			this.onConnecting.emit( true )
 			this.ngs.startConnectingIO( this.io )
 		}
 		this.mouseupEvent = () => {
@@ -72,8 +72,8 @@ export class NodeModuleIO {
 		, viewport = this.ngs.getViewportElem()
 		, viewportOffset = viewport.offset()
 		, mat = this.ngs.getNodeContainerTransformationMatrix()
-		this.io.ui.absolutePosition.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / mat[ 0 ]
-		this.io.ui.absolutePosition.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / mat[ 0 ]
+		this.io.position.x = ( ioOffset.left - viewportOffset.left + viewport.scrollLeft() + hw - mat[ 4 ] ) / mat[ 0 ]
+		this.io.position.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / mat[ 0 ]
 	}
 
 	isSelected() {

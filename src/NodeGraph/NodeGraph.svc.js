@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from 'angular2/core'
+import { Injectable, NgZone, ChangeDetectorRef } from 'angular2/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
 import $ from 'jquery'
@@ -11,7 +11,7 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 @Injectable()
 export class NodeGraphService {
 
-	constructor( zone: NgZone ) {
+	constructor( zone: NgZone, changeDetectorRef: ChangeDetectorRef ) {
 		this.viewportElem = null
 		this.nodes = []
 		this.connections = []
@@ -22,9 +22,9 @@ export class NodeGraphService {
 		this.zoomFactor = 1.0
 		// DEBUG
 		window.NGS= this
-		// this.createTestNode3()
 		this.requestAnimationFrameId = null
 		this.zone = zone
+		this.changeDetectorRef = changeDetectorRef
 	}
 
 	registerViewportElem( viewportElem ) {
@@ -183,153 +183,6 @@ export class NodeGraphService {
 		}
 	}
 
-	createTestNode3() {
-		let n = nodeFactory.create( 'RENDERER' )
-		n.addInput( 'Camera', 'Scene' )
-		n._fnstr = `this.init = input => {
-			this.renderer = new THREE.WebGLRenderer( {
-				canvas: document.getElementById( 'canvas' )
-			} )
-			this.renderer.setClearColor( 0x29333d )
-			this.renderer.clear()
-		}
-
-		this.process = input => {
-			this.renderer.render( input.Scene, input.Camera )
-		}
-
-		this.flush = () => {
-			this.renderer.dispose()
-			this.renderer = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'SCENE' )
-		n.addInput( 'Object3D' )
-		n.addOutput( 'Scene' )
-		n._fnstr = `this.init = input => {
-			this.scene = new THREE.Scene()
-			this.mesh = input.Object3D
-			this.scene.add( this.mesh )
-		}
-
-		this.process = input => {
-			return {
-				Scene: this.scene
-			}
-		}
-
-		this.flush = () => {
-			this.scene.remove( this.mesh )
-			this.scene = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'GEOMETRY' )
-		n.addOutput( 'Geometry' )
-		n._fnstr = `this.init = input => {
-			this.geometry = new THREE.IcosahedronGeometry(
-				600,
-				1
-			)
-		}
-
-		this.process = input => {
-			return {
-				Geometry: this.geometry
-			}
-		}
-
-		this.flush = () => {
-			this.geometry.dispose()
-			this.geometry = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'Material' )
-		n.addInput( 'Color' )
-		n.addOutput( 'Material' )
-		n._fnstr = `this.init = input => {
-			this.material = new THREE.MeshBasicMaterial(
-				{ color: 0xffffff, wireframe: true }
-			)
-		}
-
-		this.process = input => {
-			return {
-				Material: this.material
-			}
-		}
-
-		this.flush = () => {
-			this.material.dispose()
-			this.material = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'MESH' )
-		n.addInput( 'Geometry', 'Material', 'Data' )
-		n.addOutput( 'Mesh' )
-		n._fnstr = `this.init = input => {
-			this.mesh = new THREE.Mesh(
-				input.Geometry,
-				input.Material
-			)
-		}
-
-		this.process = input => {
-			this.mesh.rotation.y += input.Data
-			return {
-				Mesh: this.mesh
-			}
-		}
-
-		this.flush = () => {
-			this.mesh = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'DATA' )
-		n.addOutput( 'X', 'Y', 'Z' )
-		n._fnstr = `this.init = () => {}
-		this.process = () => {
-			return {
-				X: Math.random() * 0.025,
-				Y: Math.random(),
-				Z: Math.random()
-			}
-		}
-		this.flush = () => {
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'CAMERA' )
-		n.addOutput( 'Camera' )
-		n._fnstr = `this.init = () => {
-			this.camera = new THREE.PerspectiveCamera( 75, 300 / 180, 1, 10000 )
-			this.camera.position.z = 1000
-		}
-
-		this.process = () => {
-			return {
-				Camera: this.camera
-			}
-		}
-
-		this.flush = () => {
-			this.camera = null
-			this.flushOutput()
-		}`
-		this.nodes.push( n )
-
-	}
-
 	exportGraphConfiguration() {
 		// TODO: the position export should be relative to zoom factor & scroll position?
 		let graph = { nodes: [], connections: [] }
@@ -337,7 +190,7 @@ export class NodeGraphService {
 			let nodeObject = { input: [], output: [] }
 			nodeObject.name = node.name
 			nodeObject.uuid = node.uuid
-			nodeObject.position = node.ui.absolutePosition
+			nodeObject.position = node.position
 			nodeObject._fnstr = node._fnstr
 			for ( let input of node.input ) {
 				nodeObject.input.push( {
@@ -374,8 +227,7 @@ export class NodeGraphService {
 		for ( let node of graph.nodes ) {
 			let nm = new nodeFactory.Node( node.name )
 			nm._fnstr = node._fnstr
-			nm.ui.absolutePosition.x = node.position.x
-			nm.ui.absolutePosition.y = node.position.y
+			nm.position = node.position
 			for ( let input of node.input ) {
 				let io = new nodeFactory.Input( input.name, nm )
 				io.uuid = input.uuid
@@ -391,13 +243,13 @@ export class NodeGraphService {
 			nodes.push( nm )
 		}
 		this.nodes = nodes
-		this.zone.run( () => { console.log( 'this is the new $rootScope.apply()' ) } )
+		// need to trigger update before adding connections
+		this.changeDetectorRef.detectChanges()
 		for ( let conn of graph.connections ) {
 			let output = uuid_io_map[ conn.output ]
 			let input = uuid_io_map[ conn.input ]
 			this.connectIO( output, input )
 		}
-		this.zone.run( () => { console.log( 'this is the new $rootScope.apply()' ) } )
 
 	}
 
