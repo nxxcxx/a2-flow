@@ -12,6 +12,9 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 	`
 	<div nodeDetails class="view left"></div>
 	<div nodeGraph class="view right"></div>
+	<canvas #canvas id="canvas" style="z-index: 10; position: absolute;
+		bottom: 0px; right: 0px; width: 300px; height: 180px">
+	</canvas>
 	`
 
 } )

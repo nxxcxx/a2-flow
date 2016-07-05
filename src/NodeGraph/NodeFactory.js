@@ -45,6 +45,9 @@ class Output extends Connection {
 		this.input = []
 		this.type = 0
 	}
+	flush() {
+		this.data = null
+	}
 }
 
 class Executable {
@@ -61,8 +64,8 @@ class Executable {
 	}
 	parse() {
 		try {
-			this._initfn = () => {}
-			this._process = () => {}
+			this.init = () => {}
+			this.process = () => {}
 			this._parseTask = new Function( this._fnstr )
 			this._parseTask()
 			this._initialized = false
@@ -91,7 +94,7 @@ class Node extends Executable {
 		this.input = []
 		this.output = []
 		this.order = -1
-		this.ui = { absolutePosition: { x: 0, y: 0 } }
+		this.ui = { absolutePosition: { x: 100, y: 100 } }
 	}
 	addInput() {
 		for ( let arg of arguments ) {
@@ -101,6 +104,11 @@ class Node extends Executable {
 	addOutput() {
 		for ( let arg of arguments ) {
 			this.output.push( new Output( arg, this ) )
+		}
+	}
+	flushOutput() {
+		for ( let output of this.output ) {
+			output.flush()
 		}
 	}
 }

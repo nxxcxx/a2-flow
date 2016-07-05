@@ -10,7 +10,9 @@ import $ from 'jquery'
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	`
-	<div #nodeElem class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}">
+	<div #nodeElem class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}"
+		style="top: 0px; left: 0px"
+	>
 
 		<div #headerElem class="headerElem">
 			{{ node.name }} {{ node.order }}
@@ -51,11 +53,18 @@ export class NodeModule {
 
 	ngAfterViewInit() {
 		this.nodeElem = $( this.nodeElem.nativeElement )
+
+		// TODO: clean up
+		let zf = this.ngs.zoomFactor
+		let xx = this.node.ui.absolutePosition.x / zf
+		let yy = this.node.ui.absolutePosition.y / zf
+		this.nodeElem.css( { top: yy, left: xx } )
+
 		this.mousedownEvent = $event => {
 			this.ngs.setSelectedNode( this.node )
 			this.mousehold = true
 			this.prevMouse = { x: $event.pageX, y: $event.pageY }
-			this.prevPos = this.nodeElem.position() // TODO: ?
+			this.prevPos = this.nodeElem.position()
 		}
 		this.mouseupEvent = () => {
 			this.mousehold = false
@@ -67,8 +76,12 @@ export class NodeModule {
 			// if select multiple, trigger the events to all selected node
 			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
-			let zf = this.ngs.zoomFactor
-			this.nodeElem.css( { left: ( this.prevPos.left + dx ) / zf, top: ( this.prevPos.top + dy ) / zf } )
+			, zf = this.ngs.zoomFactor
+			, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
+			this.nodeElem.css( { left: xx, top: yy } )
+			// TODO: rename absolutePosition ?
+			this.node.ui.absolutePosition.x = xx
+			this.node.ui.absolutePosition.y = yy
 			this.updatePositionIO()
 		}
 		this.updatePositionIO()

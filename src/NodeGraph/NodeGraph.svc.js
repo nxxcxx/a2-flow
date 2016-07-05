@@ -1,4 +1,4 @@
-import { Injectable } from 'angular2/core'
+import { Injectable, NgZone } from 'angular2/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
 import $ from 'jquery'
@@ -11,7 +11,7 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 @Injectable()
 export class NodeGraphService {
 
-	constructor() {
+	constructor( zone: NgZone ) {
 		this.viewportElem = null
 		this.nodes = []
 		this.connections = []
@@ -22,7 +22,9 @@ export class NodeGraphService {
 		this.zoomFactor = 1.0
 		// DEBUG
 		window.NGS= this
-		this.createTestNode3()
+		// this.createTestNode3()
+		this.requestAnimationFrameId = null
+		this.zone = zone
 	}
 
 	registerViewportElem( viewportElem ) {
@@ -46,7 +48,7 @@ export class NodeGraphService {
 			theme: 'black',
 			tabSize: 2
 		} )
-		cm.setSize( '100%', 400 )
+		cm.setSize( '100%', 460 )
 		cm.on( 'change', cm => {
 			// set selected node content
 			if ( !this.selectedNode ) return
@@ -146,70 +148,255 @@ export class NodeGraphService {
 	}
 
 	run() {
-		this.sortNodes()
+		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			n.execute()
+		} )
+		this.requestAnimationFrameId = window.requestAnimationFrame( this.run.bind( this ) ).data.handleId
+	}
+
+	loopStart() {
+		// TODO: run requestAnimationFrameId outside ngzone
+		if ( this.requestAnimationFrameId === null ) {
+			this.zone.runOutsideAngular( () => {
+				this.run()
+			} )
+		}
+	}
+
+	loopStop() {
+		if ( this.requestAnimationFrameId !== null ) {
+			window.cancelAnimationFrame( this.requestAnimationFrameId )
+			this.requestAnimationFrameId = null
+		}
+	}
+
+	step() {
 		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
 			n.execute()
 		} )
 	}
 
+	flushNodesData() {
+		for ( let node of this.nodes ) {
+			node.flush()
+		}
+	}
 
 	createTestNode3() {
-		let n
-		n = nodeFactory.create( 'SRC' )
+		let n = nodeFactory.create( 'RENDERER' )
+		n.addInput( 'Camera', 'Scene' )
+		n._fnstr = `this.init = input => {
+			this.renderer = new THREE.WebGLRenderer( {
+				canvas: document.getElementById( 'canvas' )
+			} )
+			this.renderer.setClearColor( 0x29333d )
+			this.renderer.clear()
+		}
+
+		this.process = input => {
+			this.renderer.render( input.Scene, input.Camera )
+		}
+
+		this.flush = () => {
+			this.renderer.dispose()
+			this.renderer = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'SCENE' )
+		n.addInput( 'Object3D' )
+		n.addOutput( 'Scene' )
+		n._fnstr = `this.init = input => {
+			this.scene = new THREE.Scene()
+			this.mesh = input.Object3D
+			this.scene.add( this.mesh )
+		}
+
+		this.process = input => {
+			return {
+				Scene: this.scene
+			}
+		}
+
+		this.flush = () => {
+			this.scene.remove( this.mesh )
+			this.scene = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'GEOMETRY' )
+		n.addOutput( 'Geometry' )
+		n._fnstr = `this.init = input => {
+			this.geometry = new THREE.IcosahedronGeometry(
+				600,
+				1
+			)
+		}
+
+		this.process = input => {
+			return {
+				Geometry: this.geometry
+			}
+		}
+
+		this.flush = () => {
+			this.geometry.dispose()
+			this.geometry = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'Material' )
+		n.addInput( 'Color' )
+		n.addOutput( 'Material' )
+		n._fnstr = `this.init = input => {
+			this.material = new THREE.MeshBasicMaterial(
+				{ color: 0xffffff, wireframe: true }
+			)
+		}
+
+		this.process = input => {
+			return {
+				Material: this.material
+			}
+		}
+
+		this.flush = () => {
+			this.material.dispose()
+			this.material = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'MESH' )
+		n.addInput( 'Geometry', 'Material', 'Data' )
+		n.addOutput( 'Mesh' )
+		n._fnstr = `this.init = input => {
+			this.mesh = new THREE.Mesh(
+				input.Geometry,
+				input.Material
+			)
+		}
+
+		this.process = input => {
+			this.mesh.rotation.y += input.Data
+			return {
+				Mesh: this.mesh
+			}
+		}
+
+		this.flush = () => {
+			this.mesh = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'DATA' )
 		n.addOutput( 'X', 'Y', 'Z' )
-		n._fnstr =
-		`this.init = function( input ) {
-	console.log( 'SRC: initfn', input )
-	this.t = 1
-}
-this.process = function( input ) {
-	console.log( 'SRC: process', input )
-	return {
-		X: this.t++, Y: Math.random(), Z: Math.random()
+		n._fnstr = `this.init = () => {}
+		this.process = () => {
+			return {
+				X: Math.random() * 0.025,
+				Y: Math.random(),
+				Z: Math.random()
+			}
+		}
+		this.flush = () => {
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
+		n = nodeFactory.create( 'CAMERA' )
+		n.addOutput( 'Camera' )
+		n._fnstr = `this.init = () => {
+			this.camera = new THREE.PerspectiveCamera( 75, 300 / 180, 1, 10000 )
+			this.camera.position.z = 1000
+		}
+
+		this.process = () => {
+			return {
+				Camera: this.camera
+			}
+		}
+
+		this.flush = () => {
+			this.camera = null
+			this.flushOutput()
+		}`
+		this.nodes.push( n )
+
 	}
-}
-console.log( 'SRC: parse' )`
-		this.nodes.push( n )
 
-		n = nodeFactory.create( 'SINK0' )
-		n.addInput( 'U', 'V', 'W' )
-		n._fnstr =
-		`this.init = function( input ) {
-	console.log( 'SINK0: initfn', input )
-}
-this.process = function( input ) {
-	console.log( 'SINK0: process', input )
-}
-console.log( 'SINK0: parse' )`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'SINK1' )
-		n.addInput( 'X', 'Y', 'Z' )
-		n._fnstr =
-		`this.init = function( input ) {
-	console.log( 'SINK1: initfn', input )
-}
-this.process = function( input ) {
-	console.log( 'SINK1: process', input )
-}
-console.log( 'SINK1: parse' )`
-		this.nodes.push( n )
-
-		n = nodeFactory.create( 'V3' )
-		n.addInput( 'U', 'V', 'W' )
-		n.addOutput( 'V3', 'U', 'V', 'W' )
-		n._fnstr =
-`this.init = function( input ) {
-	console.log( 'V3: initfn', input )
-}
-this.process = function( input ) {
-	console.log( 'V3: process', input )
-	return {
-		V3: [ input.U, input.V, input.W ], U: input.U, V: input.V, W: input.W
+	exportGraphConfiguration() {
+		// TODO: the position export should be relative to zoom factor & scroll position?
+		let graph = { nodes: [], connections: [] }
+		for ( let node of this.nodes ) {
+			let nodeObject = { input: [], output: [] }
+			nodeObject.name = node.name
+			nodeObject.uuid = node.uuid
+			nodeObject.position = node.ui.absolutePosition
+			nodeObject._fnstr = node._fnstr
+			for ( let input of node.input ) {
+				nodeObject.input.push( {
+					name: input.name,
+					uuid: input.uuid
+				} )
+			}
+			for ( let output of node.output ) {
+				nodeObject.output.push( {
+					name: output.name,
+					uuid: output.uuid
+				} )
+			}
+			graph.nodes.push( nodeObject )
+		}
+		for ( let connection of this.connections ) {
+			graph.connections.push( {
+				output: connection[ 0 ].uuid,
+				input:  connection[ 1 ].uuid
+			} )
+		}
+		graph = JSON.stringify( graph, null, 2 )
+		let win = window.open()
+		win.document.open()
+		win.document.write( '<html><body><pre>' + graph + '</pre></body></html>' )
+		win.document.close()
 	}
-}
-console.log( 'V3: parse' )`
-		this.nodes.push( n )
+
+	importGraphConfiguration() {
+
+		let graph = JSON.parse( require( '!raw!src/test_mockup.json' ) )
+		let nodes = []
+		let uuid_io_map = {}
+		for ( let node of graph.nodes ) {
+			let nm = new nodeFactory.Node( node.name )
+			nm._fnstr = node._fnstr
+			nm.ui.absolutePosition.x = node.position.x
+			nm.ui.absolutePosition.y = node.position.y
+			for ( let input of node.input ) {
+				let io = new nodeFactory.Input( input.name, nm )
+				io.uuid = input.uuid
+				uuid_io_map[ input.uuid ] = io
+				nm.input.push( io )
+			}
+			for ( let output of node.output ) {
+				let io = new nodeFactory.Output( output.name, nm )
+				io.uuid = output.uuid
+				uuid_io_map[ output.uuid ] = io
+				nm.output.push( io )
+			}
+			nodes.push( nm )
+		}
+		this.nodes = nodes
+		this.zone.run( () => { console.log( 'this is the new $rootScope.apply()' ) } )
+		for ( let conn of graph.connections ) {
+			let output = uuid_io_map[ conn.output ]
+			let input = uuid_io_map[ conn.input ]
+			this.connectIO( output, input )
+		}
+		this.zone.run( () => { console.log( 'this is the new $rootScope.apply()' ) } )
 
 	}
 
