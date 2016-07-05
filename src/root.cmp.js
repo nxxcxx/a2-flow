@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core'
+import { Component } from '@angular/core'
 import { NodeDetails } from 'src/NodeDetails/NodeDetails.cmp'
 import { NodeGraph } from 'src/NodeGraph/NodeGraph.cmp'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'

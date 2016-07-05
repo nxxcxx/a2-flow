@@ -1,4 +1,4 @@
-import { Injectable, NgZone, ChangeDetectorRef } from 'angular2/core'
+import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
 import $ from 'jquery'
@@ -251,6 +251,14 @@ export class NodeGraphService {
 			this.connectIO( output, input )
 		}
 
+	}
+
+	deleteIOfromNode( io ) {
+		let node = this.nodes.find( node => {
+			return ( node.input.find( inp => io === inp ) !== undefined ) || ( node.output.find( opt => opt === io ) !== undefined )
+		} )
+		this.disconnectIO( io )
+		node && node.deleteIO( io )
 	}
 
 }

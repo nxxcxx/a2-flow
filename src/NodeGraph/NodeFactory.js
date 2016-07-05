@@ -111,6 +111,10 @@ class Node extends Executable {
 			output.flush()
 		}
 	}
+	deleteIO( io ) {
+		this.input = this.input.filter( inp => inp !== io )
+		this.output = this.output.filter( opt => opt !== io )
+	}
 }
 
 function create( name ) {

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from 'angular2/core'
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import NodeFactory from 'src/NodeGraph/NodeFactory'
 import $ from 'jquery'

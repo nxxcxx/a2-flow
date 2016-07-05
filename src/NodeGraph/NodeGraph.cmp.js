@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from 'angular2/core'
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'

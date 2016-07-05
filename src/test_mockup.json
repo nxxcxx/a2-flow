@@ -59,7 +59,7 @@
         "x": 158,
         "y": 367
       },
-      "_fnstr": "this.init = () => {}\nthis.process = () => {\n  return {\n    X: Math.random() * 0.025,\n    Y: Math.random(),\n    Z: Math.random()\n  }\n}\nthis.flush = () => {\n  this.flushOutput()\n}"
+      "_fnstr": "this.init = () => {}\nthis.process = () => {\n  return {\n    X: 0.025,\n    Y: 0,\n    Z: 0\n  }\n}\nthis.flush = () => {\n  this.flushOutput()\n}"
     },
     {
       "input": [

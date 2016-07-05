@@ -3,7 +3,6 @@ var HtmlWebpackPlugin = require( 'html-webpack-plugin' )
 
 module.exports = {
 	entry: [
-		'./node_modules/angular2/bundles/angular2-polyfills.js',
 		'./src/index.js'
 	],
 	output: {

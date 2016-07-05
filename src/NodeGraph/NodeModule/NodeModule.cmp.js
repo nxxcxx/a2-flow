@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ViewChildren } from 'angular2/core'
+import { Component, Input, ViewChild, ViewChildren } from '@angular/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.cmp'
 import $ from 'jquery'
@@ -72,7 +72,7 @@ export class NodeModule {
 		}
 		this.mousemoveEvent = $event => {
 			if ( !this.mousehold || this.disableMove ) return
-			// TODO: multiple selection
+			// TODO: multiple selection ( expose move interface )
 			// if select multiple, trigger the events to all selected node
 			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
