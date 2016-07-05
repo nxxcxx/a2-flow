@@ -14,7 +14,6 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 			<button (click)="loopStart()">EXE</button>
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="step()">STP</button>
-			<button (click)="testMem()">MEM</button>
 		</div>
 		<div style="clear: left"></div>
 		<span>{{ ngs.getSelectedNode()?.name }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
@@ -60,15 +59,6 @@ export class NodeDetails {
 	flush() {
 		this.ngs.flushNodesData()
 		console.log( 'CLR' )
-	}
-
-	testMem() {
-		setInterval( () => {
-			this.parse()
-			this.loopStart()
-			this.loopStop()
-			this.flush()
-		}, 250 )
 	}
 
 }

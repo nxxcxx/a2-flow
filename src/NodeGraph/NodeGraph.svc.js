@@ -155,7 +155,6 @@ export class NodeGraphService {
 	}
 
 	loopStart() {
-		// TODO: run requestAnimationFrameId outside ngzone
 		if ( this.requestAnimationFrameId === null ) {
 			this.zone.runOutsideAngular( () => {
 				this.run()
@@ -171,9 +170,11 @@ export class NodeGraphService {
 	}
 
 	step() {
-		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-			n.execute()
-		} )
+		if ( this.requestAnimationFrameId === null ) {
+			this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+				n.execute()
+			} )
+		}
 	}
 
 	flushNodesData() {
