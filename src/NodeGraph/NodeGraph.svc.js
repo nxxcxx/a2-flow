@@ -192,25 +192,12 @@ export class NodeGraphService {
 			nodeObject.uuid = node.uuid
 			nodeObject.position = node.position
 			nodeObject._fnstr = node._fnstr
-			for ( let input of node.input ) {
-				nodeObject.input.push( {
-					name: input.name,
-					uuid: input.uuid
-				} )
-			}
-			for ( let output of node.output ) {
-				nodeObject.output.push( {
-					name: output.name,
-					uuid: output.uuid
-				} )
-			}
+			nodeObject.input = node.input.map( inp => ( { name: inp.name, uuid: inp.uuid } ) )
+			nodeObject.output = node.output.map( opt => ( { name: opt.name, uuid: opt.uuid } ) )
 			graph.nodes.push( nodeObject )
 		}
 		for ( let connection of this.connections ) {
-			graph.connections.push( {
-				output: connection[ 0 ].uuid,
-				input:  connection[ 1 ].uuid
-			} )
+			graph.connections.push( { output: connection[ 0 ].uuid, input:  connection[ 1 ].uuid } )
 		}
 		graph = JSON.stringify( graph, null, 2 )
 		let win = window.open()
@@ -221,6 +208,7 @@ export class NodeGraphService {
 
 	importGraphConfiguration() {
 
+		// TODO: clean up existing nodes & connections
 		let graph = JSON.parse( require( '!raw!src/test_mockup.json' ) )
 		let nodes = []
 		let uuid_io_map = {}
@@ -254,10 +242,8 @@ export class NodeGraphService {
 	}
 
 	deleteIOfromNode( io ) {
-		let node = this.nodes.find( node => {
-			return ( node.input.find( inp => io === inp ) !== undefined ) || ( node.output.find( opt => opt === io ) !== undefined )
-		} )
 		this.disconnectIO( io )
+		let node = this.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
 		node && node.deleteIO( io )
 	}
 
