@@ -20,11 +20,10 @@ export class NodeGraphService {
 		this.codeMirror = null
 		this.linking = false
 		this.zoomFactor = 1.0
-		// DEBUG
-		window.NGS= this
 		this.requestAnimationFrameId = null
 		this.zone = zone
 		this.changeDetectorRef = changeDetectorRef
+		window.NGS= this // DEBUG
 	}
 
 	registerViewportElem( viewportElem ) {
@@ -54,6 +53,7 @@ export class NodeGraphService {
 			if ( !this.selectedNode ) return
 			this.selectedNode._fnstr = cm.doc.getValue()
 		} )
+		window.CM = cm
 	}
 
 	getNodes() { return this.nodes }
@@ -85,7 +85,7 @@ export class NodeGraphService {
 
 	connectIO( output, input ) {
 		if ( this.isValidConnection( output, input ) ) {
-			this.disconnectInput( input )
+			this._disconnectInput( input )
 			input.connect( output )
 			this.connections.push( [ output, input ] )
 		}
@@ -93,16 +93,16 @@ export class NodeGraphService {
 
 	disconnectIO( io ) {
 		if ( io instanceof nodeFactory.Input ) {
-			this.disconnectInput( io )
+			this._disconnectInput( io )
 		} else if ( io instanceof nodeFactory.Output ) {
-			// need to make a new copy because cannot call disconnectInput inside a loop
+			// need to make a new copy because cannot call _disconnectInput inside a loop
 			for ( let input of Array.from( io.input ) ) {
-				this.disconnectInput( input )
+				this._disconnectInput( input )
 			}
 		}
 	}
 
-	disconnectInput( input ) {
+	_disconnectInput( input ) {
 		input.disconnect()
 		this.connections = this.connections.filter( io => io[ 1 ] !== input )
 	}
@@ -197,7 +197,7 @@ export class NodeGraphService {
 			graph.nodes.push( nodeObject )
 		}
 		for ( let connection of this.connections ) {
-			graph.connections.push( { output: connection[ 0 ].uuid, input:  connection[ 1 ].uuid } )
+			graph.connections.push( { output: connection[ 0 ].uuid, input: connection[ 1 ].uuid } )
 		}
 		graph = JSON.stringify( graph, null, 2 )
 		let win = window.open()
@@ -208,7 +208,7 @@ export class NodeGraphService {
 
 	importGraphConfiguration() {
 
-		// TODO: clean up existing nodes & connections
+		// TODO: clean up existing nodes & connections, async
 		let graph = JSON.parse( require( '!raw!src/test_mockup.json' ) )
 		let nodes = []
 		let uuid_io_map = {}

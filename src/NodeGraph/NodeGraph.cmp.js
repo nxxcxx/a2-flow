@@ -12,7 +12,7 @@ import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnect
 	`
 	<div #container id="nodeGraphContainer"
 		style="pointer-events: none; position: absolute; width: 5000px; height: 5000px;
-			transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0)
+			transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0);
 		"
 	>
 

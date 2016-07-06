@@ -1,11 +1,12 @@
 import { Component } from '@angular/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
+import { NodeTerminal } from 'src/NodeDetails/NodeTerminal.cmp'
 
 @Component( {
 
 	selector: '[nodeDetails]',
-	directives: [ NodeEditor ],
+	directives: [ NodeEditor, NodeTerminal ],
 	template:
 	`
 		<div>
@@ -17,8 +18,9 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 			<button (click)="importGraph()">IMP</button>
 		</div>
 		<div style="clear: left"></div>
-		<span>{{ ngs.getSelectedNode()?.name }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
+		<span>{{ ngs.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
+		<nodeTerminal></nodeTerminal>
 	`
 
 } )

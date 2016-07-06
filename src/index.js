@@ -1,7 +1,6 @@
 // stylesheets
 import 'sass/index.sass'
 
-// THREE.js
 import THREE from 'three'
 window.THREE = THREE
 

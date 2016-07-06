@@ -1,3 +1,18 @@
 add remove rename io
 multi selection
 separate/individual node compilation at runtime
+canvas & pre init renderer
+
+command terminal
+	ADD [I|O|N] name - add input/output/Node
+	DEL [I|O|N] name - delete input/output/Node
+	CLO - clone Node
+	DBG - log debug info
+
+--selected node
+
+addInput( node, inputNameArgs )
+	addInputToSelectedNode( name )
+
+deleteInputFromNode( input )
+	deleteInputByNameFromSelectedNode( name )

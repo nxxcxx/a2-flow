@@ -22,7 +22,7 @@
         }
       ],
       "name": "MESH",
-      "uuid": "63c876d5-ce07-4eb2-b09f-d3b93092f26d",
+      "uuid": "d11a3913-db1c-406f-a786-ab977a544089",
       "position": {
         "x": 316,
         "y": 285
@@ -38,32 +38,12 @@
         }
       ],
       "name": "CAMERA",
-      "uuid": "f65b4857-d18c-45fe-a7a1-d8e38db6ac44",
+      "uuid": "e7616947-28d4-457b-90c1-cc7c4831f70e",
       "position": {
         "x": 569,
         "y": 255
       },
       "_fnstr": "this.init = () => {\n  this.camera = new THREE.PerspectiveCamera( 75, 300 / 180, 1, 10000 )\n  this.camera.position.z = 1000\n}\n\nthis.process = () => {\n  return {\n    Camera: this.camera\n  }\n}\n\nthis.flush = () => {\n  this.camera = null\n  this.flushOutput()\n}"
-    },
-    {
-      "input": [
-        {
-          "name": "Camera",
-          "uuid": "ab381cad-7036-4abe-bf6f-edd7b9051d49"
-        },
-        {
-          "name": "Scene",
-          "uuid": "2ee00718-03e4-43ab-abc3-3ee5510737b3"
-        }
-      ],
-      "output": [],
-      "name": "RENDERER",
-      "uuid": "449d90f6-e396-4e20-aef4-328ed2afa126",
-      "position": {
-        "x": 751,
-        "y": 283
-      },
-      "_fnstr": "this.init = input => {\n  this.renderer = new THREE.WebGLRenderer( {\n    canvas: document.getElementById( 'canvas' )\n  } )\n  this.renderer.setClearColor( 0x29333d )\n  this.renderer.clear()\n}\n\nthis.process = input => {\n  this.renderer.render( input.Scene, input.Camera )\n}\n\nthis.flush = () => {\n  this.renderer.dispose()\n  this.renderer = null\n  this.flushOutput()\n}"
     },
     {
       "input": [
@@ -79,7 +59,7 @@
         }
       ],
       "name": "SCENE",
-      "uuid": "6b853c08-8ece-4455-81b3-8bd06720c4b4",
+      "uuid": "287a265e-e20e-4d81-8589-aa344c7e0c76",
       "position": {
         "x": 539,
         "y": 330
@@ -95,7 +75,7 @@
         }
       ],
       "name": "GEOMETRY",
-      "uuid": "c1a7c1e1-c3c1-480e-90d1-9192639ca851",
+      "uuid": "2092687f-0608-4edc-b2b0-f79b3cad6529",
       "position": {
         "x": 147,
         "y": 238
@@ -119,7 +99,7 @@
         }
       ],
       "name": "DATA",
-      "uuid": "0eeaa796-c302-4e79-9f01-a26e68b02665",
+      "uuid": "614ca0a0-0039-4230-9e70-b4ec1938f150",
       "position": {
         "x": 196,
         "y": 370
@@ -140,12 +120,32 @@
         }
       ],
       "name": "Material",
-      "uuid": "cdbf7cf5-c029-4cf1-8376-0d8d617175ad",
+      "uuid": "3082397c-d622-4ce2-b286-24a7f09fd0a3",
       "position": {
         "x": 59.22023063654218,
         "y": 300.93125038859233
       },
       "_fnstr": "this.init = input => {\n  this.material = new THREE.MeshBasicMaterial(\n    { color: 0xffffff, wireframe: true }\n  )\n}\n\nthis.process = input => {\n  return {\n    Material: this.material\n  }\n}\n\nthis.flush = () => {\n  this.material.dispose()\n  this.material = null\n  this.flushOutput()\n}"
+    },
+    {
+      "input": [
+        {
+          "name": "Camera",
+          "uuid": "ab381cad-7036-4abe-bf6f-edd7b9051d49"
+        },
+        {
+          "name": "Scene",
+          "uuid": "2ee00718-03e4-43ab-abc3-3ee5510737b3"
+        }
+      ],
+      "output": [],
+      "name": "RENDERER",
+      "uuid": "14b2000d-75f9-4d89-aa22-af48dc6d1299",
+      "position": {
+        "x": 751,
+        "y": 283
+      },
+      "_fnstr": "this.init = input => {\n  this.renderer = new THREE.WebGLRenderer( {\n    canvas: document.getElementById( 'canvas' ),\n    alpha: true,\n    antialias: true\n  } )\n  this.renderer.setClearColor( 0xffff00,0 )\n  this.renderer.clear()\n}\n\nthis.process = input => {\n  this.renderer.render( input.Scene, input.Camera )\n}\n\nthis.flush = () => {\n  this.renderer.dispose()\n  this.renderer = null\n  this.flushOutput()\n}"
     }
   ],
   "connections": [

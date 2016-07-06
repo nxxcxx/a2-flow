@@ -10,11 +10,15 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 	providers: [ NodeGraphService ],
 	template:
 	`
+	<canvas #canvas id="canvas" style="
+		position: absolute;
+		bottom: 0px; right: 0px;
+		width: 300px; height: 180px;
+		border: 1px solid white;
+	">
+	</canvas>
 	<div nodeDetails class="view left"></div>
 	<div nodeGraph class="view right"></div>
-	<canvas #canvas id="canvas" style="z-index: 10; position: absolute;
-		bottom: 0px; right: 0px; width: 300px; height: 180px">
-	</canvas>
 	`
 
 } )
