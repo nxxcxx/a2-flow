@@ -88,6 +88,8 @@ svg
 	background: rgba( 0, 0, 0, 0 )
 	overflow:visible
 
+$cm1: #bbbbbb
+
 .cm-s-black
 	&.CodeMirror
 		background-color: $d1
@@ -112,3 +114,17 @@ svg
 		color: $w1
 	span.cm-keyword, span.cm-string
 		color: #w1
+	span.cm-comment
+		color: #707070
+		font-style: italic
+	span.cm-keyword
+		color: $cm1
+	span.cm-atom
+		color: $cm1
+	span.cm-string
+		color: $cm1
+	span.cm-number
+		color: $cm1
+	span.cm-def
+		color: $cm1
+		text-decoration:underline

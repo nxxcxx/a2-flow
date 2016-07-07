@@ -1,6 +1,83 @@
 {
   "nodes": [
     {
+      "input": [],
+      "output": [
+        {
+          "name": "Camera",
+          "uuid": "13f3fab8-2072-4de7-9e5a-5e647ea39248"
+        }
+      ],
+      "name": "CAMERA",
+      "uuid": "3199b492-a2f3-46df-986e-addebc8f6905",
+      "position": {
+        "x": 569,
+        "y": 255
+      },
+      "_fnstr": "this.init = () => {\n  this.camera = new THREE.PerspectiveCamera( 75, WW / HH, 1, 10000 )\n  this.camera.position.z = 1000\n}\n\nthis.process = () => {\n  this.camera.aspect = WW / HH\n  this.camera.updateProjectionMatrix()\n  return {\n    Camera: this.camera\n  }\n}\n\nthis.flush = () => {\n  this.camera = null\n  this.flushOutput()\n}"
+    },
+    {
+      "input": [
+        {
+          "name": "Color",
+          "uuid": "b581b1a6-2751-43ec-a36d-ea23407a92d1"
+        }
+      ],
+      "output": [
+        {
+          "name": "Material",
+          "uuid": "78f45303-10ca-4fdb-95f4-27a6a01219e8"
+        }
+      ],
+      "name": "Material",
+      "uuid": "0294b836-f073-423e-91f4-41fdd35ca676",
+      "position": {
+        "x": 59.22023063654218,
+        "y": 300.93125038859233
+      },
+      "_fnstr": "this.init = input => {\n  this.material = new THREE.MeshBasicMaterial( { \n    \tcolor: 0xffffff, \n    \twireframe: true,\n      wireframeLinewidth: 2\n  \t}\n  )\n}\n\nthis.process = input => {\n  return {\n    Material: this.material\n  }\n}\n\nthis.flush = () => {\n  this.material.dispose()\n  this.material = null\n  this.flushOutput()\n}"
+    },
+    {
+      "input": [],
+      "output": [
+        {
+          "name": "X",
+          "uuid": "dd3e35b0-337b-4218-a17b-d22d001151bc"
+        },
+        {
+          "name": "Y",
+          "uuid": "b8855666-0218-47e6-be76-a022ba3bc1d2"
+        },
+        {
+          "name": "Z",
+          "uuid": "4e3c469a-39f3-4496-bba3-17738548fb89"
+        }
+      ],
+      "name": "DATA",
+      "uuid": "1ee639dd-4cc7-4d66-bc3b-d264ce9d3b87",
+      "position": {
+        "x": 196,
+        "y": 370
+      },
+      "_fnstr": "this.init = () => {}\nthis.process = () => {\n  return {\n    X: 0.005,\n    Y: 0,\n    Z: 0\n  }\n}\nthis.flush = () => {\n  this.flushOutput()\n}"
+    },
+    {
+      "input": [],
+      "output": [
+        {
+          "name": "Geometry",
+          "uuid": "5b70af39-95e2-4d2d-89fe-3d59b7826bf9"
+        }
+      ],
+      "name": "GEOMETRY",
+      "uuid": "dfe78994-d84d-4860-9457-7a764ad42b77",
+      "position": {
+        "x": 147,
+        "y": 238
+      },
+      "_fnstr": "this.init = input => {\n  this.geometry = new THREE.IcosahedronGeometry(\n    600,\n    1\n  )\n}\n\nthis.process = input => {\n  return {\n    Geometry: this.geometry\n  }\n}\n\nthis.flush = () => {\n  this.geometry.dispose()\n  this.geometry = null\n  this.flushOutput()\n}"
+    },
+    {
       "input": [
         {
           "name": "Geometry",
@@ -22,28 +99,12 @@
         }
       ],
       "name": "MESH",
-      "uuid": "d11a3913-db1c-406f-a786-ab977a544089",
+      "uuid": "fa98955b-2f1b-42e6-80e5-3385f2ffb71d",
       "position": {
         "x": 316,
         "y": 285
       },
       "_fnstr": "this.init = input => {\n  this.mesh = new THREE.Mesh(\n    input.Geometry,\n    input.Material\n  )\n}\n\nthis.process = input => {\n  this.mesh.rotation.y += input.Data\n  return {\n    Mesh: this.mesh\n  }\n}\n\nthis.flush = () => {\n  this.mesh = null\n  this.flushOutput()\n}"
-    },
-    {
-      "input": [],
-      "output": [
-        {
-          "name": "Camera",
-          "uuid": "13f3fab8-2072-4de7-9e5a-5e647ea39248"
-        }
-      ],
-      "name": "CAMERA",
-      "uuid": "e7616947-28d4-457b-90c1-cc7c4831f70e",
-      "position": {
-        "x": 569,
-        "y": 255
-      },
-      "_fnstr": "this.init = () => {\n  this.camera = new THREE.PerspectiveCamera( 75, 300 / 180, 1, 10000 )\n  this.camera.position.z = 1000\n}\n\nthis.process = () => {\n  return {\n    Camera: this.camera\n  }\n}\n\nthis.flush = () => {\n  this.camera = null\n  this.flushOutput()\n}"
     },
     {
       "input": [
@@ -59,73 +120,12 @@
         }
       ],
       "name": "SCENE",
-      "uuid": "287a265e-e20e-4d81-8589-aa344c7e0c76",
+      "uuid": "a1225b06-1e96-41a2-b1e6-714e0a062e04",
       "position": {
         "x": 539,
         "y": 330
       },
       "_fnstr": "this.init = input => {\n  this.scene = new THREE.Scene()\n  this.mesh = input.Object3D\n  this.scene.add( this.mesh )\n}\n\nthis.process = input => {\n  return {\n    Scene: this.scene\n  }\n}\n\nthis.flush = () => {\n  this.scene.remove( this.mesh )\n  this.scene = null\n  this.flushOutput()\n}"
-    },
-    {
-      "input": [],
-      "output": [
-        {
-          "name": "Geometry",
-          "uuid": "5b70af39-95e2-4d2d-89fe-3d59b7826bf9"
-        }
-      ],
-      "name": "GEOMETRY",
-      "uuid": "2092687f-0608-4edc-b2b0-f79b3cad6529",
-      "position": {
-        "x": 147,
-        "y": 238
-      },
-      "_fnstr": "this.init = input => {\n  this.geometry = new THREE.IcosahedronGeometry(\n    600,\n    1\n  )\n}\n\nthis.process = input => {\n  return {\n    Geometry: this.geometry\n  }\n}\n\nthis.flush = () => {\n  this.geometry.dispose()\n  this.geometry = null\n  this.flushOutput()\n}"
-    },
-    {
-      "input": [],
-      "output": [
-        {
-          "name": "X",
-          "uuid": "dd3e35b0-337b-4218-a17b-d22d001151bc"
-        },
-        {
-          "name": "Y",
-          "uuid": "b8855666-0218-47e6-be76-a022ba3bc1d2"
-        },
-        {
-          "name": "Z",
-          "uuid": "4e3c469a-39f3-4496-bba3-17738548fb89"
-        }
-      ],
-      "name": "DATA",
-      "uuid": "614ca0a0-0039-4230-9e70-b4ec1938f150",
-      "position": {
-        "x": 196,
-        "y": 370
-      },
-      "_fnstr": "this.init = () => {}\nthis.process = () => {\n  return {\n    X: 0.025,\n    Y: 0,\n    Z: 0\n  }\n}\nthis.flush = () => {\n  this.flushOutput()\n}"
-    },
-    {
-      "input": [
-        {
-          "name": "Color",
-          "uuid": "b581b1a6-2751-43ec-a36d-ea23407a92d1"
-        }
-      ],
-      "output": [
-        {
-          "name": "Material",
-          "uuid": "78f45303-10ca-4fdb-95f4-27a6a01219e8"
-        }
-      ],
-      "name": "Material",
-      "uuid": "3082397c-d622-4ce2-b286-24a7f09fd0a3",
-      "position": {
-        "x": 59.22023063654218,
-        "y": 300.93125038859233
-      },
-      "_fnstr": "this.init = input => {\n  this.material = new THREE.MeshBasicMaterial(\n    { color: 0xffffff, wireframe: true }\n  )\n}\n\nthis.process = input => {\n  return {\n    Material: this.material\n  }\n}\n\nthis.flush = () => {\n  this.material.dispose()\n  this.material = null\n  this.flushOutput()\n}"
     },
     {
       "input": [
@@ -140,12 +140,12 @@
       ],
       "output": [],
       "name": "RENDERER",
-      "uuid": "14b2000d-75f9-4d89-aa22-af48dc6d1299",
+      "uuid": "6c73b3b5-7844-43dd-86c0-b09e3bbed7cc",
       "position": {
-        "x": 751,
+        "x": 756,
         "y": 283
       },
-      "_fnstr": "this.init = input => {\n  this.renderer = new THREE.WebGLRenderer( {\n    canvas: document.getElementById( 'canvas' ),\n    alpha: true,\n    antialias: true\n  } )\n  this.renderer.setClearColor( 0xffff00,0 )\n  this.renderer.clear()\n}\n\nthis.process = input => {\n  this.renderer.render( input.Scene, input.Camera )\n}\n\nthis.flush = () => {\n  this.renderer.dispose()\n  this.renderer = null\n  this.flushOutput()\n}"
+      "_fnstr": "this.init = input => {\n  this.renderer = window.RENDERER\n  this.renderer.setClearColor( 0x000000, 0 )\n  this.renderer.clear()\n}\n\nthis.process = input => {\n  this.renderer.render( input.Scene, input.Camera )\n}\n\nthis.flush = () => {\n  this.flushOutput()\n}"
     }
   ],
   "connections": [

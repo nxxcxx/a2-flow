@@ -15,7 +15,7 @@ export class NodeEditor {
 		this.ngs = ngs
 	}
 
-	ngAfterViewInit() {
+	ngOnInit() {
 		this.ngs.initEditor( this.editor.nativeElement )
 	}
 

@@ -2,26 +2,20 @@ import { Component } from '@angular/core'
 import { NodeDetails } from 'src/NodeDetails/NodeDetails.cmp'
 import { NodeGraph } from 'src/NodeGraph/NodeGraph.cmp'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRendererService } from 'src/NodeGraph/NodeRenderer.svc'
+import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
 
 @Component( {
 
 	selector: '[rootComponent]',
-	directives: [ NodeDetails, NodeGraph ],
-	providers: [ NodeGraphService ],
+	directives: [ NodeDetails, NodeGraph, NodeCanvas ],
+	providers: [ NodeGraphService, NodeRendererService ],
 	template:
 	`
-	<canvas #canvas id="canvas" style="
-		position: absolute;
-		bottom: 0px; right: 0px;
-		width: 300px; height: 180px;
-		border: 1px solid white;
-	">
-	</canvas>
+	<nodeCanvas></nodeCanvas>
 	<div nodeDetails class="view left"></div>
 	<div nodeGraph class="view right"></div>
 	`
 
 } )
-export class RootComponent {
-
-}
+export class RootComponent {}

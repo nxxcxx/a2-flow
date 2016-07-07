@@ -16,11 +16,11 @@ import { NodeTerminal } from 'src/NodeDetails/NodeTerminal.cmp'
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="step()">STP</button>
 			<button (click)="importGraph()">IMP</button>
+			<button (click)="ngs.createTestNode()">ADD</button>
 		</div>
 		<div style="clear: left"></div>
 		<span>{{ ngs.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
-		<nodeTerminal></nodeTerminal>
 	`
 
 } )
@@ -31,15 +31,8 @@ export class NodeDetails {
 		this.debugEnabled = false
 	}
 
-	toggleDebug() {
-		this.debugEnabled = !this.debugEnabled
-	}
-
-	getNodeInfo() {
-		return this.cjson.transform( this.ngs.getSelectedNode(), 2 )
-	}
-
 	parse() {
+		this.loopStop()
 		this.ngs.parse()
 		console.log( 'PAR' )
 	}

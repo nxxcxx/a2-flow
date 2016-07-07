@@ -1,3 +1,7 @@
+storage service, use rx observable
+when hover on any node, animate canvas opacity
+use observable subscription to register viewportElem
+changeDetectionStrategy
 add remove rename io
 multi selection
 separate/individual node compilation at runtime

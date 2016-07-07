@@ -69,6 +69,10 @@ export class NodeGraphService {
 		this.codeMirror.doc.setValue( node._fnstr )
 	}
 
+	clearSelectedNode() {
+		this.selectedNode = null
+	}
+
 	isConnectionExists( output, input ) {
 		return this.connections.find( io => io[ 0 ] === output && io[ 1 ] === input ) !== undefined
 	}
@@ -172,7 +176,7 @@ export class NodeGraphService {
 	step() {
 		if ( this.requestAnimationFrameId === null ) {
 			this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-				n.execute()
+				n.execute( 'a', 2, 'b' )
 			} )
 		}
 	}
@@ -245,6 +249,18 @@ export class NodeGraphService {
 		this.disconnectIO( io )
 		let node = this.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
 		node && node.deleteIO( io )
+	}
+
+	createTestNode() {
+		function genID() {
+			let id = String.fromCharCode( Math.floor( Math.random() * 23 ) + 65 ) + ~~( Math.random() * 9 )
+			return id
+		}
+		let n = new nodeFactory.Node( genID() )
+		let [ ilen, olen ] = [ ~~( Math.random() * 6 ), ~~( Math.random() * 6 ) ]
+		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
+		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
+		this.nodes.push( n )
 	}
 
 }

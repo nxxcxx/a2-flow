@@ -9,11 +9,21 @@ import $ from 'jquery'
 	styles: [ require( '!raw!sass!root/sass/NodeModuleIO.cmp.sass') ],
 	template:
 	`
-	<div #ioRow class="ioRow">
+	<div #ioRow class="ioRow" [ngClass]="{ inputRow: isInput, outputRow: isOutput }">
+
 		<div #ioPort class="ioPort"
-			[ngClass]="{ ioActive: !io.free, ioDisabled: io.free, selected: isSelected(), deselected: !isSelected() }"
+			[ngClass]="{
+				ioActive: !io.free, ioDisabled: io.free,
+				selected: isSelected(), deselected: !isSelected(),
+				inputPort: isInput, outputPort: isOutput,
+				ioHover: mousehover
+			}"
 		></div>
-		<div #ioLabel class="ioLabel">{{ io.name }}</div>
+
+		<div #ioLabel class="ioLabel"
+			[ngClass]="{ inputLabel: isInput, outputLabel: isOutput }"
+		>{{ io.name }}</div>
+
 	</div>
 	`
 
@@ -22,32 +32,24 @@ export class NodeModuleIO {
 
 	@Output() onConnecting = new EventEmitter()
 	@Input() io
-	@ViewChild( 'ioRow' ) ioRow
 	@ViewChild( 'ioPort' ) ioPort
-	@ViewChild( 'ioLabel' ) ioLabel
 
 	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
 	}
 
+	ngOnInit() {
+		this.isInput = this.io instanceof NodeFactory.Input
+		this.isOutput = this.io instanceof NodeFactory.Output
+	}
+
 	ngAfterViewInit() {
 		let ioPort = this.ioPort = $( this.ioPort.nativeElement )
-		, ioRow = $( this.ioRow.nativeElement )
-		, ioLabel = $( this.ioLabel.nativeElement )
-		if ( this.io instanceof NodeFactory.Input ) {
-			ioRow.addClass( 'inputRow' )
-			ioLabel.addClass( 'inputLabel' )
-			ioPort.addClass( 'inputPort' )
-		} else {
-			ioRow.addClass( 'outputRow' )
-			ioLabel.addClass( 'outputLabel' )
-			ioPort.addClass( 'outputPort' )
-		}
 		this.mouseenterEvent = () => {
-			if ( this.io.free ) ioPort.addClass( 'ioHover' )
+			this.mousehover = true
 		}
 		this.mouseleaveEvent = () => {
-			ioPort.removeClass( 'ioHover' )
+			this.mousehover = false
 		}
 		this.mousedownEvent = () => {
 			this.onConnecting.emit( true )

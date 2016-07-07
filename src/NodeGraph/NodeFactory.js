@@ -53,7 +53,6 @@ class Output extends Connection {
 class Executable {
 	constructor() {
 		this._fnstr = ''
-		// this._task = null
 		this._parseTask = null
 		this._initialized = false
 	}
@@ -70,17 +69,17 @@ class Executable {
 			this._parseTask()
 			this._initialized = false
 		} catch ( ex ) {
-			console.error( ex, this )
+			console.warn( ex, this )
 		}
 	}
-	execute() {
+	execute( injectObj = {} ) {
 		var inpObj = {}
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
 		try {
-			this._init.call( this, inpObj )
-			var res = this.process.call( this, inpObj )
+			this._init.call( this, inpObj, injectObj )
+			var res = this.process.call( this, inpObj, injectObj )
 		} catch ( ex ) {
-			console.error( ex, this )
+			console.warn( ex, this )
 		}
 		this.output.forEach( io => { io.data = res[ io.name ] } )
 	}
@@ -107,9 +106,7 @@ class Node extends Executable {
 		}
 	}
 	flushOutput() {
-		for ( let output of this.output ) {
-			output.flush()
-		}
+		this.output.forEach( output => output.flush() )
 	}
 	deleteIO( io ) {
 		this.input = this.input.filter( inp => inp !== io )
@@ -117,8 +114,4 @@ class Node extends Executable {
 	}
 }
 
-function create( name ) {
-	return new Node( name )
-}
-
-export default { create, Node, Input, Output }
+export default { Node, Input, Output }

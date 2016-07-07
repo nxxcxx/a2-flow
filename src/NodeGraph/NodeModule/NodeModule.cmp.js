@@ -10,12 +10,10 @@ import $ from 'jquery'
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	`
-	<div #nodeElem class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}"
-		style="top: 0px; left: 0px"
-	>
+	<div #nodeElem class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}" >
 
 		<div #headerElem class="headerElem">
-			{{ node.name }} {{ node.order }}
+			{{ node.name }}
 		</div>
 
 		<div #ioContainer class="ioContainer">
@@ -49,16 +47,16 @@ export class NodeModule {
 
 	ngOnInit() {
 		// TODO: this.node.setAngularComponent( this )
+		this.nodeElem = $( this.nodeElem.nativeElement )
 	}
 
 	ngAfterViewInit() {
-		this.nodeElem = $( this.nodeElem.nativeElement )
 
-		// TODO: clean up
+		// TODO: clean up init position
 		let zf = this.ngs.zoomFactor
 		let xx = this.node.position.x / zf
 		let yy = this.node.position.y / zf
-		this.nodeElem.css( { top: yy, left: xx } )
+		this.nodeElem.css( 'transform', `matrix(1,0,0,1,${xx},${yy})` )
 
 		this.mousedownEvent = $event => {
 			this.ngs.setSelectedNode( this.node )
@@ -74,21 +72,30 @@ export class NodeModule {
 			if ( !this.mousehold || this.disableMove ) return
 			// TODO: multiple selection ( expose move interface )
 			// if select multiple, trigger the events to all selected node
-			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().trigger( 'evt', fn ) )
+			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().movePosition( dx, dy ) )
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
-			, zf = this.ngs.zoomFactor
-			, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
-			this.nodeElem.css( { left: xx, top: yy } )
-			// TODO: rename absolutePosition ?
-			this.node.position.x = xx
-			this.node.position.y = yy
-			this.updatePositionIO()
+			this.movePosition( dx, dy )
 		}
 		this.updatePositionIO()
 		this.nodeElem.on( 'mousedown', this.mousedownEvent )
 		this.ngs.getViewportElem()
 		.on( 'mouseup', this.mouseupEvent )
 		.on( 'mousemove', this.mousemoveEvent )
+	}
+
+	movePosition( dx, dy ) {
+		let zf = this.ngs.zoomFactor
+		, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
+		this.nodeElem.css( 'transform', `matrix(1,0,0,1,${xx},${yy})` )
+		this.node.position.x = xx
+		this.node.position.y = yy
+		this.updatePositionIO()
+	}
+
+	ngOnDestroy() {
+		this.ngs.getViewportElem()
+		.off( 'mouseup', this.mouseupEvent )
+		.off( 'mousemove', this.mousemoveEvent )
 	}
 
 	updatePositionIO() {
