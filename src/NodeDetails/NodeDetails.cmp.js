@@ -1,12 +1,11 @@
 import { Component } from '@angular/core'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
-import { NodeTerminal } from 'src/NodeDetails/NodeTerminal.cmp'
 
 @Component( {
 
 	selector: '[nodeDetails]',
-	directives: [ NodeEditor, NodeTerminal ],
+	directives: [ NodeEditor ],
 	template:
 	`
 		<div>
