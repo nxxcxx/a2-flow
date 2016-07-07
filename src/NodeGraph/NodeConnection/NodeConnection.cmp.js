@@ -11,7 +11,7 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 			(dblclick)="disconnect()"
 			[attr.d]="getBezierCurveString()"
 			[attr.stroke]="getStokeColor()"
-			stroke-width="1" fill="rgba(0,0,0,0)"
+			stroke-width="1.5" fill="rgba(0,0,0,0)"
 		/>
 	`
 

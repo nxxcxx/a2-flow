@@ -6,6 +6,7 @@ import $ from 'jquery'
 // CodeMirror ( import order is important )
 import CodeMirror from 'codemirror'
 import 'root/node_modules/codemirror/mode/javascript/javascript.js'
+import 'root/node_modules/codemirror/keymap/vim.js'
 import 'root/node_modules/codemirror/lib/codemirror.css'
 
 @Injectable()
@@ -44,6 +45,7 @@ export class NodeGraphService {
 		let cm = this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
 			lineNumbers: true,
 			mode: 'javascript',
+			keyMap: 'vim',
 			theme: 'black',
 			tabSize: 2
 		} )
@@ -54,6 +56,7 @@ export class NodeGraphService {
 			this.selectedNode._fnstr = cm.doc.getValue()
 		} )
 		window.CM = cm
+		cm.constructor.Vim.map('jj', '<Esc>', 'insert')
 	}
 
 	getNodes() { return this.nodes }
