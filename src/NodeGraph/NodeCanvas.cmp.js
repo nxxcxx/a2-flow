@@ -27,26 +27,19 @@ export class NodeCanvas {
 	}
 
 	ngOnInit() {
-		window.RENDERER = new window.THREE.WebGLRenderer( {
+		this.renderer = new window.THREE.WebGLRenderer( {
 			canvas: this.canvas.nativeElement,
 			alpha: true,
 			antialias: true
 		} )
+		this.ngs.registerRenderer( this.renderer )
 	}
 
 	ngAfterViewInit() {
-		let canvas = this.canvas.nativeElement
-		, viewport = this.ngs.getViewportElem()
-		window.CANVAS = canvas
-		updateCanvas()
-		$( window ).on( 'resize', updateCanvas )
-		function updateCanvas() {
-			window.WW = viewport.width()
-			window.HH = viewport.height()
-			window.CANVAS.width = window.WW
-			window.CANVAS.height = window.HH
-			window.RENDERER.setSize( window.WW, window.HH )
-		}
+		let viewport = this.ngs.getViewportElem()
+		$( window ).on( 'resize', () => {
+			this.renderer.setSize( viewport.width(), viewport.height() )
+		} ).trigger( 'resize' )
 	}
 
 }

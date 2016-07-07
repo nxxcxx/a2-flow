@@ -29,6 +29,12 @@ export class NodeDetails {
 	constructor( ngs: NodeGraphService ) {
 		this.ngs = ngs
 		this.debugEnabled = false
+		window.test = () => {
+			this.parse()
+			this.loopStart()
+			this.loopStop()
+			this.flush()
+		}
 	}
 
 	parse() {
@@ -53,6 +59,7 @@ export class NodeDetails {
 	}
 
 	flush() {
+		this.loopStop()
 		this.ngs.flushNodesData()
 		console.log( 'CLR' )
 	}

@@ -18,4 +18,14 @@ import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
 	`
 
 } )
-export class RootComponent {}
+export class RootComponent {
+
+	constructor( ngs: NodeGraphService ) {
+		this.ngs = ngs
+	}
+
+	ngAfterViewInit() {
+		setTimeout( () => { this.ngs.importGraphConfiguration() }, 0 )
+	}
+
+}

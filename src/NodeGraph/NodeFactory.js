@@ -56,9 +56,9 @@ class Executable {
 		this._parseTask = null
 		this._initialized = false
 	}
-	_init( inputObj ) {
+	_init( inputObj, injectObj ) {
 		if ( this._initialized ) return
-		this.init( inputObj )
+		this.init( inputObj, injectObj )
 		this._initialized = true
 	}
 	parse() {
@@ -69,7 +69,7 @@ class Executable {
 			this._parseTask()
 			this._initialized = false
 		} catch ( ex ) {
-			console.warn( ex, this )
+			console.warn( ex, this.name, this.uuid )
 		}
 	}
 	execute( injectObj = {} ) {
@@ -79,7 +79,7 @@ class Executable {
 			this._init.call( this, inpObj, injectObj )
 			var res = this.process.call( this, inpObj, injectObj )
 		} catch ( ex ) {
-			console.warn( ex, this )
+			console.warn( ex, this.name, this.uuid )
 		}
 		this.output.forEach( io => { io.data = res[ io.name ] } )
 	}

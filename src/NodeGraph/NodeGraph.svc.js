@@ -24,7 +24,12 @@ export class NodeGraphService {
 		this.requestAnimationFrameId = null
 		this.zone = zone
 		this.changeDetectorRef = changeDetectorRef
-		window.NGS= this // DEBUG
+		this.renderer = null
+		window.NGS= this
+	}
+
+	registerRenderer( renderer ) {
+		this.renderer = renderer
 	}
 
 	registerViewportElem( viewportElem ) {
@@ -56,7 +61,7 @@ export class NodeGraphService {
 			this.selectedNode._fnstr = cm.doc.getValue()
 		} )
 		window.CM = cm
-		cm.constructor.Vim.map('jj', '<Esc>', 'insert')
+		cm.constructor.Vim.map( 'jj', '<Esc>', 'insert' )
 	}
 
 	getNodes() { return this.nodes }
@@ -154,9 +159,26 @@ export class NodeGraphService {
 		} )
 	}
 
+	createInjectionObject() {
+		let rendererSize = this.renderer.getSize()
+		return {
+			renderer: this.renderer,
+			width: rendererSize.width,
+			height: rendererSize.height
+		}
+	}
+
+	step() {
+		if ( this.requestAnimationFrameId === null ) {
+			this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+				n.execute( this.createInjectionObject() )
+			} )
+		}
+	}
+
 	run() {
 		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-			n.execute()
+			n.execute( this.createInjectionObject() )
 		} )
 		this.requestAnimationFrameId = window.requestAnimationFrame( this.run.bind( this ) ).data.handleId
 	}
@@ -176,14 +198,6 @@ export class NodeGraphService {
 		}
 	}
 
-	step() {
-		if ( this.requestAnimationFrameId === null ) {
-			this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
-				n.execute( 'a', 2, 'b' )
-			} )
-		}
-	}
-
 	flushNodesData() {
 		for ( let node of this.nodes ) {
 			node.flush()
@@ -197,7 +211,7 @@ export class NodeGraphService {
 			let nodeObject = { input: [], output: [] }
 			nodeObject.name = node.name
 			nodeObject.uuid = node.uuid
-			nodeObject.position = node.position
+			nodeObject.position = { x: ~~node.position.x, y: ~~node.position.y }
 			nodeObject._fnstr = node._fnstr
 			nodeObject.input = node.input.map( inp => ( { name: inp.name, uuid: inp.uuid } ) )
 			nodeObject.output = node.output.map( opt => ( { name: opt.name, uuid: opt.uuid } ) )
