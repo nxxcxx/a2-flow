@@ -51,7 +51,6 @@ export class NodeModule {
 	}
 
 	ngAfterViewInit() {
-
 		// TODO: clean up init position
 		let zf = this.ngs.zoomFactor
 		let xx = this.node.position.x / zf
@@ -70,7 +69,7 @@ export class NodeModule {
 		}
 		this.mousemoveEvent = $event => {
 			if ( !this.mousehold || this.disableMove ) return
-			// TODO: multiple selection ( expose move interface )
+			// TODO: multiple selection
 			// if select multiple, trigger the events to all selected node
 			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().movePosition( dx, dy ) )
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
@@ -83,6 +82,12 @@ export class NodeModule {
 		.on( 'mousemove', this.mousemoveEvent )
 	}
 
+	ngOnDestroy() {
+		this.ngs.getViewportElem()
+		.off( 'mouseup', this.mouseupEvent )
+		.off( 'mousemove', this.mousemoveEvent )
+	}
+
 	movePosition( dx, dy ) {
 		let zf = this.ngs.zoomFactor
 		, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
@@ -90,12 +95,6 @@ export class NodeModule {
 		this.node.position.x = xx
 		this.node.position.y = yy
 		this.updatePositionIO()
-	}
-
-	ngOnDestroy() {
-		this.ngs.getViewportElem()
-		.off( 'mouseup', this.mouseupEvent )
-		.off( 'mousemove', this.mousemoveEvent )
 	}
 
 	updatePositionIO() {

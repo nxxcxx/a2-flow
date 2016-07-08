@@ -13,9 +13,9 @@ import $ from 'jquery'
 
 		<div #ioPort class="ioPort"
 			[ngClass]="{
-				ioActive: !io.free, ioDisabled: io.free,
-				selected: isSelected(), deselected: !isSelected(),
 				inputPort: isInput, outputPort: isOutput,
+				selected: isSelected(), deselected: !isSelected(),
+				ioActive: !io.free, ioDisabled: io.free,
 				ioHover: mousehover
 			}"
 		></div>

@@ -3,7 +3,6 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
-import $ from 'jquery'
 
 @Component( {
 
@@ -54,7 +53,6 @@ export class NodeGraph {
 	ngOnInit() {
 		this.ngs.registerViewportElem( this.el )
 		this.ngs.setNodeContainerElemId( 'nodeGraphContainer' )
-		// $( this.el ).on('keyup keydown', function(e){ console.log( e.shiftKey ) } );
 	}
 
 	@HostListener( 'wheel', [ '$event' ] ) onMouseWheel( $event ) {
@@ -70,7 +68,7 @@ export class NodeGraph {
 		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
 		, xx = sd * ( mat[ 4 ] - ox ) + ox
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
-		if ( ss <= 0.2 ) return // clamp scaling
+		if ( ss <= 0.1 ) return // clamp scaling
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		// TODO: no direct access to zoomFactor
 		this.ngs.zoomFactor = ss
@@ -94,18 +92,6 @@ export class NodeGraph {
 		viewport.scrollLeft( viewport.scrollLeft() - dt.x )
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
-
-	// @HostListener( 'mouseenter', [ '$event' ] ) onMouseEnter( $event ) {
-	// 	if ( $event.target !== this.ngs.getViewportElem().get(0) ) return
-	// 	this.ngs.getNodeContainerElem().animate( { opacity: 1.0 }, 300 )
-	// 	$( '#canvas' ).animate( { opacity: 0.1 }, 300 )
-	// }
-	//
-	// @HostListener( 'mouseleave', [ '$event' ] ) onMouseLeave( $event ) {
-	// 	if ( $event.target !== this.ngs.getViewportElem().get(0) ) return
-	// 	this.ngs.getNodeContainerElem().animate( { opacity: 0.1 }, 300 )
-	// 	$( '#canvas' ).animate( { opacity: 1.0 }, 300 )
-	// }
 
 	@HostListener( 'contextmenu', [ '$event' ] ) onContextMenu( $event ) {
 		$event.preventDefault()
