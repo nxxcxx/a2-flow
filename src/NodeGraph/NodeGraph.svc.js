@@ -2,6 +2,7 @@ import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import toposort from 'toposort'
 import $ from 'jquery'
+import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 
 // CodeMirror ( import order is important )
 import CodeMirror from 'codemirror'
@@ -12,18 +13,20 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 @Injectable()
 export class NodeGraphService {
 
-	constructor( zone: NgZone, changeDetectorRef: ChangeDetectorRef ) {
+	constructor( _store: NodeStoreService, zone: NgZone, changeDetectorRef: ChangeDetectorRef ) {
+		this._store = _store
+		this.zone = zone
+		this.changeDetectorRef = changeDetectorRef
 		this.viewportElem = null
+		this.containerElem = null
 		this.nodes = []
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
+		this.isConnecting = false
 		this.selectedNode = null
 		this.codeMirror = null
-		this.linking = false
 		this.zoomFactor = 1.0
 		this.requestAnimationFrameId = null
-		this.zone = zone
-		this.changeDetectorRef = changeDetectorRef
 		this.renderer = null
 		window.NGS= this
 	}
@@ -36,14 +39,20 @@ export class NodeGraphService {
 		this.viewportElem = $( viewportElem )
 	}
 
-	getViewportElem() { return this.viewportElem }
+	getViewportElem() {
+		return this.viewportElem
+	}
 
-	setNodeContainerElemId( id ) { this.nodeContainerElem = this.viewportElem.find( '#' + id ) }
+	setNodeContainerElem( containerElem ) {
+		this.containerElem = $( containerElem )
+	}
 
-	getNodeContainerElem() { return this.nodeContainerElem }
+	getNodeContainerElem() {
+		return this.containerElem
+	}
 
 	getNodeContainerTransformationMatrix() {
-		return this.nodeContainerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		return this.containerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 	}
 
 	initEditor( textareaElem ) {
@@ -56,7 +65,6 @@ export class NodeGraphService {
 		} )
 		cm.setSize( '100%', 460 )
 		cm.on( 'change', cm => {
-			// set selected node content
 			if ( !this.selectedNode ) return
 			this.selectedNode._fnstr = cm.doc.getValue()
 		} )
@@ -87,9 +95,9 @@ export class NodeGraphService {
 
 	isValidConnection( output, input ) {
 		return (
-			( output instanceof nodeFactory.Output ) &&
-			( input instanceof nodeFactory.Input ) &&
-			( output.parent.uuid !== input.parent.uuid ) &&
+			output instanceof nodeFactory.Output &&
+			input instanceof nodeFactory.Input &&
+			output.parent.uuid !== input.parent.uuid &&
 			!this.isConnectionExists( output, input ) &&
 			!this.isConnectionCyclic( output, input )
 		)
@@ -108,7 +116,7 @@ export class NodeGraphService {
 			this._disconnectInput( io )
 		} else if ( io instanceof nodeFactory.Output ) {
 			// need to make a new copy because cannot call _disconnectInput inside a loop
-			for ( let input of Array.from( io.input ) ) {
+			for ( let input of [ ...io.input] ) {
 				this._disconnectInput( input )
 			}
 		}
@@ -121,7 +129,7 @@ export class NodeGraphService {
 
 	startConnectingIO( io )  {
 		this.connectingIO.src = io
-		this.linking = true
+		this.isConnecting = true
 	}
 
 	endConnectingIO( io ) {
@@ -130,12 +138,12 @@ export class NodeGraphService {
 		if ( cio.src instanceof nodeFactory.Output ) this.connectIO( cio.src, cio.dst )
 		else if ( cio.src instanceof nodeFactory.Input ) this.connectIO( cio.dst, cio.src )
 		cio.src = cio.dst = null
-		this.linking = false
+		this.isConnecting = false
 	}
 
 	isConnectionCyclic( output, input ) {
-		let test = Array.from( this.connections ).concat( [ [ output, input] ] )
-		try { this.computeToposort( test ) }
+		let testCase = [ ...this.connections, [ output, input ] ]
+		try { this.computeToposort( testCase ) }
 		catch( ex ) { return true }
 		return false
 	}
@@ -262,11 +270,16 @@ export class NodeGraphService {
 
 	}
 
-	deleteIOfromNode( io ) {
+	deleteIOByReference( io ) {
 		this.disconnectIO( io )
 		let node = this.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
 		node && node.deleteIO( io )
 	}
+
+	addNewNode( name, type ) {}
+	deleteNode( node ) {}
+	addNewIO( node, type, name ) {}
+	deleteIO( node, type, name ) {}
 
 	createTestNode() {
 		function genID() {

@@ -3,12 +3,13 @@ import { NodeDetails } from 'src/NodeDetails/NodeDetails.cmp'
 import { NodeGraph } from 'src/NodeGraph/NodeGraph.cmp'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
+import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 
 @Component( {
 
 	selector: '[rootComponent]',
 	directives: [ NodeDetails, NodeGraph, NodeCanvas ],
-	providers: [ NodeGraphService ],
+	providers: [ NodeStoreService, NodeGraphService ],
 	template:
 	`
 	<div>

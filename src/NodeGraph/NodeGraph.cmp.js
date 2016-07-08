@@ -51,13 +51,12 @@ export class NodeGraph {
 
 	ngOnInit() {
 		this.ngs.registerViewportElem( this.el )
-		this.ngs.setNodeContainerElemId( 'nodeGraphContainer' )
+		this.ngs.setNodeContainerElem( this.container.nativeElement )
 	}
 
 	@HostListener( 'wheel', [ '$event' ] ) onMouseWheel( $event ) {
 		$event.preventDefault()
-		let container = this.ngs.getNodeContainerElem()
-		, mat = this.ngs.getNodeContainerTransformationMatrix()
+		let mat = this.ngs.getNodeContainerTransformationMatrix()
 		, viewport = this.ngs.getViewportElem()
 		, viewportOffset = viewport.offset()
 		, dd = - Math.sign( $event.deltaY ) * 0.1
@@ -67,7 +66,7 @@ export class NodeGraph {
 		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
 		, xx = sd * ( mat[ 4 ] - ox ) + ox
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
-		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
+		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		// TODO: no direct access to zoomFactor
 		this.ngs.zoomFactor = ss
 	}

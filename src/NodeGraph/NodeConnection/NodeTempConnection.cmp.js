@@ -6,8 +6,8 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 	selector: '[nodeTempConnection]',
 	template:
 	`
-		<svg:line style="pointer-events: none" stroke="#0bb1f9"
-			[attr.visibility]="ngs.linking ? 'visible' : 'hidden'"
+		<svg:line style="pointer-events: none" stroke-width="1" stroke="#0bb1f9"
+			[attr.visibility]="ngs.isConnecting ? 'visible' : 'hidden'"
 			[attr.x1]="getStartCoord().x"
 			[attr.y1]="getStartCoord().y"
 			[attr.x2]="mousePos.x"
@@ -23,6 +23,23 @@ export class NodeTempConnection {
 		this.mousePos = { x: 0, y: 0 }
 	}
 
+	ngAfterViewInit() {
+		this.mousedownEvent = $event => {
+			this.mousePos = this.getMousePositionAbsolute( $event )
+		}
+		this.mouseupEvent = () => {
+			this.ngs.isConnecting = false
+		}
+		this.mousemoveEvent = $event => {
+			if ( !this.ngs.isConnecting ) return
+			this.mousePos = this.getMousePositionAbsolute( $event )
+		}
+		this.ngs.getViewportElem()
+		.on( 'mousedown', this.mousedownEvent )
+		.on( 'mouseup', this.mouseupEvent )
+		.on( 'mousemove', this.mousemoveEvent )
+	}
+
 	getMousePositionAbsolute( $event ) {
 		let viewport = this.ngs.getViewportElem()
 		, offset = viewport.offset()
@@ -32,24 +49,6 @@ export class NodeTempConnection {
 			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
 			y: ( $event.clientY - offset.top + viewport.scrollTop() - mat[ 5 ] ) / zf
 		}
-	}
-
-	ngAfterViewInit() {
-		this.mousedownEvent = $event => {
-			this.mousePos = this.getMousePositionAbsolute( $event )
-		}
-		this.mouseupEvent = () => {
-			this.ngs.linking = false
-		}
-		this.mousemoveEvent = $event => {
-			if ( this.ngs.linking ) {
-				this.mousePos = this.getMousePositionAbsolute( $event )
-			}
-		}
-		this.ngs.getViewportElem()
-		.on( 'mousedown', this.mousedownEvent )
-		.on( 'mouseup', this.mouseupEvent )
-		.on( 'mousemove', this.mousemoveEvent )
 	}
 
 	getStartCoord() {
