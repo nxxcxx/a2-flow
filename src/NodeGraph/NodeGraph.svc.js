@@ -270,16 +270,34 @@ export class NodeGraphService {
 
 	}
 
+	// TODO:
+	// addNewNode( name, type ) {}
+	// deleteNode( node ) {}
+	// addNewIO( node, type, name ) {}
+	// deleteIO( node, type, name ) {}
+
 	deleteIOByReference( io ) {
 		this.disconnectIO( io )
 		let node = this.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
 		node && node.deleteIO( io )
 	}
 
-	addNewNode( name, type ) {}
-	deleteNode( node ) {}
-	addNewIO( node, type, name ) {}
-	deleteIO( node, type, name ) {}
+	addNewNode( name ) {
+		let n = new nodeFactory.Node( name )
+		this.nodes.push( n )
+	}
+
+	deleteNode( node ) {
+		for ( let io of [ ...node.output, ...node.input ] ) {
+			this.disconnectIO( io )
+		}
+		this.nodes = this.nodes.filter( n => n !== node )
+	}
+
+	addNewIO( node, type, name ) {
+		let op = [ 'addOutput', 'addInput' ]
+		node[ op[ type ] ]( name )
+	}
 
 	createTestNode() {
 		function genID() {

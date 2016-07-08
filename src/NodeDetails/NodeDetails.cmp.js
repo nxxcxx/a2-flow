@@ -12,8 +12,8 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 			<button (click)="flush()">CLR</button>
 			<button (click)="parse()">PAR</button>
 			<button (click)="loopStart()">EXE</button>
-			<button (click)="loopStop()">HLT</button>
 			<button (click)="step()">STP</button>
+			<button (click)="loopStop()">HLT</button>
 			<button (click)="importGraph()">IMP</button>
 			<button (click)="ngs.createTestNode()">ADD</button>
 		</div>

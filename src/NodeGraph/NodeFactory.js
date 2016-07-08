@@ -55,6 +55,9 @@ class Executable {
 		this._fnstr = ''
 		this._parseTask = null
 		this._initialized = false
+		this.init = () => {}
+		this.process = () => {}
+		this.flush = () => {}
 	}
 	_init( inputObj, injectObj ) {
 		if ( this._initialized ) return
