@@ -9,8 +9,7 @@ import $ from 'jquery'
 	`
 		<canvas #canvas id="canvas" style="
 			position: absolute;
-			bottom: 0px; right: 0px;
-			border: 1px solid white;
+			top: 0px; right: 0px;
 			transform-style: preserve-3d; // fix webkit opacity perf issue
 		">
 		</canvas>
@@ -23,7 +22,6 @@ export class NodeCanvas {
 
 	constructor( ngs: NodeGraphService) {
 		this.ngs = ngs
-		this.renderer = null
 	}
 
 	ngOnInit() {
@@ -36,8 +34,8 @@ export class NodeCanvas {
 	}
 
 	ngAfterViewInit() {
-		let viewport = this.ngs.getViewportElem()
 		$( window ).on( 'resize', () => {
+			let viewport = this.ngs.getViewportElem()
 			this.renderer.setSize( viewport.width(), viewport.height() )
 		} ).trigger( 'resize' )
 	}

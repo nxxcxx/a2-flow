@@ -11,9 +11,15 @@ import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
 	providers: [ NodeGraphService ],
 	template:
 	`
-	<nodeCanvas></nodeCanvas>
-	<div nodeDetails class="view left"></div>
-	<div nodeGraph class="view right"></div>
+	<div>
+
+		<div nodeDetails class="view left"></div>
+
+		<!-- nodeCanvas suppose to be inside the right viewport but chrome's bug make things pixelated -->
+		<nodeCanvas></nodeCanvas>
+		<div nodeGraph class="view right"></div>
+
+	</div>
 	`
 
 } )

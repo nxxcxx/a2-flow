@@ -21,10 +21,8 @@ import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnect
 				<g nodeConnection *ngFor="let conn of ngs.getConnections()"
 					[selectedNode]="ngs.getSelectedNode()"
 					[connection]="conn"
-					[x1]="conn[ 0 ].position.x"
-					[y1]="conn[ 0 ].position.y"
-					[x2]="conn[ 1 ].position.x"
-					[y2]="conn[ 1 ].position.y"
+					[x1]="conn[ 0 ].position.x" [y1]="conn[ 0 ].position.y"
+					[x2]="conn[ 1 ].position.x" [y2]="conn[ 1 ].position.y"
 				/>
 				<g nodeTempConnection />
 			</g>
@@ -32,7 +30,7 @@ import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnect
 
 		<div id="nodeContainer" style="pointer-events: none">
 			<div style="pointer-events: auto">
-				<nodeModule *ngFor="let node of ngs.getNodes()" [node]="node"></nodeModule>
+				<div nodeModule *ngFor="let node of ngs.getNodes()" [node]="node"></div>
 			</div>
 		</div>
 
@@ -48,6 +46,7 @@ export class NodeGraph {
 	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
 		this.ngs = ngs
 		this.el = elRef.nativeElement
+		this.clampScale = 0.1
 	}
 
 	ngOnInit() {
@@ -61,14 +60,13 @@ export class NodeGraph {
 		, mat = this.ngs.getNodeContainerTransformationMatrix()
 		, viewport = this.ngs.getViewportElem()
 		, viewportOffset = viewport.offset()
-		, dd = -Math.sign( $event.deltaY ) * 0.1
-		, ss = mat[ 0 ] * ( 1.0 + dd )
+		, dd = - Math.sign( $event.deltaY ) * 0.1
+		, ss = Math.max( mat[ 0 ] * ( 1.0 + dd ), this.clampScale )
 		, sd = ss / mat[ 0 ]
 		, ox = $event.clientX - viewportOffset.left + viewport.scrollLeft()
 		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
 		, xx = sd * ( mat[ 4 ] - ox ) + ox
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
-		if ( ss <= 0.1 ) return // clamp scaling
 		container.css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		// TODO: no direct access to zoomFactor
 		this.ngs.zoomFactor = ss
