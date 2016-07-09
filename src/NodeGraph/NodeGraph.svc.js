@@ -185,9 +185,11 @@ export class NodeGraphService {
 	}
 
 	run() {
+		STATS.begin()
 		this.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
 			n.execute( this.createInjectionObject() )
 		} )
+		STATS.end()
 		this.requestAnimationFrameId = window.requestAnimationFrame( this.run.bind( this ) ).data.handleId
 	}
 
@@ -207,8 +209,12 @@ export class NodeGraphService {
 	}
 
 	flushNodesData() {
-		for ( let node of this.nodes ) {
-			node.flush()
+		try {
+			for ( let node of this.nodes ) {
+				node.flush()
+			}
+		} catch ( ex ) {
+			console.warn( ex )
 		}
 	}
 

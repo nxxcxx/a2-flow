@@ -4,11 +4,12 @@ import { NodeGraph } from 'src/NodeGraph/NodeGraph.cmp'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
 import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
+import { NodeStats } from 'src/NodeGraph/NodeStats.cmp'
 
 @Component( {
 
 	selector: '[rootComponent]',
-	directives: [ NodeDetails, NodeGraph, NodeCanvas ],
+	directives: [ NodeDetails, NodeGraph, NodeCanvas, NodeStats ],
 	providers: [ NodeStoreService, NodeGraphService ],
 	template:
 	`
@@ -19,6 +20,8 @@ import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 		<!-- nodeCanvas suppose to be inside the right viewport but chrome's bug make things pixelated -->
 		<nodeCanvas></nodeCanvas>
 		<div nodeGraph class="view right"></div>
+
+		<nodeStats></nodeStats>
 
 	</div>
 	`
