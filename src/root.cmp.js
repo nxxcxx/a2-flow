@@ -3,14 +3,21 @@ import { NodeDetails } from 'src/NodeDetails/NodeDetails.cmp'
 import { NodeGraph } from 'src/NodeGraph/NodeGraph.cmp'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeCanvas } from 'src/NodeGraph/NodeCanvas.cmp'
-import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 import { NodeStats } from 'src/NodeGraph/NodeStats.cmp'
+import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
+import { NodeEngineService } from 'src/NodeGraph/NodeEngine.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+import { NodeIMService } from 'src/NodeGraph/NodeIM.svc'
+import { NodeConnectionService } from 'src/NodeGraph/NodeConnection.svc'
 
 @Component( {
 
 	selector: '[rootComponent]',
 	directives: [ NodeDetails, NodeGraph, NodeCanvas, NodeStats ],
-	providers: [ NodeStoreService, NodeGraphService ],
+	providers: [
+		NodeRegistryService, NodeStoreService, NodeGraphService, NodeEngineService, NodeIMService,
+		NodeConnectionService
+	],
 	template:
 	`
 	<div>
@@ -29,12 +36,8 @@ import { NodeStats } from 'src/NodeGraph/NodeStats.cmp'
 } )
 export class RootComponent {
 
-	constructor( ngs: NodeGraphService ) {
-		this.ngs = ngs
-	}
-
-	ngAfterViewInit() {
-		setTimeout( () => { this.ngs.importGraphConfiguration() }, 0 )
+	constructor( _reg: NodeRegistryService ) {
+		global._REG = _reg
 	}
 
 }

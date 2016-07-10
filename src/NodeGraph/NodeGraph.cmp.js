@@ -3,13 +3,15 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+const html = String.raw
 
 @Component( {
 
 	selector: '[nodeGraph]',
 	directives: [ NodeModule, NodeConnection, NodeTempConnection ],
 	template:
-	`
+	html`
 	<div #container id="nodeGraphContainer"
 		style="pointer-events: none; position: absolute; width: 5000px; height: 5000px;
 			transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0);
@@ -43,10 +45,10 @@ export class NodeGraph {
 	@ViewChild( 'container' ) container
 	@ViewChild( 'canvas' ) canvas
 
-	constructor( elRef: ElementRef, ngs: NodeGraphService ) {
-		this.ngs = ngs
+	constructor( elRef: ElementRef, _reg: NodeRegistryService ) {
+		this.ngs = _reg.request( 'NodeGraph' )
 		this.el = elRef.nativeElement
-		this.clampScale = 0.1
+		this.clampScale = 0.2
 	}
 
 	ngOnInit() {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 
 @Component( {
@@ -15,18 +15,20 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 			<button (click)="step()">STP</button>
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="importGraph()">IMP</button>
-			<button (click)="ngs.createTestNode()">ADD</button>
+			<button (click)="_nodeGraph.createTestNode()">ADD</button>
 		</div>
 		<div style="clear: left"></div>
-		<span>{{ ngs.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
+		<span>{{ _nodeGraph.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ _nodeGraph.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
 	`
 
 } )
 export class NodeDetails {
 
-	constructor( ngs: NodeGraphService ) {
-		this.ngs = ngs
+	constructor( _reg: NodeRegistryService ) {
+		this._nodeGraph = _reg.request( 'NodeGraph' )
+		this._nodeEngine = _reg.request( 'NodeEngine' )
+		this._nodeIM = _reg.request( 'NodeIM' )
 		this.debugEnabled = false
 		window.test = () => {
 			this.parse()
@@ -36,35 +38,35 @@ export class NodeDetails {
 		}
 	}
 
+	importGraph() {
+		this._nodeIM.importGraphConfiguration()
+	}
+
 	parse() {
 		this.loopStop()
-		this.ngs.parse()
+		this._nodeEngine.parse()
 		console.log( 'PAR' )
 	}
 
 	loopStart() {
-		this.ngs.loopStart()
+		this._nodeEngine.loopStart()
 		console.log( 'EXE' )
 	}
 
 	loopStop() {
-		this.ngs.loopStop()
+		this._nodeEngine.loopStop()
 		console.log( 'HLT' )
 	}
 
 	step() {
-		this.ngs.step()
+		this._nodeEngine.step()
 		console.log( 'STP' )
 	}
 
 	flush() {
 		this.loopStop()
-		this.ngs.flushNodesData()
+		this._nodeEngine.flushNodesData()
 		console.log( 'CLR' )
-	}
-
-	importGraph() {
-		this.ngs.importGraphConfiguration()
 	}
 
 }

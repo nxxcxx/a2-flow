@@ -1,5 +1,5 @@
 import { Component, Input, ViewChildren, ElementRef, HostListener } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.cmp'
 import $ from 'jquery'
 let html = String.raw
@@ -40,8 +40,8 @@ export class NodeModule {
 	@Input() node
 	@ViewChildren( NodeModuleIO ) nodeIO
 
-	constructor( ngs: NodeGraphService, elRef: ElementRef ) {
-		this.ngs = ngs
+	constructor( elRef: ElementRef, _reg: NodeRegistryService ) {
+		this.ngs = _reg.request( 'NodeGraph' )
 		this.el = elRef.nativeElement
 		this.nodeElem = $( this.el )
 		this.disableMove = false

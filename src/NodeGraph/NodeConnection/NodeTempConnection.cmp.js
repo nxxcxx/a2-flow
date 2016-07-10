@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 
 @Component( {
 
@@ -18,8 +18,8 @@ import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 } )
 export class NodeTempConnection {
 
-	constructor( ngs: NodeGraphService ) {
-		this.ngs = ngs
+	constructor( _reg: NodeRegistryService ) {
+		this.ngs = _reg.request( 'NodeGraph' )
 		this.mousePos = { x: 0, y: 0 }
 	}
 

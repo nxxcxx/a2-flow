@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 
 @Component( {
 
@@ -25,8 +25,8 @@ export class NodeConnection {
 	@Input() x2
 	@Input() y2
 
-	constructor( ngs: NodeGraphService ) {
-		this.ngs = ngs
+	constructor( _reg: NodeRegistryService ) {
+		this.ncs = _reg.request( 'NodeConnection' )
 	}
 
 	getBezierCurveString() {
@@ -47,7 +47,7 @@ export class NodeConnection {
 	}
 
 	disconnect() {
-		this.ngs.disconnectIO( this.connection[ 1 ] )
+		this.ncs.disconnectIO( this.connection[ 1 ] )
 	}
 
 }

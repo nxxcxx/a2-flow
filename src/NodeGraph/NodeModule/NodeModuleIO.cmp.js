@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import NodeFactory from 'src/NodeGraph/NodeFactory'
 import $ from 'jquery'
 
@@ -34,8 +34,9 @@ export class NodeModuleIO {
 	@Input() io
 	@ViewChild( 'ioPort' ) ioPort
 
-	constructor( ngs: NodeGraphService ) {
-		this.ngs = ngs
+	constructor( _reg: NodeRegistryService ) {
+		this.ngs = _reg.request( 'NodeGraph' )
+		this.ncs = _reg.request( 'NodeConnection' )
 	}
 
 	ngOnInit() {
@@ -53,13 +54,13 @@ export class NodeModuleIO {
 		}
 		this.mousedownEvent = () => {
 			this.onConnecting.emit( true )
-			this.ngs.startConnectingIO( this.io )
+			this.ncs.startConnectingIO( this.io )
 		}
 		this.mouseupEvent = () => {
-			this.ngs.endConnectingIO( this.io )
+			this.ncs.endConnectingIO( this.io )
 		}
 		this.dblclickEvent = () => {
-			this.ngs.disconnectIO( this.io )
+			this.ncs.disconnectIO( this.io )
 		}
 		ioPort.on( 'mouseenter', this.mouseenterEvent )
 		.on( 'mouseleave', this.mouseleaveEvent )

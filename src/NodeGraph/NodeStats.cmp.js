@@ -72,6 +72,7 @@ export class NodeStats {
 		ctx.lineTo( this.width, y )
 		ctx.closePath()
 		ctx.stroke()
+
 		this.prevY = y
 	}
 

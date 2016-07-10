@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import $ from 'jquery'
 
 @Component( {
@@ -21,8 +21,8 @@ export class NodeCanvas {
 
 	@ViewChild( 'canvas' ) canvas
 
-	constructor( ngs: NodeGraphService) {
-		this.ngs = ngs
+	constructor( _reg: NodeRegistryService ) {
+		this.ngs = _reg.request( 'NodeGraph' )
 	}
 
 	ngOnInit() {
