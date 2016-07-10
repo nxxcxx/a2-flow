@@ -10,7 +10,8 @@ import $ from 'jquery'
 		<canvas #canvas id="canvas" style="
 			position: absolute;
 			top: 0px; right: 0px;
-			transform-style: preserve-3d; // fix webkit opacity perf issue
+			transform-style: preserve-3d;
+			opacity: 1.0;
 		">
 		</canvas>
 	`

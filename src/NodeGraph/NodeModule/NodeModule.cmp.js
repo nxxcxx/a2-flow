@@ -2,6 +2,7 @@ import { Component, Input, ViewChildren, ElementRef, HostListener } from '@angul
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModuleIO } from 'src/NodeGraph/NodeModule/NodeModuleIO.cmp'
 import $ from 'jquery'
+let html = String.raw
 
 @Component( {
 
@@ -9,7 +10,7 @@ import $ from 'jquery'
 	directives: [ NodeModuleIO ],
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
-	`
+	html`
 	<div class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}" >
 
 		<div #headerElem class="headerElem">

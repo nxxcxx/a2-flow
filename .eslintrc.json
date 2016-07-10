@@ -10,6 +10,9 @@
 		"parserOptions": {
 				"sourceType": "module"
 		},
+		"globals": {
+			"html": true
+		},
 		"rules": {
 				"eqeqeq": [
 						"error",

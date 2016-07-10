@@ -63,7 +63,7 @@ export class NodeGraphService {
 			theme: 'black',
 			tabSize: 2
 		} )
-		cm.setSize( '100%', 460 )
+		cm.setSize( '100%', 600 )
 		cm.on( 'change', cm => {
 			if ( !this.selectedNode ) return
 			this.selectedNode._fnstr = cm.doc.getValue()
@@ -212,6 +212,7 @@ export class NodeGraphService {
 		try {
 			for ( let node of this.nodes ) {
 				node.flush()
+				node.flushOutput()
 			}
 		} catch ( ex ) {
 			console.warn( ex )
@@ -244,7 +245,7 @@ export class NodeGraphService {
 	importGraphConfiguration() {
 
 		// TODO: clean up existing nodes & connections, async
-		let graph = JSON.parse( require( '!raw!src/test_mockup.json' ) )
+		let graph = JSON.parse( require( '!raw!src/test_mockup2.json' ) )
 		let nodes = []
 		let uuid_io_map = {}
 		for ( let node of graph.nodes ) {
