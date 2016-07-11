@@ -24,7 +24,8 @@ export class NodeStats {
 		this.width = 200
 		this.height = 40
 		this.prevY = this.height
-		this.updateInterval = 16
+		this.clampMaxGraphHeight = 60
+		this.updateInterval = 15
 		window.STATS = this
 	}
 
@@ -54,8 +55,7 @@ export class NodeStats {
 
 	drawGraphSegment( value, maxValue ) {
 		let ctx = this.ctx
-		, clampMaxGraphHeight = 60
-		, y = this.height - Math.round( ( Math.min( value, clampMaxGraphHeight ) / maxValue ) * this.height )
+		, y = this.height - Math.round( ( Math.min( value, this.clampMaxGraphHeight ) / maxValue ) * this.height )
 		, unit = 1
 		, offsetTop = 0
 		ctx.drawImage( this.canvas.nativeElement,

@@ -7,12 +7,7 @@ import $ from 'jquery'
 	selector: 'nodeCanvas',
 	template:
 	`
-		<canvas #canvas id="canvas" style="
-			position: absolute;
-			top: 0px; right: 0px;
-			transform-style: preserve-3d;
-			opacity: 1.0;
-		">
+		<canvas #canvas id="canvas" style="position: absolute; top: 0px; right: 0px; transform-style: preserve-3d;">
 		</canvas>
 	`
 

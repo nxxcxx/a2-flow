@@ -1,13 +1,14 @@
 import { Component } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
+const html = String.raw
 
 @Component( {
 
 	selector: '[nodeDetails]',
 	directives: [ NodeEditor ],
 	template:
-	`
+	html`
 		<div>
 			<button (click)="flush()">CLR</button>
 			<button (click)="parse()">PAR</button>
@@ -16,6 +17,7 @@ import { NodeEditor } from 'src/NodeDetails/NodeEditor.cmp'
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="importGraph()">IMP</button>
 			<button (click)="_nodeGraph.createTestNode()">ADD</button>
+			<button (click)="parseSelectedNode()">PAR-S</button>
 		</div>
 		<div style="clear: left"></div>
 		<span>{{ _nodeGraph.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ _nodeGraph.getSelectedNode()?.uuid | uppercase }}</span>
@@ -46,6 +48,10 @@ export class NodeDetails {
 		this.loopStop()
 		this._nodeEngine.parse()
 		console.log( 'PAR' )
+	}
+
+	parseSelectedNode() {
+		this._nodeGraph.getSelectedNode().parse()
 	}
 
 	loopStart() {

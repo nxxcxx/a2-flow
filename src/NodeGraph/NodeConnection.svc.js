@@ -36,8 +36,8 @@ export class NodeConnectionService {
 		if ( io instanceof nodeFactory.Input ) {
 			this._disconnectInput( io )
 		} else if ( io instanceof nodeFactory.Output ) {
-			// need to make a new copy because cannot call _disconnectInput inside a loop
-			for ( let input of [ ...io.input] ) {
+			// need to make a new copy because input.disconnect mutate the array
+			for ( let input of [ ...io.input ] ) {
 				this._disconnectInput( input )
 			}
 		}

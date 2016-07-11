@@ -1,20 +1,12 @@
-import { Injectable, NgZone, ChangeDetectorRef } from '@angular/core'
+import { Injectable } from '@angular/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 import $ from 'jquery'
-
-// CodeMirror ( import order is important )
-import CodeMirror from 'codemirror'
-import 'root/node_modules/codemirror/mode/javascript/javascript.js'
-import 'root/node_modules/codemirror/keymap/vim.js'
-import 'root/node_modules/codemirror/lib/codemirror.css'
 
 @Injectable()
 export class NodeGraphService {
 
-	constructor( zone: NgZone, changeDetectorRef: ChangeDetectorRef ) {
+	constructor() {
 		console.log( 'NodeGraphService' )
-		this.zone = zone
-		this.changeDetectorRef = changeDetectorRef
 		this.viewportElem = null
 		this.containerElem = null
 		this.nodes = []
@@ -24,7 +16,6 @@ export class NodeGraphService {
 		this.selectedNode = null
 		this.codeMirror = null
 		this.zoomFactor = 1.0
-		this.requestAnimationFrameId = null
 		this.renderer = null
 	}
 
@@ -52,34 +43,29 @@ export class NodeGraphService {
 		return this.containerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 	}
 
-	initEditor( textareaElem ) {
-		let cm = this.codeMirror = CodeMirror.fromTextArea( textareaElem, {
-			lineNumbers: true,
-			mode: 'javascript',
-			keyMap: 'vim',
-			theme: 'black',
-			tabSize: 2
-		} )
-		cm.setSize( '100%', 600 )
-		cm.on( 'change', cm => {
-			if ( !this.selectedNode ) return
-			this.selectedNode._fnstr = cm.doc.getValue()
-		} )
-		window.CM = cm
-		cm.constructor.Vim.map( 'jj', '<Esc>', 'insert' )
+	registerCodeMirror( codeMirror ) {
+		this.codeMirror = codeMirror
 	}
 
-	getNodes() { return this.nodes }
+	getNodes() {
+		return this.nodes
+	}
 
-	getConnections() { return this.connections }
+	getConnections() {
+		return this.connections
+	}
 
-	getSelectedNode() { return this.selectedNode }
+	getSelectedNode() {
+		return this.selectedNode
+	}
 
 	setSelectedNode( node ) {
 		this.selectedNode = node
 		let swapIndex = this.nodes.findIndex( currentNode => currentNode === node )
-		this.nodes.push( this.nodes.splice( swapIndex, 1 )[ 0 ] )
+		let lastIndex = this.nodes.length - 1
+		;[ this.nodes[ swapIndex ], this.nodes[ lastIndex ] ] = [ this.nodes[ lastIndex ], this.nodes[ swapIndex ] ]
 		this.codeMirror.doc.setValue( node._fnstr )
+		this.codeMirror.doc.clearHistory()
 	}
 
 	clearSelectedNode() {
@@ -110,14 +96,10 @@ export class NodeGraphService {
 	}
 
 	createTestNode() {
-		function genID() {
-			let id = String.fromCharCode( Math.floor( Math.random() * 23 ) + 65 ) + ~~( Math.random() * 9 )
-			return id
-		}
+		let genID = () => String.fromCharCode( Math.floor( Math.random() * 23 ) + 65 ) + ~~( Math.random() * 9 )
 		let n = new nodeFactory.Node( genID() )
-		let [ ilen, olen ] = [ ~~( Math.random() * 6 ), ~~( Math.random() * 6 ) ]
-		for ( let i = 0; i < ilen; i ++ ) n.addInput( genID() )
-		for ( let i = 0; i < olen; i ++ ) n.addOutput( genID() )
+		for ( let i = 0; i < ~~( Math.random() * 6 ); i ++ ) n.addInput( genID() )
+		for ( let i = 0; i < ~~( Math.random() * 6 ); i ++ ) n.addOutput( genID() )
 		this.nodes.push( n )
 	}
 

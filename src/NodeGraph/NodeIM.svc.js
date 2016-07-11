@@ -58,6 +58,7 @@ export class NodeIMService {
 			nodes.push( nm )
 		}
 		this._reg.request( 'NodeGraph' ).nodes = nodes
+		this._reg.request( 'NodeGraph' ).connections = []
 		// need to trigger update before adding connections
 		this.changeDetectorRef.detectChanges()
 		for ( let conn of graph.connections ) {
