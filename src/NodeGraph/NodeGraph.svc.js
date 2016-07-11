@@ -27,12 +27,16 @@ export class NodeGraphService {
 		this.viewportElem = $( viewportElem )
 	}
 
-	getViewportElem() {
-		return this.viewportElem
-	}
-
 	setNodeContainerElem( containerElem ) {
 		this.containerElem = $( containerElem )
+	}
+
+	registerCodeMirror( codeMirror ) {
+		this.codeMirror = codeMirror
+	}
+
+	getViewportElem() {
+		return this.viewportElem
 	}
 
 	getNodeContainerElem() {
@@ -41,10 +45,6 @@ export class NodeGraphService {
 
 	getNodeContainerTransformationMatrix() {
 		return this.containerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
-	}
-
-	registerCodeMirror( codeMirror ) {
-		this.codeMirror = codeMirror
 	}
 
 	getNodes() {

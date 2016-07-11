@@ -32,12 +32,6 @@ export class NodeDetails {
 		this._nodeEngine = _reg.request( 'NodeEngine' )
 		this._nodeIM = _reg.request( 'NodeIM' )
 		this.debugEnabled = false
-		window.test = () => {
-			this.parse()
-			this.loopStart()
-			this.loopStop()
-			this.flush()
-		}
 	}
 
 	importGraph() {

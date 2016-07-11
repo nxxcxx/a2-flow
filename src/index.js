@@ -1,12 +1,10 @@
 // stylesheets
 import 'sass/index.sass'
 
-import 'core-js/client/shim.min.js'
-
 import THREE from 'three'
 window.THREE = THREE
-// window.html = String.raw
 
+import 'core-js/client/shim.min.js'
 import 'zone.js'
 import 'reflect-metadata'
 import { bootstrap } from '@angular/platform-browser-dynamic'

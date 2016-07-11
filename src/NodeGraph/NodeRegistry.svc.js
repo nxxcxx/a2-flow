@@ -20,18 +20,23 @@ export class NodeRegistryService {
 
 		console.log( 'NodeRegistryService' )
 
-		this._services = {}
-		this.registerService( 'NodeStore', _NodeStoreService )
-		this.registerService( 'NodeGraph', _NodeGraphService )
-		this.registerService( 'NodeEngine', _NodeEngineService )
-		this.registerService( 'NodeIM', _NodeIMService )
-		this.registerService( 'NodeConnection', _NodeConnectionService )
+		this.registerServices( _NodeStoreService, {
+			NodeGraph: _NodeGraphService,
+			NodeEngine: _NodeEngineService,
+			NodeIM: _NodeIMService,
+			NodeConnection: _NodeConnectionService
+		} )
 
 	}
 
-	registerService( name, service ) {
-		this._services[ name ] = service
-		service._reg = this
+	registerServices( store = null, services = {} ) {
+		this._store = store
+		this._services = {}
+		for ( let [ name, svc ] of Object.entries( services ) ) {
+			this._services[ name ] = svc
+			svc._reg = this
+			svc._store = store
+		}
 	}
 
 	request( name ) {
