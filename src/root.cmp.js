@@ -7,19 +7,20 @@ import { NodeStats } from 'src/NodeGraph/NodeStats.cmp'
 import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 import { NodeEngineService } from 'src/NodeGraph/NodeEngine.svc'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
-import { NodeIMService } from 'src/NodeGraph/NodeIM.svc'
+import { NodeIEService } from 'src/NodeGraph/NodeIE.svc'
 import { NodeConnectionService } from 'src/NodeGraph/NodeConnection.svc'
+const html = String.raw
 
 @Component( {
 
 	selector: '[rootComponent]',
 	directives: [ NodeDetails, NodeGraph, NodeCanvas, NodeStats ],
 	providers: [
-		NodeRegistryService, NodeStoreService, NodeGraphService, NodeEngineService, NodeIMService,
+		NodeRegistryService, NodeStoreService, NodeGraphService, NodeEngineService, NodeIEService,
 		NodeConnectionService
 	],
 	template:
-	`
+	html`
 	<div>
 
 		<div nodeDetails class="view left"></div>

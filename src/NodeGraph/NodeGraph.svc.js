@@ -6,7 +6,7 @@ import $ from 'jquery'
 export class NodeGraphService {
 
 	constructor() {
-		console.log( 'NodeGraphService' )
+		console.log()
 	}
 
 	registerRenderer( renderer ) {
@@ -17,7 +17,7 @@ export class NodeGraphService {
 		this._store.viewportElem = $( viewportElem )
 	}
 
-	setNodeContainerElem( containerElem ) {
+	registerNodeContainerElem( containerElem ) {
 		this._store.containerElem = $( containerElem )
 	}
 

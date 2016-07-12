@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core'
 export class NodeStoreService {
 
 	constructor() {
-		console.log( 'NodeStoreService' )
 		this.viewportElem = null
 		this.containerElem = null
 		this.nodes = []

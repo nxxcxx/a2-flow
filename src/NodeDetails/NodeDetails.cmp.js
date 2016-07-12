@@ -16,11 +16,11 @@ const html = String.raw
 			<button (click)="step()">STP</button>
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="importGraph()">IMP</button>
-			<button (click)="_nodeGraph.createTestNode()">ADD</button>
+			<button (click)="ngs.createTestNode()">ADD</button>
 			<button (click)="parseSelectedNode()">PAR-S</button>
 		</div>
 		<div style="clear: left"></div>
-		<span>{{ _nodeGraph.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ _nodeGraph.getSelectedNode()?.uuid | uppercase }}</span>
+		<span>{{ ngs.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
 		<nodeEditor></nodeEditor>
 	`
 
@@ -28,44 +28,44 @@ const html = String.raw
 export class NodeDetails {
 
 	constructor( _reg: NodeRegistryService ) {
-		this._nodeGraph = _reg.request( 'NodeGraph' )
-		this._nodeEngine = _reg.request( 'NodeEngine' )
-		this._nodeIM = _reg.request( 'NodeIM' )
+		this.ngs = _reg.request( 'NodeGraph' )
+		this.nen = _reg.request( 'NodeEngine' )
+		this.nie = _reg.request( 'NodeIE' )
 		this.debugEnabled = false
 	}
 
 	importGraph() {
-		this._nodeIM.importGraphConfiguration()
+		this.nie.importGraphConfiguration()
 	}
 
 	parse() {
 		this.loopStop()
-		this._nodeEngine.parse()
+		this.nen.parse()
 		console.log( 'PAR' )
 	}
 
 	parseSelectedNode() {
-		this._nodeGraph.getSelectedNode().parse()
+		this.ngs.getSelectedNode().parse()
 	}
 
 	loopStart() {
-		this._nodeEngine.loopStart()
+		this.nen.loopStart()
 		console.log( 'EXE' )
 	}
 
 	loopStop() {
-		this._nodeEngine.loopStop()
+		this.nen.loopStop()
 		console.log( 'HLT' )
 	}
 
 	step() {
-		this._nodeEngine.step()
+		this.nen.step()
 		console.log( 'STP' )
 	}
 
 	flush() {
 		this.loopStop()
-		this._nodeEngine.flushNodesData()
+		this.nen.flushNodesData()
 		console.log( 'CLR' )
 	}
 

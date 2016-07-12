@@ -1,4 +1,5 @@
 var path = require( 'path' )
+var webpack = require( 'webpack' )
 var HtmlWebpackPlugin = require( 'html-webpack-plugin' )
 
 module.exports = {
@@ -30,6 +31,9 @@ module.exports = {
 		new HtmlWebpackPlugin( {
 			template: './src/index.html',
 			inject: 'body'
+		} ),
+		new webpack.DefinePlugin( {
+			'process.env': ' "debug" '
 		} )
 	],
 	devtool: 'eval'

@@ -68,6 +68,7 @@ class Executable {
 		try {
 			this.init = () => {}
 			this.process = () => {}
+			this.flush = () => {}
 			this._parseTask = new Function( this._fnstr )
 			this._parseTask()
 			this._initialized = false
@@ -76,15 +77,16 @@ class Executable {
 		}
 	}
 	execute( injectObj = {} ) {
-		var inpObj = {}
+		let res = null
+		let inpObj = {}
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
 		try {
 			this._init.call( this, inpObj, injectObj )
-			var res = this.process.call( this, inpObj, injectObj )
+			res = this.process.call( this, inpObj, injectObj )
 		} catch ( ex ) {
 			console.warn( ex, this.name, this.uuid )
 		}
-		this.output.forEach( io => { io.data = res[ io.name ] } )
+		if ( res ) this.output.forEach( io => { io.data = res[ io.name ] } )
 	}
 }
 

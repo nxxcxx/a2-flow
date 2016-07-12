@@ -53,7 +53,7 @@ export class NodeGraph {
 
 	ngOnInit() {
 		this.ngs.registerViewportElem( this.el )
-		this.ngs.setNodeContainerElem( this.container.nativeElement )
+		this.ngs.registerNodeContainerElem( this.container.nativeElement )
 	}
 
 	@HostListener( 'wheel', [ '$event' ] ) onMouseWheel( $event ) {

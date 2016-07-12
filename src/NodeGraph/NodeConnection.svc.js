@@ -6,7 +6,6 @@ import toposort from 'toposort'
 export class NodeConnectionService {
 
 	constructor() {
-		console.log( 'NodeConnectionService' )
 		this._reg = null
 	}
 

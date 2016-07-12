@@ -4,12 +4,9 @@ import { Injectable, NgZone } from '@angular/core'
 export class NodeEngineService {
 
 	constructor( zone: NgZone ) {
-
-		console.log( 'NodeEngineService' )
 		this._reg = null
 		this.zone = zone
 		this.requestAnimationFrameId = null
-
 	}
 
 	sortNodes() {

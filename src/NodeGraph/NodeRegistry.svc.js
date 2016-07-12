@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { NodeStoreService } from 'src/NodeGraph/NodeStore.svc'
 import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeEngineService } from 'src/NodeGraph/NodeEngine.svc'
-import { NodeIMService } from 'src/NodeGraph/NodeIM.svc'
+import { NodeIEService } from 'src/NodeGraph/NodeIE.svc'
 import { NodeConnectionService } from 'src/NodeGraph/NodeConnection.svc'
 
 @Injectable()
@@ -13,17 +13,15 @@ export class NodeRegistryService {
 		_NodeStoreService: NodeStoreService,
 		_NodeGraphService: NodeGraphService,
 		_NodeEngineService: NodeEngineService,
-		_NodeIMService: NodeIMService,
+		_NodeIEService: NodeIEService,
 		_NodeConnectionService: NodeConnectionService
 
 	) {
 
-		console.log( 'NodeRegistryService' )
-
 		this.registerServices( _NodeStoreService, {
 			NodeGraph: _NodeGraphService,
 			NodeEngine: _NodeEngineService,
-			NodeIM: _NodeIMService,
+			NodeIE: _NodeIEService,
 			NodeConnection: _NodeConnectionService
 		} )
 

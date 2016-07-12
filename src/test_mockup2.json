@@ -4,28 +4,12 @@
       "input": [],
       "output": [
         {
-          "name": "Freq",
-          "uuid": "e8bc08da-d82d-4887-892f-11d0ce065813"
-        }
-      ],
-      "name": "AUDIO",
-      "uuid": "37cf9a3e-8fa9-49e7-8c18-beb37db1534d",
-      "position": {
-        "x": 238,
-        "y": 412
-      },
-      "_fnstr": "const client_id = '2ef3426fc39f261e2af948669e232577'\nconst track_id = '79464998'\n\nthis.init = () => {\n  let uri = `https://api.soundcloud.com/tracks/${track_id}/stream?client_id=${client_id}`\n  this.audio = this.audio || new Audio()\n  this.audio.crossOrigin = 'anonymous'\n  this.audio.src = uri\n  this.audio.play()\n  this.audioCtx = this.audioCtx || ( new (window.AudioContext || window.webkitAudioContext)() )\n\tthis.source = this.source || this.audioCtx.createMediaElementSource( this.audio )\n\tthis.analyser = this.analyser || this.audioCtx.createAnalyser()\n  this.analyser.fftSize = 2048\n\tthis.freqArray = new Uint8Array( this.analyser.frequencyBinCount )\n  console.log( this.analyser.frequencyBinCount )\n\tthis.source.connect( this.audioCtx.destination )\n\tthis.source.connect( this.analyser )\n}\n\nthis.process = () => {\n  this.analyser.getByteFrequencyData( this.freqArray )\n  let fs = 0\n  let fe = 1024\n  let avgFreq = computeAverage( this.freqArray, fs, fe ) / 256\n\treturn {\n\t\tFreq: avgFreq\n\t}\n}\n\nthis.flush = () => {\n\tif ( this.audio ) {\n\t\tthis.audio.pause()\n\t\tthis.audio.currentTime = 0\n\t}\n}\n\nfunction computeAverage( freqArray, start, end ) {\n\treturn freqArray.slice( start, end ).reduce( ( a, b ) => a + b ) / ( end - start )\n}"
-    },
-    {
-      "input": [],
-      "output": [
-        {
           "name": "Camera",
           "uuid": "13f3fab8-2072-4de7-9e5a-5e647ea39248"
         }
       ],
       "name": "CAMERA",
-      "uuid": "6918603a-056e-47d4-8577-07eee1c86412",
+      "uuid": "4a14c293-4990-4ca2-888f-2df1bc848643",
       "position": {
         "x": 720,
         "y": 253
@@ -41,7 +25,7 @@
         }
       ],
       "name": "Material",
-      "uuid": "ccb8df73-e1d4-429e-a772-27290a2a032d",
+      "uuid": "bbc2c4e8-65e5-495a-a62f-e88cf9b85e3e",
       "position": {
         "x": 125,
         "y": 278
@@ -57,7 +41,7 @@
         }
       ],
       "name": "GEOMETRY",
-      "uuid": "27d03764-c8bb-415f-b936-4b5782fecee5",
+      "uuid": "e208be94-bdf3-42b0-a4e0-66a99d92c644",
       "position": {
         "x": 126,
         "y": 206
@@ -82,7 +66,7 @@
         }
       ],
       "name": "MESH",
-      "uuid": "979919e1-bd03-4ce2-b8ec-9f12d194e87a",
+      "uuid": "0ae96c95-cd2d-4ad8-8b9c-7771c4751468",
       "position": {
         "x": 269,
         "y": 235
@@ -106,12 +90,28 @@
         }
       ],
       "name": "DATA",
-      "uuid": "d9350024-f9f8-432d-8428-aa29d9780f8c",
+      "uuid": "1a3384fc-3715-4813-9aff-09bc21fa5cba",
       "position": {
         "x": 252,
         "y": 318
       },
       "_fnstr": "this.init = () => {\n\tthis.clock = new THREE.Clock()\n}\n\nthis.process = () => {\n  let dt = this.clock.getDelta()\n  return {\n    X: 0.1 * dt,\n    Y: 0.5 * dt,\n    Z: 1.0 * dt\n  }\n}\n\nthis.flush = () => {\n\t\n}"
+    },
+    {
+      "input": [],
+      "output": [
+        {
+          "name": "Freq",
+          "uuid": "e8bc08da-d82d-4887-892f-11d0ce065813"
+        }
+      ],
+      "name": "AUDIO",
+      "uuid": "37e83ed4-fb76-4a4e-b221-e26728f5e50d",
+      "position": {
+        "x": 238,
+        "y": 412
+      },
+      "_fnstr": "this.init = () => {\n\t\n  if ( this.__initialized ) return\n  this.__initialized = true\n  this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()\n\tthis.analyser = this.audioCtx.createAnalyser()\n  this.analyser.fftSize = 1024\n\tthis.freqArray = new Uint8Array( this.analyser.frequencyBinCount )\n  console.log( 'freqBin', this.analyser.frequencyBinCount )\n  \n  navigator.getUserMedia = (navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia||navigator.msGetUserMedia)\n\tnavigator.getUserMedia( { audio: true }, stream => {\n  \tthis.source = this.audioCtx.createMediaStreamSource( stream )\n\t\tthis.source.connect( this.analyser )\n\t}, err => {\n    console.warn( err )\n\t} )\n  \n}\n\nthis.process = () => {\n  this.analyser.getByteFrequencyData( this.freqArray )\n  let fs = 0\n  let fe = 512\n  let avgFreq = computeAverage( this.freqArray, fs, fe ) / 256\n\treturn {\n\t\tFreq: avgFreq\n\t}\n}\n\nthis.flush = () => {\n\tif ( this.audio ) {\n\t\tthis.audio.pause()\n\t\tthis.audio.currentTime = 0\n\t}\n}\n\nfunction computeAverage( freqArray, start, end ) {\n\treturn freqArray.slice( start, end ).reduce( ( a, b ) => a + b ) / ( end - start )\n}"
     },
     {
       "input": [
@@ -135,12 +135,12 @@
         }
       ],
       "name": "Modifier",
-      "uuid": "8dbfe5ed-6a80-4e60-947f-2583f3013500",
+      "uuid": "4c9ff47f-822e-434c-9c9f-314697d9ee96",
       "position": {
-        "x": 476,
-        "y": 305
+        "x": 474,
+        "y": 303
       },
-      "_fnstr": "this.init = input => {\n  \n}\n\nthis.process = input => {\n  let sx = 1.0\n  if ( input.D2 ) sx = Math.pow( input.D2, 2.0 ) * 5.0 + 0.1\n  let mesh = input.Mesh\n  mesh.scale.set( sx, sx, sx )\n  mesh.rotation.x += input.D1 * 0.2\n  mesh.rotation.y += input.D1 * 0.5\n  mesh.rotation.z += input.D1\n  return {\n    Mesh: mesh\n  }\n}\n\nthis.flush = () => {\n\t\n}"
+      "_fnstr": "this.init = input => {\n  \n}\n\nthis.process = input => {\n  let sx = 1.0\n\tif ( input.D2 !== null ) \n  \tsx = Math.pow( input.D2, 2.0 ) * 5.0 + 0.1\n  let mesh = input.Mesh\n  mesh.scale.set( sx, sx, sx )\n  mesh.rotation.x += input.D1 * 0.2\n  mesh.rotation.y += input.D1 * 0.5\n  mesh.rotation.z += input.D1\n  return {\n    Mesh: mesh\n  }\n}\n\nthis.flush = () => {\n\t\n}"
     },
     {
       "input": [
@@ -156,7 +156,7 @@
         }
       ],
       "name": "SCENE",
-      "uuid": "509a4c9b-4ec6-477e-b698-92bf5b44fff0",
+      "uuid": "057ac61a-de9c-46a4-bbf7-9c6e6abc268e",
       "position": {
         "x": 647,
         "y": 322
@@ -176,7 +176,7 @@
       ],
       "output": [],
       "name": "RENDERER",
-      "uuid": "89b91933-d278-4653-840b-3e271aece10d",
+      "uuid": "2f33ff40-ec51-483b-9767-ba3de44a409b",
       "position": {
         "x": 871,
         "y": 281
@@ -210,8 +210,12 @@
       "input": "42a733a0-0d56-4172-a3d6-36a433f054cc"
     },
     {
-      "output": "dd3e35b0-337b-4218-a17b-d22d001151bc",
+      "output": "b8855666-0218-47e6-be76-a022ba3bc1d2",
       "input": "a1f6fcd6-e477-4ff3-a2c4-f64c847d6614"
+    },
+    {
+      "output": "e8bc08da-d82d-4887-892f-11d0ce065813",
+      "input": "fcef78ec-8472-43d9-8952-17972d90cd8a"
     }
   ]
 }

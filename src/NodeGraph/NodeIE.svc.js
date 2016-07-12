@@ -2,10 +2,9 @@ import { Injectable, ChangeDetectorRef } from '@angular/core'
 import nodeFactory from 'src/NodeGraph/NodeFactory'
 
 @Injectable()
-export class NodeIMService {
+export class NodeIEService {
 
 	constructor( changeDetectorRef: ChangeDetectorRef ) {
-		console.log( 'NodeIMService' )
 		this._reg = null
 		this.changeDetectorRef = changeDetectorRef
 	}
@@ -36,7 +35,7 @@ export class NodeIMService {
 	importGraphConfiguration() {
 
 		// TODO: clean up existing nodes & connections, async
-		let graph = JSON.parse( require( '!raw!src/test_mockup.json' ) )
+		let graph = JSON.parse( require( '!raw!src/test_mockup2.json' ) )
 		let nodes = []
 		let uuid_io_map = {}
 		for ( let node of graph.nodes ) {
