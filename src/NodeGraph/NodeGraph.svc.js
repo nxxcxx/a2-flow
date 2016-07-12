@@ -7,92 +7,81 @@ export class NodeGraphService {
 
 	constructor() {
 		console.log( 'NodeGraphService' )
-		this.viewportElem = null
-		this.containerElem = null
-		this.nodes = []
-		this.connections = []
-		this.connectingIO = { src: null, dst: null }
-		this.isConnecting = false
-		this.selectedNode = null
-		this.codeMirror = null
-		this.zoomFactor = 1.0
-		this.renderer = null
 	}
 
 	registerRenderer( renderer ) {
-		this.renderer = renderer
+		this._store.renderer = renderer
 	}
 
 	registerViewportElem( viewportElem ) {
-		this.viewportElem = $( viewportElem )
+		this._store.viewportElem = $( viewportElem )
 	}
 
 	setNodeContainerElem( containerElem ) {
-		this.containerElem = $( containerElem )
+		this._store.containerElem = $( containerElem )
 	}
 
 	registerCodeMirror( codeMirror ) {
-		this.codeMirror = codeMirror
+		this._store.codeMirror = codeMirror
 	}
 
 	getViewportElem() {
-		return this.viewportElem
+		return this._store.viewportElem
 	}
 
 	getNodeContainerElem() {
-		return this.containerElem
+		return this._store.containerElem
 	}
 
 	getNodeContainerTransformationMatrix() {
-		return this.containerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
+		return this._store.containerElem.css( 'transform' ).match( /[\d|\.|\+|-]+/g ).map( v => parseFloat( v ) )
 	}
 
 	getNodes() {
-		return this.nodes
+		return this._store.nodes
 	}
 
 	getConnections() {
-		return this.connections
+		return this._store.connections
 	}
 
 	getSelectedNode() {
-		return this.selectedNode
+		return this._store.selectedNode
 	}
 
 	setSelectedNode( node ) {
-		this.selectedNode = node
-		let swapIndex = this.nodes.findIndex( currentNode => currentNode === node )
-		let lastIndex = this.nodes.length - 1
-		;[ this.nodes[ swapIndex ], this.nodes[ lastIndex ] ] = [ this.nodes[ lastIndex ], this.nodes[ swapIndex ] ]
-		this.codeMirror.doc.setValue( node._fnstr )
-		this.codeMirror.doc.clearHistory()
+		this._store.selectedNode = node
+		let swapIndex = this._store.nodes.findIndex( currentNode => currentNode === node )
+		let lastIndex = this._store.nodes.length - 1
+		;[ this._store.nodes[ swapIndex ], this._store.nodes[ lastIndex ] ] = [ this._store.nodes[ lastIndex ], this._store.nodes[ swapIndex ] ]
+		this._store.codeMirror.doc.setValue( node._fnstr )
+		this._store.codeMirror.doc.clearHistory()
 	}
 
 	clearSelectedNode() {
-		this.selectedNode = null
+		this._store.selectedNode = null
 	}
 
 	deleteIOByReference( io ) {
-		this.disconnectIO( io )
-		let node = this.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
+		this._reg.request( 'NodeConnection' ).disconnectIO( io )
+		let node = this._store.nodes.find( node => !!node.input.find( inp => inp === io ) || !!node.output.find( opt => opt === io ) )
 		node && node.deleteIO( io )
 	}
 
 	addNewNode( name ) {
 		let n = new nodeFactory.Node( name )
-		this.nodes.push( n )
+		this._store.nodes.push( n )
 	}
 
 	deleteNode( node ) {
 		for ( let io of [ ...node.output, ...node.input ] ) {
-			this.disconnectIO( io )
+			this._reg.request( 'NodeConnection' ).disconnectIO( io )
 		}
-		this.nodes = this.nodes.filter( n => n !== node )
+		this._store.nodes = this._store.nodes.filter( n => n !== node )
 	}
 
 	addNewIO( node, type, name ) {
-		let op = [ 'addOutput', 'addInput' ]
-		node[ op[ type ] ]( name )
+		node[ [ 'addOutput', 'addInput' ][ type ] ]( name )
 	}
 
 	createTestNode() {
@@ -100,7 +89,7 @@ export class NodeGraphService {
 		let n = new nodeFactory.Node( genID() )
 		for ( let i = 0; i < ~~( Math.random() * 6 ); i ++ ) n.addInput( genID() )
 		for ( let i = 0; i < ~~( Math.random() * 6 ); i ++ ) n.addOutput( genID() )
-		this.nodes.push( n )
+		this._store.nodes.push( n )
 	}
 
 }

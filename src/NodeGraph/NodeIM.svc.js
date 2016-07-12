@@ -13,7 +13,7 @@ export class NodeIMService {
 	exportGraphConfiguration() {
 		// TODO: the position export should be relative to zoom factor & scroll position?
 		let graph = { nodes: [], connections: [] }
-		for ( let node of this._reg.request( 'NodeGraph' ).nodes ) {
+		for ( let node of this._store.nodes ) {
 			let nodeObject = { input: [], output: [] }
 			nodeObject.name = node.name
 			nodeObject.uuid = node.uuid
@@ -23,7 +23,7 @@ export class NodeIMService {
 			nodeObject.output = node.output.map( opt => ( { name: opt.name, uuid: opt.uuid } ) )
 			graph.nodes.push( nodeObject )
 		}
-		for ( let connection of this._reg.request( 'NodeGraph' ).connections ) {
+		for ( let connection of this._store.connections ) {
 			graph.connections.push( { output: connection[ 0 ].uuid, input: connection[ 1 ].uuid } )
 		}
 		graph = JSON.stringify( graph, null, 2 )
@@ -57,8 +57,8 @@ export class NodeIMService {
 			}
 			nodes.push( nm )
 		}
-		this._reg.request( 'NodeGraph' ).nodes = nodes
-		this._reg.request( 'NodeGraph' ).connections = []
+		this._store.nodes = nodes
+		this._store.connections = []
 		// need to trigger update before adding connections
 		this.changeDetectorRef.detectChanges()
 		for ( let conn of graph.connections ) {

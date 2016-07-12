@@ -14,21 +14,21 @@ export class NodeEngineService {
 
 	sortNodes() {
 		let sorted = this._reg.request( 'NodeConnection' ).computeToposort()
-		this._reg.request( 'NodeGraph' ).nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
-		this._reg.request( 'NodeGraph' ).nodes.sort( ( a, b ) => { return a.order - b.order } )
+		this._store.nodes.forEach( n => { n.order = sorted.indexOf( n.uuid ) } )
+		this._store.nodes.sort( ( a, b ) => { return a.order - b.order } )
 	}
 
 	parse() {
 		this.sortNodes()
-		this._reg.request( 'NodeGraph' ).nodes.forEach( n => {
-			n.parse()
-		} )
+		for ( let node of this._store.nodes ) {
+			node.parse()
+		}
 	}
 
 	createInjectionObject() {
-		let rendererSize = this._reg.request( 'NodeGraph' ).renderer.getSize()
+		let rendererSize = this._store.renderer.getSize()
 		return {
-			renderer: this._reg.request( 'NodeGraph' ).renderer,
+			renderer: this._store.renderer,
 			width: rendererSize.width,
 			height: rendererSize.height
 		}
@@ -36,7 +36,7 @@ export class NodeEngineService {
 
 	step() {
 		if ( this.requestAnimationFrameId === null ) {
-			this._reg.request( 'NodeGraph' ).nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+			this._store.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
 				n.execute( this.createInjectionObject() )
 			} )
 		}
@@ -44,7 +44,7 @@ export class NodeEngineService {
 
 	run() {
 		STATS.begin()
-		this._reg.request( 'NodeGraph' ).nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
+		this._store.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
 			n.execute( this.createInjectionObject() )
 		} )
 		STATS.end()
@@ -68,7 +68,7 @@ export class NodeEngineService {
 
 	flushNodesData() {
 		try {
-			for ( let n of this._reg.request( 'NodeGraph' ).nodes ) {
+			for ( let n of this._store.nodes ) {
 				n.flush()
 				n.flushOutput()
 			}

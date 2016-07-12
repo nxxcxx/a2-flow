@@ -1,12 +1,13 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+const html = String.raw
 
 @Component( {
 
 	selector: '[nodeConnection]',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template:
-	`
+	html`
 		<svg:path
 			(dblclick)="disconnect()"
 			[attr.d]="getBezierCurveString()"

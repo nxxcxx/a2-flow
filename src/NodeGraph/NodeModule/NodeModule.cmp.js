@@ -41,6 +41,7 @@ export class NodeModule {
 	@ViewChildren( NodeModuleIO ) nodeIO
 
 	constructor( elRef: ElementRef, _reg: NodeRegistryService ) {
+		this._store = _reg._store
 		this.ngs = _reg.request( 'NodeGraph' )
 		this.el = elRef.nativeElement
 		this.nodeElem = $( this.el )
@@ -67,7 +68,7 @@ export class NodeModule {
 			if ( !this.mousehold || this.disableMove ) return
 			// TODO: multiple selection
 			// if select multiple, trigger the events to all selected node
-			// this.ngs.getAllSelectedNodes().forEach( node => node.getAngularComponent().moveByPixel( dx, dy ) )
+			// getAllSelectedNodes().forEach( node => node.getAngularComponent().moveByPixel( dx, dy ) )
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
 			this.moveByPixel( dx, dy )
 		}
@@ -83,7 +84,7 @@ export class NodeModule {
 	}
 
 	moveByPixel( dx, dy ) {
-		let zf = this.ngs.zoomFactor
+		let zf = this._store.zoomFactor
 		, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
 		this.nodeElem.css( 'transform', `matrix(1,0,0,1,${xx},${yy})` )
 		this.node.position.x = xx

@@ -2,13 +2,14 @@ import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import NodeFactory from 'src/NodeGraph/NodeFactory'
 import $ from 'jquery'
+const html = String.raw
 
 @Component( {
 
 	selector: 'nodeModuleIO',
 	styles: [ require( '!raw!sass!root/sass/NodeModuleIO.cmp.sass') ],
 	template:
-	`
+	html`
 	<div #ioRow class="ioRow" [ngClass]="{ inputRow: isInput, outputRow: isOutput }">
 
 		<div #ioPort class="ioPort"

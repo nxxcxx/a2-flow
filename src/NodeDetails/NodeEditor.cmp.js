@@ -32,8 +32,8 @@ export class NodeEditor {
 		cm.constructor.Vim.map( 'jj', '<Esc>', 'insert' )
 		cm.setSize( '100%', 600 )
 		cm.on( 'change', cm => {
-			if ( !this.ngs.selectedNode ) return
-			this.ngs.selectedNode._fnstr = cm.doc.getValue()
+			if ( !this.ngs.getSelectedNode() ) return
+			this.ngs.getSelectedNode()._fnstr = cm.doc.getValue()
 		} )
 		this.ngs.registerCodeMirror( cm )
 	}

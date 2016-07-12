@@ -1,13 +1,14 @@
 import { Component } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+const html = String.raw
 
 @Component( {
 
 	selector: '[nodeTempConnection]',
 	template:
-	`
+	html`
 		<svg:line style="pointer-events: none" stroke-width="1" stroke="#0bb1f9"
-			[attr.visibility]="ngs.isConnecting ? 'visible' : 'hidden'"
+			[attr.visibility]="isConnecting() ? 'visible' : 'hidden'"
 			[attr.x1]="getStartCoord().x"
 			[attr.y1]="getStartCoord().y"
 			[attr.x2]="mousePos.x"
@@ -19,6 +20,7 @@ import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 export class NodeTempConnection {
 
 	constructor( _reg: NodeRegistryService ) {
+		this._store = _reg._store
 		this.ngs = _reg.request( 'NodeGraph' )
 		this.mousePos = { x: 0, y: 0 }
 	}
@@ -28,10 +30,10 @@ export class NodeTempConnection {
 			this.mousePos = this.getMousePositionAbsolute( $event )
 		}
 		this.mouseupEvent = () => {
-			this.ngs.isConnecting = false
+			this._store.isConnecting = false
 		}
 		this.mousemoveEvent = $event => {
-			if ( !this.ngs.isConnecting ) return
+			if ( !this._store.isConnecting ) return
 			this.mousePos = this.getMousePositionAbsolute( $event )
 		}
 		this.ngs.getViewportElem()
@@ -43,7 +45,7 @@ export class NodeTempConnection {
 	getMousePositionAbsolute( $event ) {
 		let viewport = this.ngs.getViewportElem()
 		, offset = viewport.offset()
-		, zf = this.ngs.zoomFactor
+		, zf = this._store.zoomFactor
 		, mat = this.ngs.getNodeContainerTransformationMatrix()
 		return {
 			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
@@ -53,13 +55,17 @@ export class NodeTempConnection {
 
 	getStartCoord() {
 		let p = { x: 0, y: 0 }
-		, io = this.ngs.connectingIO.src
+		, io = this._store.connectingIO.src
 		if ( io ) {
 			// TODO: no hard coded offset
 			p.x = io.position.x + 5 * ( io.type === 0 ? 1 : -1 )
 			p.y = io.position.y
 		}
 		return p
+	}
+
+	isConnecting() {
+		return this._store.isConnecting
 	}
 
 }

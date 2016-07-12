@@ -1,12 +1,13 @@
 import { Component, ViewChild } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import $ from 'jquery'
+const html = String.raw
 
 @Component( {
 
 	selector: 'nodeCanvas',
 	template:
-	`
+	html`
 		<canvas #canvas id="canvas" style="position: absolute; top: 0px; right: 0px; transform-style: preserve-3d;">
 		</canvas>
 	`

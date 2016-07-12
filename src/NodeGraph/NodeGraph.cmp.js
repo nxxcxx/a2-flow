@@ -1,5 +1,4 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core'
-import { NodeGraphService } from 'src/NodeGraph/NodeGraph.svc'
 import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
@@ -46,6 +45,7 @@ export class NodeGraph {
 	@ViewChild( 'canvas' ) canvas
 
 	constructor( elRef: ElementRef, _reg: NodeRegistryService ) {
+		this._store = _reg._store
 		this.ngs = _reg.request( 'NodeGraph' )
 		this.el = elRef.nativeElement
 		this.clampScale = 0.2
@@ -70,7 +70,7 @@ export class NodeGraph {
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
 		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		// TODO: no direct access to zoomFactor
-		this.ngs.zoomFactor = ss
+		this._store.zoomFactor = ss
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {

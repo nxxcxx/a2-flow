@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core'
+const html = String.raw
 
 @Component( {
 
 	selector: 'nodeStats',
 	template:
-	`
+	html`
 		<div style="position: fixed; bottom: 0px; left: 0px; z-index: 10000">
 			<canvas #canvas></canvas>
 		</div>
