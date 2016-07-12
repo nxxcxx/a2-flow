@@ -19,13 +19,13 @@ const html = String.raw
 	>
 
 		<svg class="nodeContainerSvg">
-				<g nodeConnection *ngFor="let conn of ngs.getConnections()"
-					[selectedNode]="ngs.getSelectedNode()"
-					[connection]="conn"
-					[x1]="conn[ 0 ].position.x" [y1]="conn[ 0 ].position.y"
-					[x2]="conn[ 1 ].position.x" [y2]="conn[ 1 ].position.y"
-				/>
-				<g nodeTempConnection />
+			<g nodeConnection *ngFor="let conn of ngs.getConnections()"
+				[selectedNode]="ngs.getSelectedNode()"
+				[connection]="conn"
+				[x1]="conn[ 0 ].position.x" [y1]="conn[ 0 ].position.y"
+				[x2]="conn[ 1 ].position.x" [y2]="conn[ 1 ].position.y"
+			/>
+			<g nodeTempConnection />
 		</svg>
 
 		<div class="nodeContainer">

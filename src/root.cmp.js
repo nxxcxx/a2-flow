@@ -28,7 +28,6 @@ const html = String.raw
 		<!-- nodeCanvas suppose to be inside the right viewport but chrome's bug make things pixelated -->
 		<nodeCanvas></nodeCanvas>
 		<div nodeGraph class="view right"></div>
-
 		<nodeStats></nodeStats>
 
 	</div>

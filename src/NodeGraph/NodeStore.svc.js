@@ -11,10 +11,11 @@ export class NodeStoreService {
 		this.connectingIO = { src: null, dst: null }
 		this.isConnecting = false
 		this.selectedNode = null
+		this.zoomFactor = 1.0
+		
+		this.stats = null
 		this.codeMirror = null
 		this.renderer = null
-		this.zoomFactor = 1.0
-		this.stats = null
 	}
 
 }
