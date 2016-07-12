@@ -11,27 +11,27 @@ let html = String.raw
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	html`
-	<div class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}" >
+		<div class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}" >
 
-		<div #headerElem class="headerElem">
-			{{ node.name }}
-		</div>
-
-		<div #ioContainer class="ioContainer">
-
-			<div #inputColumn class="inputColumn">
-				<nodeModuleIO *ngFor="let input of node.input" [io]="input" (onConnecting)="onConnecting( $event )"></nodeModuleIO>
+			<div #headerElem class="headerElem">
+				{{ node.name }}
 			</div>
 
-			<div #separator class="separator"></div>
+			<div #ioContainer class="ioContainer">
 
-			<div #outputColumn class="outputColumn">
-				<nodeModuleIO *ngFor="let output of node.output" [io]="output" (onConnecting)="onConnecting( $event )"></nodeModuleIO>
+				<div #inputColumn class="inputColumn">
+					<div nodeModuleIO *ngFor="let input of node.input" [io]="input" (onConnecting)="onConnecting( $event )"></div>
+				</div>
+
+				<div #separator class="separator"></div>
+
+				<div #outputColumn class="outputColumn">
+					<div nodeModuleIO *ngFor="let output of node.output" [io]="output" (onConnecting)="onConnecting( $event )"></div>
+				</div>
+
 			</div>
 
 		</div>
-
-	</div>
 	`
 
 } )

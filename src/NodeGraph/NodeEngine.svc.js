@@ -4,7 +4,6 @@ import { Injectable, NgZone } from '@angular/core'
 export class NodeEngineService {
 
 	constructor( zone: NgZone ) {
-		this._reg = null
 		this.zone = zone
 		this.requestAnimationFrameId = null
 	}
@@ -40,11 +39,11 @@ export class NodeEngineService {
 	}
 
 	run() {
-		STATS.begin()
+		this._store.stats.begin()
 		this._store.nodes.filter( n => { return n.order !== -1 } ).forEach( n => {
 			n.execute( this.createInjectionObject() )
 		} )
-		STATS.end()
+		this._store.stats.end()
 		this.requestAnimationFrameId = window.requestAnimationFrame( this.run.bind( this ) ).data.handleId
 	}
 
@@ -66,7 +65,6 @@ export class NodeEngineService {
 	flushNodesData() {
 		try {
 			for ( let n of this._store.nodes ) {
-				n.flush()
 				n.flushOutput()
 			}
 		} catch ( ex ) {

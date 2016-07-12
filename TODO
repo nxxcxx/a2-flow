@@ -1,3 +1,4 @@
+isolated scope of execution
 disposable runtime environment
 add userdata, ex: slider
 multi selection

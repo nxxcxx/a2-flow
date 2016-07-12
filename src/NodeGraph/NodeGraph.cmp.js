@@ -9,16 +9,16 @@ const html = String.raw
 
 	selector: '[nodeGraph]',
 	directives: [ NodeModule, NodeConnection, NodeTempConnection ],
+	styles: [ require( '!raw!sass!root/sass/NodeGraph.cmp.sass') ],
 	template:
 	html`
-	<div #container id="nodeGraphContainer"
+	<div #container class="nodeGraphContainer"
 		style="pointer-events: none; position: absolute; width: 5000px; height: 5000px;
 			transform-origin: 0px 0px; transform: matrix(1,0,0,1,0,0);
 		"
 	>
 
-		<svg id="nodeContainerSvg" style="pointer-events: none">
-			<g style="pointer-events: auto">
+		<svg class="nodeContainerSvg">
 				<g nodeConnection *ngFor="let conn of ngs.getConnections()"
 					[selectedNode]="ngs.getSelectedNode()"
 					[connection]="conn"
@@ -26,13 +26,10 @@ const html = String.raw
 					[x2]="conn[ 1 ].position.x" [y2]="conn[ 1 ].position.y"
 				/>
 				<g nodeTempConnection />
-			</g>
 		</svg>
 
-		<div id="nodeContainer" style="pointer-events: none">
-			<div style="pointer-events: auto">
-				<div nodeModule *ngFor="let node of ngs.getNodes()" [node]="node"></div>
-			</div>
+		<div class="nodeContainer">
+			<div nodeModule *ngFor="let node of ngs.getNodes()" [node]="node"></div>
 		</div>
 
 	</div>

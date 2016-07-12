@@ -6,26 +6,26 @@ const html = String.raw
 
 @Component( {
 
-	selector: 'nodeModuleIO',
+	selector: '[nodeModuleIO]',
 	styles: [ require( '!raw!sass!root/sass/NodeModuleIO.cmp.sass') ],
 	template:
 	html`
-	<div #ioRow class="ioRow" [ngClass]="{ inputRow: isInput, outputRow: isOutput }">
+		<div #ioRow class="ioRow" [ngClass]="{ inputRow: isInput, outputRow: isOutput }">
 
-		<div #ioPort class="ioPort"
-			[ngClass]="{
-				inputPort: isInput, outputPort: isOutput,
-				selected: isSelected(), deselected: !isSelected(),
-				ioActive: !io.free, ioDisabled: io.free,
-				ioHover: mousehover
-			}"
-		></div>
+			<div #ioPort class="ioPort"
+				[ngClass]="{
+					inputPort: isInput, outputPort: isOutput,
+					selected: isSelected(), deselected: !isSelected(),
+					ioActive: !io.free, ioDisabled: io.free,
+					ioHover: mousehover
+				}"
+			></div>
 
-		<div #ioLabel class="ioLabel"
-			[ngClass]="{ inputLabel: isInput, outputLabel: isOutput }"
-		>{{ io.name }}</div>
+			<div #ioLabel class="ioLabel"
+				[ngClass]="{ inputLabel: isInput, outputLabel: isOutput }"
+			>{{ io.name }}</div>
 
-	</div>
+		</div>
 	`
 
 } )

@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+const html = String.raw
 
 // CodeMirror ( import order is important )
 import CodeMirror from 'codemirror'
@@ -10,7 +11,10 @@ import 'root/node_modules/codemirror/lib/codemirror.css'
 @Component( {
 
 	selector: 'nodeEditor',
-	template: '<textarea #textarea ></textarea>'
+	template:
+	html`
+		<textarea #textarea ></textarea>
+	`
 
 } )
 export class NodeEditor {

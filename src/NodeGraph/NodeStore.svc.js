@@ -14,6 +14,7 @@ export class NodeStoreService {
 		this.codeMirror = null
 		this.renderer = null
 		this.zoomFactor = 1.0
+		this.stats = null
 	}
 
 }

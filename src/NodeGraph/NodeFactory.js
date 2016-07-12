@@ -17,12 +17,11 @@ class Input extends Connection {
 		this.type = 1
 	}
 	connect( output ) {
-		if ( output instanceof Output ) {
-			this.output = output
-			this.free = false
-			output.input.push( this )
-			output.free = false
-		}
+		if ( !( output instanceof Output ) ) return
+		this.output = output
+		this.free = false
+		output.input.push( this )
+		output.free = false
 	}
 	disconnect() {
 		if ( this.output ) {
@@ -55,22 +54,34 @@ class Executable {
 		this._fnstr = ''
 		this._parseTask = null
 		this._initialized = false
-		this.init = () => {}
-		this.process = () => {}
-		this.flush = () => {}
+		// this.init = () => {}
+		// this.process = () => {}
+		// this.flush = () => {}
+		this.scope = {
+			init: () => {},
+			process: () => {},
+			flush: () => {}
+		}
 	}
 	_init( inputObj, injectObj ) {
 		if ( this._initialized ) return
-		this.init( inputObj, injectObj )
+		// this.init( inputObj, injectObj )
+		this.scope.init.call( this.scope, inputObj, injectObj )
 		this._initialized = true
 	}
 	parse() {
 		try {
-			this.init = () => {}
-			this.process = () => {}
-			this.flush = () => {}
+			// this.init = () => {}
+			// this.process = () => {}
+			// this.flush = () => {}
+			this.scope = {
+				init: () => {},
+				process: () => {},
+				flush: () => {}
+			}
 			this._parseTask = new Function( this._fnstr )
-			this._parseTask()
+			// this._parseTask()
+			this._parseTask.call( this.scope )
 			this._initialized = false
 		} catch ( ex ) {
 			console.warn( ex, this.name, this.uuid )
@@ -81,8 +92,10 @@ class Executable {
 		let inpObj = {}
 		this.input.forEach( inp => { inpObj[ inp.name ] = inp.retrieveData() } )
 		try {
-			this._init.call( this, inpObj, injectObj )
-			res = this.process.call( this, inpObj, injectObj )
+			// this._init.call( this, inpObj, injectObj )
+			// res = this.process.call( this, inpObj, injectObj )
+			this._init( inpObj, injectObj )
+			res = this.scope.process.call( this.scope, inpObj, injectObj )
 		} catch ( ex ) {
 			console.warn( ex, this.name, this.uuid )
 		}
@@ -111,6 +124,7 @@ class Node extends Executable {
 		}
 	}
 	flushOutput() {
+		this.scope.flush.call( this.scope )
 		this.output.forEach( output => output.flush() )
 	}
 	deleteIO( io ) {

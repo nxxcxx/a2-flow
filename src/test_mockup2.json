@@ -9,7 +9,7 @@
         }
       ],
       "name": "CAMERA",
-      "uuid": "4a14c293-4990-4ca2-888f-2df1bc848643",
+      "uuid": "a02808c9-99fa-4eaf-aa38-9841105a1f57",
       "position": {
         "x": 720,
         "y": 253
@@ -25,7 +25,7 @@
         }
       ],
       "name": "Material",
-      "uuid": "bbc2c4e8-65e5-495a-a62f-e88cf9b85e3e",
+      "uuid": "bbbbca6f-e842-44fd-8adc-d6d3b5ab00f3",
       "position": {
         "x": 125,
         "y": 278
@@ -41,7 +41,7 @@
         }
       ],
       "name": "GEOMETRY",
-      "uuid": "e208be94-bdf3-42b0-a4e0-66a99d92c644",
+      "uuid": "a94521f8-9d11-4111-8f18-904a394818a2",
       "position": {
         "x": 126,
         "y": 206
@@ -66,12 +66,28 @@
         }
       ],
       "name": "MESH",
-      "uuid": "0ae96c95-cd2d-4ad8-8b9c-7771c4751468",
+      "uuid": "a156ac5f-c41b-469d-b274-be0f61d1d89e",
       "position": {
         "x": 269,
         "y": 235
       },
       "_fnstr": "this.init = input => {\n  this.mesh = new THREE.Mesh(\n    input.Geometry,\n    input.Material\n  )\n}\n\nthis.process = input => {\n  return {\n    Mesh: this.mesh\n  }\n}\n\nthis.flush = () => {\n  delete this.mesh\n}"
+    },
+    {
+      "input": [],
+      "output": [
+        {
+          "name": "Freq",
+          "uuid": "e8bc08da-d82d-4887-892f-11d0ce065813"
+        }
+      ],
+      "name": "AUDIO",
+      "uuid": "3266684e-62dc-4012-b42d-f782a0aa0410",
+      "position": {
+        "x": 239,
+        "y": 411
+      },
+      "_fnstr": "this.init = () => {\n\t\n  if ( this.__initialized ) return\n  this.__initialized = true\n  this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()\n\tthis.analyser = this.audioCtx.createAnalyser()\n  this.analyser.fftSize = 2048\n\tthis.freqArray = new Uint8Array( this.analyser.frequencyBinCount )\n  console.log( 'freqBin', this.analyser.frequencyBinCount )\n  \n  navigator.getUserMedia = (navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia||navigator.msGetUserMedia)\n\tnavigator.getUserMedia( { audio: true }, stream => {\n  \tthis.source = this.audioCtx.createMediaStreamSource( stream )\n\t\tthis.source.connect( this.analyser )\n\t}, err => {\n    console.warn( err )\n\t} )\n  \n}\n\nthis.process = () => {\n  this.analyser.getByteFrequencyData( this.freqArray )\n  let fs = 0\n  let fe = 1024\n  let avgFreq = computeAverage( this.freqArray, fs, fe ) / 256\n\treturn {\n\t\tFreq: avgFreq\n\t}\n}\n\nthis.flush = () => {\n\tif ( this.audio ) {\n\t\tthis.audio.pause()\n\t\tthis.audio.currentTime = 0\n\t}\n}\n\nfunction computeAverage( freqArray, start, end ) {\n\treturn freqArray.slice( start, end ).reduce( ( a, b ) => a + b ) / ( end - start )\n}"
     },
     {
       "input": [],
@@ -90,28 +106,12 @@
         }
       ],
       "name": "DATA",
-      "uuid": "1a3384fc-3715-4813-9aff-09bc21fa5cba",
+      "uuid": "30b50a92-60ad-47b4-87f6-cf525ca7deda",
       "position": {
         "x": 252,
         "y": 318
       },
       "_fnstr": "this.init = () => {\n\tthis.clock = new THREE.Clock()\n}\n\nthis.process = () => {\n  let dt = this.clock.getDelta()\n  return {\n    X: 0.1 * dt,\n    Y: 0.5 * dt,\n    Z: 1.0 * dt\n  }\n}\n\nthis.flush = () => {\n\t\n}"
-    },
-    {
-      "input": [],
-      "output": [
-        {
-          "name": "Freq",
-          "uuid": "e8bc08da-d82d-4887-892f-11d0ce065813"
-        }
-      ],
-      "name": "AUDIO",
-      "uuid": "37e83ed4-fb76-4a4e-b221-e26728f5e50d",
-      "position": {
-        "x": 238,
-        "y": 412
-      },
-      "_fnstr": "this.init = () => {\n\t\n  if ( this.__initialized ) return\n  this.__initialized = true\n  this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()\n\tthis.analyser = this.audioCtx.createAnalyser()\n  this.analyser.fftSize = 1024\n\tthis.freqArray = new Uint8Array( this.analyser.frequencyBinCount )\n  console.log( 'freqBin', this.analyser.frequencyBinCount )\n  \n  navigator.getUserMedia = (navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia||navigator.msGetUserMedia)\n\tnavigator.getUserMedia( { audio: true }, stream => {\n  \tthis.source = this.audioCtx.createMediaStreamSource( stream )\n\t\tthis.source.connect( this.analyser )\n\t}, err => {\n    console.warn( err )\n\t} )\n  \n}\n\nthis.process = () => {\n  this.analyser.getByteFrequencyData( this.freqArray )\n  let fs = 0\n  let fe = 512\n  let avgFreq = computeAverage( this.freqArray, fs, fe ) / 256\n\treturn {\n\t\tFreq: avgFreq\n\t}\n}\n\nthis.flush = () => {\n\tif ( this.audio ) {\n\t\tthis.audio.pause()\n\t\tthis.audio.currentTime = 0\n\t}\n}\n\nfunction computeAverage( freqArray, start, end ) {\n\treturn freqArray.slice( start, end ).reduce( ( a, b ) => a + b ) / ( end - start )\n}"
     },
     {
       "input": [
@@ -135,7 +135,7 @@
         }
       ],
       "name": "Modifier",
-      "uuid": "4c9ff47f-822e-434c-9c9f-314697d9ee96",
+      "uuid": "4a655ba6-16dc-4359-87f9-2654b1953a5a",
       "position": {
         "x": 474,
         "y": 303
@@ -156,7 +156,7 @@
         }
       ],
       "name": "SCENE",
-      "uuid": "057ac61a-de9c-46a4-bbf7-9c6e6abc268e",
+      "uuid": "2c9abd1c-5edf-43dc-ac44-11e9ee6020a3",
       "position": {
         "x": 647,
         "y": 322
@@ -176,7 +176,7 @@
       ],
       "output": [],
       "name": "RENDERER",
-      "uuid": "2f33ff40-ec51-483b-9767-ba3de44a409b",
+      "uuid": "2b1b9c6a-ecd5-4d54-aa92-357307da6ac1",
       "position": {
         "x": 871,
         "y": 281
@@ -210,12 +210,12 @@
       "input": "42a733a0-0d56-4172-a3d6-36a433f054cc"
     },
     {
-      "output": "b8855666-0218-47e6-be76-a022ba3bc1d2",
-      "input": "a1f6fcd6-e477-4ff3-a2c4-f64c847d6614"
-    },
-    {
       "output": "e8bc08da-d82d-4887-892f-11d0ce065813",
       "input": "fcef78ec-8472-43d9-8952-17972d90cd8a"
+    },
+    {
+      "output": "e5e379b8-d8c8-447c-9f14-747d35e81697",
+      "input": "a1f6fcd6-e477-4ff3-a2c4-f64c847d6614"
     }
   ]
 }

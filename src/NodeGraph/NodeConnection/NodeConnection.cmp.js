@@ -13,6 +13,7 @@ const html = String.raw
 			[attr.d]="getBezierCurveString()"
 			[attr.stroke]="getStokeColor()"
 			stroke-width="1.5" fill="rgba(0,0,0,0)"
+			style="pointer-events: auto"
 		/>
 	`
 

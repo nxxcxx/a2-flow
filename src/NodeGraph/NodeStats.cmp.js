@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core'
+import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 const html = String.raw
 
 @Component( {
@@ -16,7 +17,7 @@ export class NodeStats {
 
 	@ViewChild( 'canvas' ) canvas
 
-	constructor() {
+	constructor( _reg: NodeRegistryService ) {
 		this.beginTime = ( performance || Date ).now()
 		this.prevTime = this.beginTime
 		this.frames = 0
@@ -27,7 +28,7 @@ export class NodeStats {
 		this.prevY = this.height
 		this.clampMaxGraphHeight = 60
 		this.updateInterval = 15
-		window.STATS = this
+		_reg._store.stats = this
 	}
 
 	ngOnInit() {

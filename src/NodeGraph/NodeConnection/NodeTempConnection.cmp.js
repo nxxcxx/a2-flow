@@ -7,12 +7,14 @@ const html = String.raw
 	selector: '[nodeTempConnection]',
 	template:
 	html`
-		<svg:line style="pointer-events: none" stroke-width="1" stroke="#0bb1f9"
+		<svg:line
 			[attr.visibility]="isConnecting() ? 'visible' : 'hidden'"
 			[attr.x1]="getStartCoord().x"
 			[attr.y1]="getStartCoord().y"
 			[attr.x2]="mousePos.x"
 			[attr.y2]="mousePos.y"
+			stroke-width="1" stroke="#0bb1f9"
+			style="pointer-events: none"
 		/>
 	`
 

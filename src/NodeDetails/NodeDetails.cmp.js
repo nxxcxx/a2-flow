@@ -16,6 +16,7 @@ const html = String.raw
 			<button (click)="step()">STP</button>
 			<button (click)="loopStop()">HLT</button>
 			<button (click)="importGraph()">IMP</button>
+			<button (click)="exportGraph()">EXP</button>
 			<button (click)="ngs.createTestNode()">ADD</button>
 			<button (click)="parseSelectedNode()">PAR-S</button>
 		</div>
@@ -38,35 +39,40 @@ export class NodeDetails {
 		this.nie.importGraphConfiguration()
 	}
 
+	exportGraph() {
+		this.nie.exportGraphConfiguration()
+	}
+
 	parse() {
+		console.log( 'PAR' )
 		this.loopStop()
 		this.nen.parse()
-		console.log( 'PAR' )
 	}
 
 	parseSelectedNode() {
+		console.log( 'PAR-S' )
 		this.ngs.getSelectedNode().parse()
 	}
 
 	loopStart() {
-		this.nen.loopStart()
 		console.log( 'EXE' )
+		this.nen.loopStart()
 	}
 
 	loopStop() {
-		this.nen.loopStop()
 		console.log( 'HLT' )
+		this.nen.loopStop()
 	}
 
 	step() {
-		this.nen.step()
 		console.log( 'STP' )
+		this.nen.step()
 	}
 
 	flush() {
+		console.log( 'CLR' )
 		this.loopStop()
 		this.nen.flushNodesData()
-		console.log( 'CLR' )
 	}
 
 }
