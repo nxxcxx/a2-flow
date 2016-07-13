@@ -39,12 +39,12 @@ export class NodeConnection {
 	}
 
 	getStokeColor() {
-		if ( !!this.selectedNode &&
-				(
-					!!this.selectedNode.output.find( opt => opt === this.connection[ 0 ] ) ||
-					!!this.selectedNode.input.find( inp => inp === this.connection[ 1 ] )
-				)
-		) return '#0bb1f9'
+		// if ( !!this.selectedNode &&
+		// 		(
+		// 			!!this.selectedNode.output.find( opt => opt === this.connection[ 0 ] ) ||
+		// 			!!this.selectedNode.input.find( inp => inp === this.connection[ 1 ] )
+		// 		)
+		// ) return '#0bb1f9'
 		return '#e6e6e6'
 	}
 

@@ -60,6 +60,8 @@ export class NodeGraphService {
 
 	clearSelectedNode() {
 		this._store.selectedNode = null
+		this._store.codeMirror.doc.setValue( '' )
+		this._store.codeMirror.doc.clearHistory()
 	}
 
 	deleteIOByReference( io ) {

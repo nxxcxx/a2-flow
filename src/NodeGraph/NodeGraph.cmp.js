@@ -3,12 +3,13 @@ import { NodeModule } from 'src/NodeGraph/NodeModule/NodeModule.cmp'
 import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
+import { SelectionBox } from 'src/NodeGraph/SelectionBox.cmp'
 const html = String.raw
 
 @Component( {
 
 	selector: '[nodeGraph]',
-	directives: [ NodeModule, NodeConnection, NodeTempConnection ],
+	directives: [ NodeModule, NodeConnection, NodeTempConnection, SelectionBox ],
 	styles: [ require( '!raw!sass!root/sass/NodeGraph.cmp.sass') ],
 	template:
 	html`
@@ -33,6 +34,8 @@ const html = String.raw
 		</div>
 
 	</div>
+
+	<div selectionBox></div>
 	`
 
 } )
@@ -66,12 +69,17 @@ export class NodeGraph {
 		, xx = sd * ( mat[ 4 ] - ox ) + ox
 		, yy = sd * ( mat[ 5 ] - oy ) + oy
 		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
-		// TODO: no direct access to zoomFactor
 		this._store.zoomFactor = ss
+		// TODO: cleanup
+		this._store.nodes.forEach( n => {
+			if ( n !== this.node && n.multiSelected ) {
+				n._ngComponent.resetPrevPos()
+			}
+		} )
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
-		if ( $event.target !== this.ngs.getViewportElem()[ 0 ] ) return
+		if ( $event.which !== 2 || $event.target !== this.ngs.getViewportElem()[ 0 ] ) return
 		this.mousehold = true
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
