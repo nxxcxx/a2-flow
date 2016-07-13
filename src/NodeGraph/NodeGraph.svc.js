@@ -6,7 +6,6 @@ import $ from 'jquery'
 export class NodeGraphService {
 
 	constructor() {
-		console.log()
 	}
 
 	registerRenderer( renderer ) {
@@ -47,6 +46,17 @@ export class NodeGraphService {
 
 	getSelectedNode() {
 		return this._store.selectedNode
+	}
+
+	getMousePositionRelativeToContainer( $event ) {
+		let viewport = this._store.viewportElem
+		, offset = viewport.offset()
+		, zf = this._store.zoomFactor
+		, mat = this.getNodeContainerTransformationMatrix()
+		return {
+			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
+			y: ( $event.clientY - offset.top + viewport.scrollTop() - mat[ 5 ] ) / zf
+		}
 	}
 
 	setSelectedNode( node ) {

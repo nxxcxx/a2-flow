@@ -71,9 +71,7 @@ export class NodeModule {
 			if ( !this.mousehold || this.disableMove ) return
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
 			this.moveByPixel( dx, dy )
-			// TODO: multiple selection
-			// if select multiple, trigger the events to all selected node
-			// getAllSelectedNodes().forEach( node => node.getAngularComponent().moveByPixel( dx, dy ) )
+			// TODO: cleanup
 			this._store.nodes.forEach( n => {
 				if ( n !== this.node && n.multiSelected ) {
 					n._ngComponent.moveByPixel( dx, dy )

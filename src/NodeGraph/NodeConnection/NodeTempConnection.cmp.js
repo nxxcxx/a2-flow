@@ -29,30 +29,19 @@ export class NodeTempConnection {
 
 	ngAfterViewInit() {
 		this.mousedownEvent = $event => {
-			this.mousePos = this.getMousePositionRelativeToContainer( $event )
+			this.mousePos = this.ngs.getMousePositionRelativeToContainer( $event )
 		}
 		this.mouseupEvent = () => {
 			this._store.isConnecting = false
 		}
 		this.mousemoveEvent = $event => {
 			if ( !this._store.isConnecting ) return
-			this.mousePos = this.getMousePositionRelativeToContainer( $event )
+			this.mousePos = this.ngs.getMousePositionRelativeToContainer( $event )
 		}
 		this.ngs.getViewportElem()
 		.on( 'mousedown', this.mousedownEvent )
 		.on( 'mouseup', this.mouseupEvent )
 		.on( 'mousemove', this.mousemoveEvent )
-	}
-
-	getMousePositionRelativeToContainer( $event ) {
-		let viewport = this.ngs.getViewportElem()
-		, offset = viewport.offset()
-		, zf = this._store.zoomFactor
-		, mat = this.ngs.getNodeContainerTransformationMatrix()
-		return {
-			x: ( $event.clientX - offset.left + viewport.scrollLeft() - mat[ 4 ] ) / zf,
-			y: ( $event.clientY - offset.top + viewport.scrollTop() - mat[ 5 ] ) / zf
-		}
 	}
 
 	getStartCoord() {
