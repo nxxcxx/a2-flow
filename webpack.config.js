@@ -33,7 +33,9 @@ module.exports = {
 			inject: 'body'
 		} ),
 		new webpack.DefinePlugin( {
-			'process.env': ' "debug" '
+			'process.env': '"debug"'
+		} ),
+		new webpack.ProvidePlugin( {
 		} )
 	],
 	devtool: 'eval'

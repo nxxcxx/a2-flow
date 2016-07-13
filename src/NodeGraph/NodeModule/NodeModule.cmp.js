@@ -47,14 +47,10 @@ export class NodeModule {
 		this.nodeElem = $( this.el )
 		this.disableMove = false
 		this.prevPos = this.nodeElem.position()
-		// TODO: this.node.setAngularComponent( this )
 	}
 
-	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
-		this.ngs.setSelectedNode( this.node )
-		this.mousehold = true
-		this.prevMouse = { x: $event.pageX, y: $event.pageY }
-		this.prevPos = this.nodeElem.position()
+	ngOnInit() {
+		this.node._ngComponent = this
 	}
 
 	ngAfterViewInit() {
@@ -85,7 +81,7 @@ export class NodeModule {
 
 	moveByPixel( dx, dy ) {
 		let zf = this._store.zoomFactor
-		, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ]
+		, [ xx, yy ] = [ ( this.prevPos.left + dx ) / zf, ( this.prevPos.top + dy ) / zf ].map( v => +v.toFixed( 2 ) )
 		this.nodeElem.css( 'transform', `matrix(1,0,0,1,${xx},${yy})` )
 		this.node.position.x = xx
 		this.node.position.y = yy
@@ -102,6 +98,13 @@ export class NodeModule {
 
 	isSelected() {
 		return this.node === this.ngs.getSelectedNode()
+	}
+
+	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
+		this.ngs.setSelectedNode( this.node )
+		this.mousehold = true
+		this.prevMouse = { x: $event.pageX, y: $event.pageY }
+		this.prevPos = this.nodeElem.position()
 	}
 
 }
