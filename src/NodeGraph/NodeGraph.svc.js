@@ -45,7 +45,7 @@ export class NodeGraphService {
 	}
 
 	getSelectedNodes() {
-		return this._store.selectedNode
+		return this._store.selectedNodes
 	}
 
 	getMousePositionRelativeToContainer( $event ) {
@@ -62,9 +62,9 @@ export class NodeGraphService {
 	setSelectedNode( node ) {
 		if ( node ) node._markAsSelecting = true
 		this._store.nodes.forEach( n => {
-			let alreadySelected = this._store.selectedNode.find( sn => sn === n )
+			let alreadySelected = this._store.selectedNodes.find( sn => sn === n )
 			if ( n._markAsSelecting && !alreadySelected ) {
-				this._store.selectedNode.push( n )
+				this._store.selectedNodes.push( n )
 				n._markAsSelecting = false
 			}
 		} )
@@ -78,8 +78,8 @@ export class NodeGraphService {
 		}
 	}
 
-	isNodeInSelection() {
-		console.log( 'TODO' )
+	isNodeInSelection( node ) {
+		return this._store.selectedNodes.find( n => n === node ) !== undefined
 	}
 
 	setEditorText( text ) {
@@ -89,8 +89,8 @@ export class NodeGraphService {
 
 	clearSelectedNode() {
 		this._store.nodes.forEach( n => { n._markAsSelecting = false } )
-		if ( this._store.selectedNode.length !== 0 ) {
-			this._store.selectedNode = []
+		if ( this._store.selectedNodes.length !== 0 ) {
+			this._store.selectedNodes = []
 			this._store.codeMirror.doc.setValue( '' )
 			this._store.codeMirror.doc.clearHistory()
 		}

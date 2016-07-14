@@ -70,11 +70,8 @@ export class NodeGraph {
 		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
 		this._store.zoomFactor = ss
 		// TODO: cleanup
-		this._store.nodes.forEach( n => {
-			let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
-			if ( n !== this.node && isInSelection ) {
-				n._ngComponent.resetPrevPos()
-			}
+		this.ngs.getSelectedNodes().forEach( n => {
+			if ( n !== this.node ) n._ngComponent.resetPrevPos()
 		} )
 	}
 

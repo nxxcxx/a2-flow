@@ -10,7 +10,7 @@ export class NodeStoreService {
 		this.connections = []
 		this.connectingIO = { src: null, dst: null }
 		this.isConnecting = false
-		this.selectedNode = []
+		this.selectedNodes = []
 		this.zoomFactor = 1.0
 
 		this.stats = null

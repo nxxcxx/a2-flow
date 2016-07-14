@@ -61,24 +61,16 @@ export class NodeModule {
 		this.mouseupEvent = () => {
 			this.mousehold = false
 			this.disableMove = false
-			// TODO: cleanup
-			this._store.nodes.forEach( n => {
-				let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
-				if ( n !== this.node && isInSelection ) {
-					n._ngComponent.resetPrevPos()
-				}
+			this.ngs.getSelectedNodes().forEach( n => {
+				if ( n !== this.node ) n._ngComponent.resetPrevPos()
 			} )
 		}
 		this.mousemoveEvent = $event => {
 			if ( !this.mousehold || this.disableMove ) return
 			let [ dx, dy ] = [ $event.pageX - this.prevMouse.x, $event.pageY - this.prevMouse.y ]
 			this.moveByPixel( dx, dy )
-			// TODO: cleanup
-			this._store.nodes.forEach( n => {
-				let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
-				if ( n !== this.node && isInSelection ) {
-					n._ngComponent.moveByPixel( dx, dy )
-				}
+			this.ngs.getSelectedNodes().forEach( n => {
+				if ( n !== this.node ) n._ngComponent.moveByPixel( dx, dy )
 			} )
 		}
 		this.ngs.getViewportElem()
@@ -88,8 +80,7 @@ export class NodeModule {
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
 		// TODO: cleanup
-		let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === this.node )
-		if ( !isInSelection ) {
+		if ( !this.ngs.isNodeInSelection( this.node ) ) {
 			this.ngs.clearSelectedNode()
 			this.ngs.setSelectedNode( this.node )
 		}
@@ -130,9 +121,7 @@ export class NodeModule {
 	}
 
 	shouldHighlight() {
-		// TODO: cleanup
-		let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === this.node )
-		return isInSelection || this.node._markAsSelecting
+		return this.ngs.isNodeInSelection( this.node ) || this.node._markAsSelecting
 	}
 
 }
