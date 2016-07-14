@@ -34,7 +34,7 @@ export class NodeIEService {
 
 	importGraphConfiguration() {
 		// TODO: clean up existing nodes & connections, async
-		let graph = JSON.parse( require( '!raw!src/test_mockup3.json' ) )
+		let graph = JSON.parse( require( '!raw!src/test_node_graph_01.json' ) )
 		let nodes = []
 		let uuid_io_map = {}
 		for ( let node of graph.nodes ) {

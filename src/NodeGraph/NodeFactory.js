@@ -104,7 +104,7 @@ class Executable {
 }
 
 class Node extends Executable {
-	constructor( name ) {
+	constructor( name, type = 'NM_BASIC' ) {
 		super()
 		this.uuid = uuid()
 		this.name = name
@@ -112,6 +112,7 @@ class Node extends Executable {
 		this.output = []
 		this.order = -1
 		this.position = { x: 0, y: 0 }
+		this.type = type
 	}
 	addInput() {
 		for ( let arg of arguments ) {

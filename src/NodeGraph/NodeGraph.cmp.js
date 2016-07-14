@@ -4,12 +4,13 @@ import { NodeConnection } from 'src/NodeGraph/NodeConnection/NodeConnection.cmp'
 import { NodeTempConnection } from 'src/NodeGraph/NodeConnection/NodeTempConnection.cmp'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 import { SelectionBox } from 'src/NodeGraph/SelectionBox.cmp'
+import { NodeModuleDisplay } from 'src/NodeGraph/NodeModule/NodeModuleDisplay.cmp'
 const html = String.raw
 
 @Component( {
 
 	selector: '[nodeGraph]',
-	directives: [ NodeModule, NodeConnection, NodeTempConnection, SelectionBox ],
+	directives: [ NodeModule, NodeConnection, NodeTempConnection, SelectionBox, NodeModuleDisplay ],
 	styles: [ require( '!raw!sass!root/sass/NodeGraph.cmp.sass') ],
 	template:
 	html`
@@ -29,7 +30,10 @@ const html = String.raw
 		</svg>
 
 		<div class="nodeContainer">
-			<div nodeModule *ngFor="let node of ngs.getNodes()" [node]="node"></div>
+			<div *ngFor="let node of ngs.getNodes()">
+				<div *ngIf="node.type === 'NM_BASIC'" nodeModule [node]="node"></div>
+				<div *ngIf="node.type === 'NM_DISPLAY'" nodeModuleDisplay [node]="node"></div>
+			</div>
 		</div>
 
 	</div>
@@ -55,24 +59,35 @@ export class NodeGraph {
 		this.ngs.registerNodeContainerElem( this.container.nativeElement )
 	}
 
+	zoom( anchor, delta ) {
+		let mat = this.ngs.getNodeContainerTransformationMatrix()
+		, dd = - Math.sign( delta ) * 0.1
+		, sf = Math.max( mat[ 0 ] * ( 1.0 + dd ), this.clampScale )
+		, sd = sf / mat[ 0 ]
+		, xx = sd * ( mat[ 4 ] - anchor.x ) + anchor.x
+		, yy = sd * ( mat[ 5 ] - anchor.y ) + anchor.y
+		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${sf},0,0,${sf},${xx},${yy})` )
+		this._store.zoomFactor = sf
+	}
+
+	pan( delta ) {
+		let viewport = this.ngs.getViewportElem()
+		viewport.scrollLeft( viewport.scrollLeft() - delta.x )
+		viewport.scrollTop( viewport.scrollTop() - delta.y )
+	}
+
 	@HostListener( 'wheel', [ '$event' ] ) onMouseWheel( $event ) {
 		$event.preventDefault()
-		let mat = this.ngs.getNodeContainerTransformationMatrix()
-		, viewport = this.ngs.getViewportElem()
+		let viewport = this.ngs.getViewportElem()
 		, viewportOffset = viewport.offset()
-		, dd = - Math.sign( $event.deltaY ) * 0.1
-		, ss = Math.max( mat[ 0 ] * ( 1.0 + dd ), this.clampScale )
-		, sd = ss / mat[ 0 ]
-		, ox = $event.clientX - viewportOffset.left + viewport.scrollLeft()
-		, oy = $event.clientY - viewportOffset.top + viewport.scrollTop()
-		, xx = sd * ( mat[ 4 ] - ox ) + ox
-		, yy = sd * ( mat[ 5 ] - oy ) + oy
-		this.ngs.getNodeContainerElem().css( 'transform', `matrix(${ss},0,0,${ss},${xx},${yy})` )
-		this._store.zoomFactor = ss
-		// TODO: cleanup
-		this.ngs.getSelectedNodes().forEach( n => {
-			if ( n !== this.node ) n._ngComponent.resetPrevPos()
-		} )
+		let anchor = {
+			x: $event.clientX - viewportOffset.left + viewport.scrollLeft(),
+			y: $event.clientY - viewportOffset.top + viewport.scrollTop()
+		}
+		this.zoom( anchor, $event.deltaY )
+		this.ngs.getSelectedNodes()
+			.filter( n => n !== this.node )
+			.map( n => n._ngComponent.resetPrevPos() )
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
@@ -86,11 +101,8 @@ export class NodeGraph {
 	}
 
 	@HostListener( 'mousemove', [ '$event' ] ) onMouseMove( $event ) {
-		let viewport = this.ngs.getViewportElem()
-		if ( !this.mousehold || ( $event.target !== viewport.get(0) ) ) return
-		let dt = { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y }
-		viewport.scrollTop( viewport.scrollTop() - dt.y )
-		viewport.scrollLeft( viewport.scrollLeft() - dt.x )
+		if ( !this.mousehold || ( $event.target !== this.ngs.getViewportElem()[ 0 ] ) ) return
+		this.pan( { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y } )
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
 	}
 

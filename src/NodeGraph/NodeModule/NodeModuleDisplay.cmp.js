@@ -6,7 +6,7 @@ let html = String.raw
 
 @Component( {
 
-	selector: '[nodeModule]',
+	selector: '[nodeModuleDisplay]',
 	directives: [ NodeModuleIO ],
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
@@ -23,7 +23,9 @@ let html = String.raw
 					<div nodeModuleIO *ngFor="let input of node.input" [io]="input" (onConnecting)="onConnecting( $event )"></div>
 				</div>
 
-				<div #separator class="separator"></div>
+				<div style="display: inline-block; width: 100px; background: red; text-align: center">
+					{{ node.scope._dispText }}
+				</div>
 
 				<div #outputColumn class="outputColumn">
 					<div nodeModuleIO *ngFor="let output of node.output" [io]="output" (onConnecting)="onConnecting( $event )"></div>
@@ -35,7 +37,7 @@ let html = String.raw
 	`
 
 } )
-export class NodeModule extends NodeModuleBase {
+export class NodeModuleDisplay extends NodeModuleBase {
 	constructor( elRef: ElementRef, _reg: NodeRegistryService ) {
 		super( elRef, _reg )
 	}

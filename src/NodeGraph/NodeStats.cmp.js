@@ -7,7 +7,8 @@ const html = String.raw
 	selector: 'nodeStats',
 	template:
 	html`
-		<div style="position: fixed; bottom: 0px; left: 0px; z-index: 10000">
+		<div style="position: fixed; top: 0px; left: 30%; z-index: 10;">
+			<div #fps style="position: absolute; top: 1px; right: 1px; font-size: 10px"></div>
 			<canvas #canvas></canvas>
 		</div>
 	`
@@ -16,22 +17,24 @@ const html = String.raw
 export class NodeStats {
 
 	@ViewChild( 'canvas' ) canvas
+	@ViewChild( 'fps' ) fps
 
 	constructor( _reg: NodeRegistryService ) {
 		this.beginTime = ( performance || Date ).now()
 		this.prevTime = this.beginTime
 		this.frames = 0
-		this.bg = '#111'
-		this.fg = '#fff'
-		this.width = 200
+		this.bg = '#181a1c'
+		this.fg = '#eee'
+		this.width = 80
 		this.height = 40
 		this.prevY = this.height
 		this.clampMaxGraphHeight = 60
-		this.updateInterval = 15
+		this.updateInterval = 100
 		_reg._store.stats = this
 	}
 
 	ngOnInit() {
+		this.fpsElem = this.fps.nativeElement
 		let canvas = this.canvas.nativeElement
 		canvas.width = this.width
 		canvas.height = this.height
@@ -57,6 +60,7 @@ export class NodeStats {
 
 	drawGraphSegment( value, maxValue ) {
 		let ctx = this.ctx
+		, fps = Math.round( value )
 		, y = this.height - Math.round( ( Math.min( value, this.clampMaxGraphHeight ) / maxValue ) * this.height )
 		, unit = 1
 		, offsetTop = 0
@@ -75,7 +79,10 @@ export class NodeStats {
 		ctx.closePath()
 		ctx.stroke()
 
+		this.fpsElem.innerText = fps
+
 		this.prevY = y
+
 	}
 
 
