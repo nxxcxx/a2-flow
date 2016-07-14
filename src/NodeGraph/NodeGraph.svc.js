@@ -44,7 +44,7 @@ export class NodeGraphService {
 		return this._store.connections
 	}
 
-	getSelectedNode() {
+	getSelectedNodes() {
 		return this._store.selectedNode
 	}
 
@@ -60,18 +60,40 @@ export class NodeGraphService {
 	}
 
 	setSelectedNode( node ) {
-		this._store.selectedNode = node
-		let swapIndex = this._store.nodes.findIndex( currentNode => currentNode === node )
-		let lastIndex = this._store.nodes.length - 1
-		;[ this._store.nodes[ swapIndex ], this._store.nodes[ lastIndex ] ] = [ this._store.nodes[ lastIndex ], this._store.nodes[ swapIndex ] ]
-		this._store.codeMirror.doc.setValue( node._fnstr )
+		if ( node ) node._markAsSelecting = true
+		this._store.nodes.forEach( n => {
+			let alreadySelected = this._store.selectedNode.find( sn => sn === n )
+			if ( n._markAsSelecting && !alreadySelected ) {
+				this._store.selectedNode.push( n )
+				n._markAsSelecting = false
+			}
+		} )
+		let selectedNodes = this.getSelectedNodes()
+		if ( selectedNodes.length === 1 ) {
+			this.setEditorText( selectedNodes[ 0 ]._fnstr )
+		} else if ( selectedNodes.length > 1 ) {
+			this.setEditorText( '<< MULTIPLE SELECTED >>' )
+		} else {
+			this.setEditorText( 'NULL' )
+		}
+	}
+
+	isNodeInSelection() {
+		console.log( 'TODO' )
+	}
+
+	setEditorText( text ) {
+		this._store.codeMirror.doc.setValue( text )
 		this._store.codeMirror.doc.clearHistory()
 	}
 
 	clearSelectedNode() {
-		this._store.selectedNode = null
-		this._store.codeMirror.doc.setValue( '' )
-		this._store.codeMirror.doc.clearHistory()
+		this._store.nodes.forEach( n => { n._markAsSelecting = false } )
+		if ( this._store.selectedNode.length !== 0 ) {
+			this._store.selectedNode = []
+			this._store.codeMirror.doc.setValue( '' )
+			this._store.codeMirror.doc.clearHistory()
+		}
 	}
 
 	deleteIOByReference( io ) {

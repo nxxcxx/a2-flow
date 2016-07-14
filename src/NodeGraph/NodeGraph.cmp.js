@@ -21,7 +21,6 @@ const html = String.raw
 
 		<svg class="nodeContainerSvg">
 			<g nodeConnection *ngFor="let conn of ngs.getConnections()"
-				[selectedNode]="ngs.getSelectedNode()"
 				[connection]="conn"
 				[x1]="conn[ 0 ].position.x" [y1]="conn[ 0 ].position.y"
 				[x2]="conn[ 1 ].position.x" [y2]="conn[ 1 ].position.y"
@@ -72,7 +71,8 @@ export class NodeGraph {
 		this._store.zoomFactor = ss
 		// TODO: cleanup
 		this._store.nodes.forEach( n => {
-			if ( n !== this.node && n.multiSelected ) {
+			let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
+			if ( n !== this.node && isInSelection ) {
 				n._ngComponent.resetPrevPos()
 			}
 		} )

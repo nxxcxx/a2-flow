@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, Output } from '@angular/core'
 import { NodeRegistryService } from 'src/NodeGraph/NodeRegistry.svc'
 const html = String.raw
 
@@ -7,7 +7,7 @@ const html = String.raw
 	selector: '[selectionBox]',
 	template:
 	html`
-		<div #box
+		<div
 			style="position: fixed; border: 1px solid #0bb1f9;"
 			[ngStyle]="{
 				width: width + 'px', height: height + 'px',
@@ -19,8 +19,6 @@ const html = String.raw
 
 } )
 export class SelectionBox {
-
-	@ViewChild( 'box' ) box
 
 	constructor( _reg: NodeRegistryService ) {
 		this._store = _reg._store
@@ -43,7 +41,7 @@ export class SelectionBox {
 			this.deselect()
 			this.visible = true
 			let [ cp, pp ] = [ { x: $event.clientX, y: $event.clientY }, this.prevPos ]
-			, ppr = this.ppr = this.prevPosRel
+			, ppr = this.prevPosRel
 			, cpr = this.cpr = this.ngs.getMousePositionRelativeToContainer( $event )
 			this.width = Math.abs( cp.x - pp.x )
 			this.height = Math.abs( cp.y - pp.y )
@@ -64,6 +62,7 @@ export class SelectionBox {
 		.on( 'mouseup', () => {
 			this.mousehold = false
 			this.visible = false
+			this.ngs.setSelectedNode()
 		} )
 	}
 
@@ -72,15 +71,15 @@ export class SelectionBox {
 			if ( doRectIntersect( {
 				l,
 				t,
-				r: l + Math.abs( this.cpr.x - this.ppr.x ),
-				b: t + Math.abs( this.cpr.y - this.ppr.y )
+				r: l + Math.abs( this.cpr.x - this.prevPosRel.x ),
+				b: t + Math.abs( this.cpr.y - this.prevPosRel.y )
 			}, {
 				l: n.position.x,
 				t: n.position.y,
 				r: n._posRightRel,
 				b: n._posBottomRel
 			} ) ) {
-				n.multiSelected = true
+				n._markAsSelecting = true
 			}
 		} )
 		function doRectIntersect( r1, r2 ) {
@@ -90,7 +89,6 @@ export class SelectionBox {
 
 	deselect() {
 		this.ngs.clearSelectedNode()
-		this._store.nodes.forEach( n => n.multiSelected = false )
 	}
 
 }

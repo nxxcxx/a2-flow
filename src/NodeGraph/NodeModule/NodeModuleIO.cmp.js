@@ -15,7 +15,7 @@ const html = String.raw
 			<div #ioPort class="ioPort"
 				[ngClass]="{
 					inputPort: isInput, outputPort: isOutput,
-					selected: isSelected(), deselected: !isSelected(),
+					selected: shouldHighlight(), deselected: !shouldHighlight(),
 					ioActive: !io.free, ioDisabled: io.free,
 					ioHover: mousehover
 				}"
@@ -80,8 +80,9 @@ export class NodeModuleIO {
 		this.io.position.y = ( ioOffset.top - viewportOffset.top + viewport.scrollTop() + hh  - mat[ 5 ] ) / mat[ 0 ]
 	}
 
-	isSelected() {
-		return this.io.parent === this.ngs.getSelectedNode()
+	shouldHighlight() {
+		let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === this.io.parent )
+		return isInSelection || this.io.parent._markAsSelecting
 	}
 
 }

@@ -11,7 +11,7 @@ let html = String.raw
 	styles: [ require( '!raw!sass!root/sass/NodeModule.cmp.sass') ],
 	template:
 	html`
-		<div #nodeBody class="nodeElem" [ngClass]="{selected: isSelected(), deselected: !isSelected()}" >
+		<div #nodeBody class="nodeElem" [ngClass]="{selected: shouldHighlight(), deselected: !shouldHighlight()}" >
 
 			<div #headerElem class="headerElem">
 				{{ node.name }}
@@ -61,8 +61,10 @@ export class NodeModule {
 		this.mouseupEvent = () => {
 			this.mousehold = false
 			this.disableMove = false
+			// TODO: cleanup
 			this._store.nodes.forEach( n => {
-				if ( n !== this.node && n.multiSelected ) {
+				let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
+				if ( n !== this.node && isInSelection ) {
 					n._ngComponent.resetPrevPos()
 				}
 			} )
@@ -73,7 +75,8 @@ export class NodeModule {
 			this.moveByPixel( dx, dy )
 			// TODO: cleanup
 			this._store.nodes.forEach( n => {
-				if ( n !== this.node && n.multiSelected ) {
+				let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === n )
+				if ( n !== this.node && isInSelection ) {
 					n._ngComponent.moveByPixel( dx, dy )
 				}
 			} )
@@ -84,7 +87,12 @@ export class NodeModule {
 	}
 
 	@HostListener( 'mousedown', [ '$event' ] ) onMouseDown( $event ) {
-		this.ngs.setSelectedNode( this.node )
+		// TODO: cleanup
+		let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === this.node )
+		if ( !isInSelection ) {
+			this.ngs.clearSelectedNode()
+			this.ngs.setSelectedNode( this.node )
+		}
 		this.mousehold = true
 		this.prevMouse = { x: $event.pageX, y: $event.pageY }
 		this.prevPos = this.nodeElem.position()
@@ -121,8 +129,10 @@ export class NodeModule {
 		this.disableMove = bool
 	}
 
-	isSelected() {
-		return ( this.node === this.ngs.getSelectedNode() ) || this.node.multiSelected
+	shouldHighlight() {
+		// TODO: cleanup
+		let isInSelection = !!this.ngs.getSelectedNodes().find( sn => sn === this.node )
+		return isInSelection || this.node._markAsSelecting
 	}
 
 }

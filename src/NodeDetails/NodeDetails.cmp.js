@@ -18,10 +18,12 @@ const html = String.raw
 			<button (click)="importGraph()">IMP</button>
 			<button (click)="exportGraph()">EXP</button>
 			<button (click)="ngs.createTestNode()">ADD</button>
-			<button (click)="parseSelectedNode()">PAR-S</button>
 		</div>
 		<div style="clear: left"></div>
-		<span>{{ ngs.getSelectedNode()?.name || 'NULL' }}</span> <span>{{ ngs.getSelectedNode()?.uuid | uppercase }}</span>
+		<div *ngFor="let node of ngs.getSelectedNodes()" (click)="logDebugInfo( node )">
+				<span>{{ node.name }}</span> <span>{{ node.uuid | uppercase }}</span>
+		</div>
+		<span *ngIf="!ngs.getSelectedNodes()">NULL</span>
 		<nodeEditor></nodeEditor>
 	`
 
@@ -33,6 +35,10 @@ export class NodeDetails {
 		this.nen = _reg.request( 'NodeEngine' )
 		this.nie = _reg.request( 'NodeIE' )
 		this.debugEnabled = false
+	}
+
+	logDebugInfo( info ) {
+		console.log( info )
 	}
 
 	importGraph() {
@@ -47,11 +53,6 @@ export class NodeDetails {
 		console.log( 'PAR' )
 		this.loopStop()
 		this.nen.parse()
-	}
-
-	parseSelectedNode() {
-		console.log( 'PAR-S' )
-		this.ngs.getSelectedNode().parse()
 	}
 
 	loopStart() {

@@ -20,7 +20,6 @@ const html = String.raw
 } )
 export class NodeConnection {
 
-	@Input() selectedNode
 	@Input() connection
 	@Input() x1
 	@Input() y1
