@@ -43,6 +43,13 @@ export class NodeModuleIO {
 	ngOnInit() {
 		this.isInput = this.io instanceof NodeFactory.Input
 		this.isOutput = this.io instanceof NodeFactory.Output
+		// TODO:
+		this.ioPort.nativeElement._ioComponentRef = this
+	}
+
+	ngOnDestroy() {
+		// TODO:
+		this.ioPort.nativeElement._ioComponentRef = null
 	}
 
 	ngAfterViewInit() {

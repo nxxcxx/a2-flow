@@ -57,6 +57,15 @@ export class NodeGraph {
 	ngOnInit() {
 		this.ngs.registerViewportElem( this.el )
 		this.ngs.registerNodeContainerElem( this.container.nativeElement )
+
+		setInterval( () => {
+			if ( !this.ioUnderCursor ) return
+			if ( this.ioUnderCursor.type === 0 ) {
+				console.log( 'OPT:', this.ioUnderCursor.data )
+			} else if ( this.ioUnderCursor.type === 1 ) {
+				console.log( 'INP:', this.ioUnderCursor.output.data )
+			}
+		}, 100 )
 	}
 
 	zoom( anchor, delta ) {
@@ -101,6 +110,13 @@ export class NodeGraph {
 	}
 
 	@HostListener( 'mousemove', [ '$event' ] ) onMouseMove( $event ) {
+
+		if ( $event.target._ioComponentRef ) {
+			this.ioUnderCursor = $event.target._ioComponentRef.io
+		} else {
+			this.ioUnderCursor = null
+		}
+
 		if ( !this.mousehold || ( $event.target !== this.ngs.getViewportElem()[ 0 ] ) ) return
 		this.pan( { x: $event.clientX - this.prevMouse.x, y: $event.clientY - this.prevMouse.y } )
 		this.prevMouse = { x: $event.clientX, y: $event.clientY }
