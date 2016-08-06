@@ -33,6 +33,7 @@ const html = String.raw
 			<div *ngFor="let node of ngs.getNodes()">
 				<div *ngIf="node.type === 'NM_BASIC'" nodeModule [node]="node"></div>
 				<div *ngIf="node.type === 'NM_DISPLAY'" nodeModuleDisplay [node]="node"></div>
+				<!-- TODO: node.type = 'NM_XPACK' -->
 			</div>
 		</div>
 
